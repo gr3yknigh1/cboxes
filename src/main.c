@@ -38,6 +38,10 @@ int main() {
     printf("%d\n", *(int*)node->value);
     List_PrintItems(list);
 
+    printf("\nFree 4 index\n");
+    List_Free(list, 4);
+    List_PrintItems(list);
+
     List_Clear(list);
     printf("\n");
     List_PrintItems(list);

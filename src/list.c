@@ -106,20 +106,18 @@ int List_Pop(List *list, u64 index, Node** outNode) {
     if (List_IsFirst(list, index)) {
         *outNode = list->head;
         list->head = list->head->next;
-        list->length--;
-        return LIST_OK;
+    } else {
+        Node *before;
+        _List_LoopUntil(list, 1, list->length, index - 1, &before);
+        *outNode = before->next;
+        before->next = before->next->next;
     }
-
-    Node *before;
-    _List_LoopUntil(list, 1, list->length, index - 1, &before);
-
-    *outNode = before->next;
-
-    before->next = before->next->next;
 
     list->length--;
     return LIST_OK;
 }
+
+int List_PopRange(List* list, u64 start, u64 end, Node** outNodes);
 
 int List_Free(List* list, u64 index) {
     if (!List_InRange(list, index)) {
