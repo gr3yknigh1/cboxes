@@ -29,10 +29,11 @@ int List_Get(const List* list, u64 index, Node** outNode) {
     } else if (List_IsLast(list, index)) {
         *outNode = list->tail;
         return LIST_OK;
+    } else {
+        // NOTE: Staring from second item because first is already handled
+        _List_LoopUntil(list, 1, list->length, index, outNode);
     }
 
-    // NOTE: Staring from second item because first is already handled
-    _List_LoopUntil(list, 1, list->length, index, outNode);
     return LIST_OK;
 }
 
