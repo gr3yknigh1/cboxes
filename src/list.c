@@ -114,14 +114,29 @@ int List_Pop(List *list, u64 index, Node** outNode) {
     _List_LoopUntil(list, 1, list->length, index - 1, &before);
 
     *outNode = before->next;
+
     before->next = before->next->next;
 
     list->length--;
     return LIST_OK;
 }
 
-void List_Free(List* list, u64 index);
-void List_FreeRange(List* list, u64 start, u64 end);
+int List_Free(List* list, u64 index) {
+    if (!List_InRange(list, index)) {
+        printf("IndexError: List[%lu] Index(%lu)\n", list->length, index);
+        return LIST_INDEX_ERROR;
+    }
+
+    Node* node;
+    List_Pop(list, index, &node);
+    node->next = NULL;
+    Node_Free(node);
+
+    return LIST_OK;
+}
+
+
+int List_FreeRange(List* list, u64 start, u64 end);
 
 void List_Clear(List* list) {
     Node_Free(list->head);

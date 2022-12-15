@@ -36,8 +36,9 @@ u64 List_ExpandInsert(
 int List_Pop(List* list, u64 index, Node** outNode);
 int List_PopRange(List* list, u64 start, u64 end, Node** outNodes);
 
-void List_Free(List* list, u64 index);
-void List_Range(List* list, u64 start, u64 end);
+int List_Free(List* list, u64 index);
+int List_FreeRange(List* list, u64 start, u64 end);
+
 void List_Clear(List* list);
 
 bool List_IsEmpty(const List* list);
