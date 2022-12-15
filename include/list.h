@@ -42,10 +42,11 @@ u64 List_ExpandInsert2List(List* list, List* other, const u64 length);
 int List_Pop(List* list, u64 index, Node** outNode);
 int List_PopRange(List* list, u64 start, u64 end, Node** outNodes);
 
-int List_Free(List* list, u64 index);
+int List_FreeItem(List* list, u64 index);
 int List_FreeRange(List* list, u64 start, u64 end);
 
 void List_Clear(List* list);
+void List_Free(List* list);
 
 bool List_IsEmpty(const List* list);
 bool List_IsFirst(const List* list, const u64 index);

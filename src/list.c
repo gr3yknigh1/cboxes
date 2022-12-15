@@ -8,7 +8,7 @@
 List* List_Construct() {
     List* list = malloc(sizeof(List));
     list->length = 0;
-    list->head = (Node*)list;
+    list->head = NULL;
     list->tail = NULL;
     return list;
 }
@@ -120,7 +120,7 @@ int List_Pop(List *list, u64 index, Node** outNode) {
 
 int List_PopRange(List* list, u64 start, u64 end, Node** outNodes);
 
-int List_Free(List* list, u64 index) {
+int List_FreeItem(List* list, u64 index) {
     if (!List_InRange(list, index)) {
         printf("IndexError: List[%lu] Index(%lu)\n", list->length, index);
         return LIST_INDEX_ERROR;
@@ -138,11 +138,23 @@ int List_Free(List* list, u64 index) {
 int List_FreeRange(List* list, u64 start, u64 end);
 
 void List_Clear(List* list) {
+    if (list->length == 0) {
+        return;
+    }
     Node_Free(list->head);
-    free(list);
     list->length = 0;
+    list->head = NULL;
+    list->tail = NULL;
 }
 
+void List_Free(List *list) {
+    if (list->length == 0) {
+        return;
+    }
+    List_Clear(list);
+    free(list);
+    list = NULL;
+}
 
 bool List_IsEmpty(const List* list) {
     return list->length == 0;
