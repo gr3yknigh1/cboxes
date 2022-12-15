@@ -4,22 +4,12 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include "types.h"
+#include "node.h"
 
 enum {
     LIST_OK,
     LIST_INDEX_ERROR,
 };
-
-
-typedef struct Node {
-    void* value;
-    size_t size;
-    struct Node* next;
-} Node;
-
-Node* Node_Construct(void* value, Node* next, size_t size);
-void Node_Free(Node* node);
-
 
 typedef struct List {
     Node* head;
@@ -56,6 +46,7 @@ bool List_IsLast(const List* list, const u64 index);
 bool List_InRange(const List* list, const u64 index);
 
 u64 _List_IncementLength(List* list);
-void _List_LoopUntil(const List* list, u64 start, u64 end, u64 index, Node** outNode);
+void _List_LoopUntil(
+    const List* list, u64 start, u64 end, u64 index, Node** outNode);
 
 #endif // LIST_H
