@@ -8,7 +8,7 @@
 List* List_Construct() {
     List* list = malloc(sizeof(List));
     list->length = 0;
-    list->head = NULL;
+    list->head = (Node*)list;
     list->tail = NULL;
     return list;
 }

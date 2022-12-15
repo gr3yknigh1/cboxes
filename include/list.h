@@ -22,6 +22,8 @@ List* List_Construct();
 
 int List_Get(const List* list, u64 index, Node** outNode);
 
+List* List_Copy(const List* list);
+
 u64 List_PushBack(List* list, void* value, size_t size);
 u64 List_PushFront(List* list, void* value, size_t size);
 
@@ -32,6 +34,10 @@ u64 List_ExpandFront(List* list, void* begin, const u64 length);
 u64 List_ExpandInsert(
     List* list, u64 index, void* begin, const u64 length);
 
+
+u64 List_ExpandBack2List(List* list, List* other, const u64 length);
+u64 List_ExpandFront2List(List* list, List* other, const u64 length);
+u64 List_ExpandInsert2List(List* list, List* other, const u64 length);
 
 int List_Pop(List* list, u64 index, Node** outNode);
 int List_PopRange(List* list, u64 start, u64 end, Node** outNodes);
