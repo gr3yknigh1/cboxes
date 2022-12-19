@@ -4,7 +4,17 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include "types.h"
-#include "node.h"
+
+typedef struct Node {
+    void* value;
+    size_t size;
+    struct Node* next;
+} Node;
+
+Node* Node_Construct(void* value, Node* next, size_t size);
+void Node_Free(Node* node);
+
+bool Node_Equals(const Node* node, const Node* other);
 
 enum {
     LIST_OK,

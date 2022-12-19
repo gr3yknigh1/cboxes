@@ -5,6 +5,29 @@
 #include <memory.h>
 #include <string.h>
 
+Node* Node_Construct(void* value, Node* next, size_t size) {
+    Node* node = malloc(sizeof(Node));
+    node->value = malloc(size);
+    memcpy(node->value, value, size);
+    node->next = next;
+    node->size = size;
+    return node;
+}
+
+void Node_Free(Node *node) {
+    free(node->value);
+    if (node->next != NULL) {
+        Node_Free(node->next);
+    }
+    free(node);
+}
+
+bool Node_Equals(const Node* node, const Node* other) {
+    return node->value == other->value \
+        && node->size == other->size   \
+        && node->next == other->next;
+}
+
 List* List_Construct() {
     List* list = malloc(sizeof(List));
     list->length = 0;
@@ -178,10 +201,10 @@ u64 _List_IncementLength(List* list) {
 }
 
 void _List_LoopUntil(
-    const List* list, 
-    u64 start, 
-    u64 end, 
-    u64 index, 
+    const List* list,
+    u64 start,
+    u64 end,
+    u64 index,
     Node** outNode
 ) {
 
