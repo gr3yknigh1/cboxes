@@ -36,7 +36,14 @@ List* List_Construct() {
     return list;
 }
 
-int List_Get(const List* list, u64 index, LNode** outNode) {
+int List_Get(const List *list, u64 index, void **outNode) {
+    LNode* node;
+    int exitCode = List_GetNode(list, index, &node);
+    *outNode = node->value;
+    return exitCode;
+}
+
+int List_GetNode(const List* list, u64 index, LNode** outNode) {
     if (List_IsEmpty(list)) {
         printf("Error: No items in list\n");
         return LIST_INDEX_ERROR;

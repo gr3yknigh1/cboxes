@@ -30,7 +30,8 @@ typedef struct List {
 
 List* List_Construct();
 
-int List_Get(const List* list, u64 index, LNode** outNode);
+int List_Get(const List* list, u64 index, void** out);
+int List_GetNode(const List* list, u64 index, LNode** outNode);
 
 List* List_Copy(const List* list);
 

@@ -51,3 +51,22 @@ Test(test_list, List_Clear) {
     cr_expect(list->tail == NULL, "Tail in empty list must be null");
 }
 
+Test(test_list, List_Get) {
+    List* list = List_Construct();
+
+    for (int i = 0; i < 4; i++) {
+        List_PushBack(list, &i, sizeof(int));
+    }
+
+    void* value = NULL;
+    List_Get(list, 0, &value);
+    cr_expect(*(int*)list->head->value == *(int*)value);
+
+    List_Get(list, list->length - 1, &value);
+    cr_expect(*(int*)list->tail->value == *(int*)value);
+
+    List_Get(list, 2, &value);
+    cr_expect(*(int*)value == 2);
+    List_Free(list);
+}
+
