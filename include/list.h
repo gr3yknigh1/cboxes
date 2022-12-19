@@ -5,16 +5,16 @@
 #include <stdlib.h>
 #include "types.h"
 
-typedef struct Node {
+typedef struct LNode {
     void* value;
     size_t size;
-    struct Node* next;
-} Node;
+    struct LNode* next;
+} LNode;
 
-Node* Node_Construct(void* value, Node* next, size_t size);
-void Node_Free(Node* node);
+LNode* LNode_Construct(void* value, LNode* next, size_t size);
+void LNode_Free(LNode* node);
 
-bool Node_Equals(const Node* node, const Node* other);
+bool LNode_Equals(const LNode* node, const LNode* other);
 
 enum {
     LIST_OK,
@@ -22,15 +22,15 @@ enum {
 };
 
 typedef struct List {
-    Node* head;
-    Node* tail;
+    LNode* head;
+    LNode* tail;
     u64 length;
 } List;
 
 
 List* List_Construct();
 
-int List_Get(const List* list, u64 index, Node** outNode);
+int List_Get(const List* list, u64 index, LNode** outNode);
 
 List* List_Copy(const List* list);
 
@@ -49,8 +49,8 @@ u64 List_ExpandBack2List(List* list, List* other, const u64 length);
 u64 List_ExpandFront2List(List* list, List* other, const u64 length);
 u64 List_ExpandInsert2List(List* list, List* other, const u64 length);
 
-int List_Pop(List* list, u64 index, Node** outNode);
-int List_PopRange(List* list, u64 start, u64 end, Node** outNodes);
+int List_Pop(List* list, u64 index, LNode** outNode);
+int List_PopRange(List* list, u64 start, u64 end, LNode** outNodes);
 
 int List_FreeItem(List* list, u64 index);
 int List_FreeRange(List* list, u64 start, u64 end);
@@ -65,6 +65,6 @@ bool List_InRange(const List* list, const u64 index);
 
 u64 _List_IncementLength(List* list);
 void _List_LoopUntil(
-    const List* list, u64 start, u64 end, u64 index, Node** outNode);
+    const List* list, u64 start, u64 end, u64 index, LNode** outNode);
 
 #endif // LIST_H

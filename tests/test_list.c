@@ -28,7 +28,7 @@ Test(test_list, List_PushBack) {
     cr_expect(*(int*)list->head->next->next->next->value == 3, "Failed to push 4th element");
     cr_expect(*(int*)list->tail->value == 9, "Failed to push last element");
 
-    Node* node = list->head;
+    LNode* node = list->head;
     for (int i = 0; i < expectedSize; i++) {
         int pushedValue = *(int*)node->value;
         cr_expect(pushedValue == i, "kailed to push some item correctly");

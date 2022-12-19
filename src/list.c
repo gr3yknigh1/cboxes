@@ -5,8 +5,8 @@
 #include <memory.h>
 #include <string.h>
 
-Node* Node_Construct(void* value, Node* next, size_t size) {
-    Node* node = malloc(sizeof(Node));
+LNode* LNode_Construct(void* value, LNode* next, size_t size) {
+    LNode* node = malloc(sizeof(LNode));
     node->value = malloc(size);
     memcpy(node->value, value, size);
     node->next = next;
@@ -14,15 +14,15 @@ Node* Node_Construct(void* value, Node* next, size_t size) {
     return node;
 }
 
-void Node_Free(Node *node) {
+void LNode_Free(LNode *node) {
     free(node->value);
     if (node->next != NULL) {
-        Node_Free(node->next);
+        LNode_Free(node->next);
     }
     free(node);
 }
 
-bool Node_Equals(const Node* node, const Node* other) {
+bool LNode_Equals(const LNode* node, const LNode* other) {
     return node->value == other->value \
         && node->size == other->size   \
         && node->next == other->next;
@@ -36,7 +36,7 @@ List* List_Construct() {
     return list;
 }
 
-int List_Get(const List* list, u64 index, Node** outNode) {
+int List_Get(const List* list, u64 index, LNode** outNode) {
     if (List_IsEmpty(list)) {
         printf("Error: No items in list\n");
         return LIST_INDEX_ERROR;
@@ -62,13 +62,13 @@ int List_Get(const List* list, u64 index, Node** outNode) {
 
 u64 List_PushBack(List *list, void *value, size_t size) {
     if (List_IsEmpty(list)) {
-        list->head = Node_Construct(value, NULL, size);
+        list->head = LNode_Construct(value, NULL, size);
         list->tail = list->head;
     } else if (list->length == 1) {
-        list->tail = Node_Construct(value, NULL, size);
+        list->tail = LNode_Construct(value, NULL, size);
         list->head->next = list->tail;
     } else {
-        list->tail->next = Node_Construct(value, NULL, size);
+        list->tail->next = LNode_Construct(value, NULL, size);
         list->tail = list->tail->next;
     }
 
@@ -78,10 +78,10 @@ u64 List_PushBack(List *list, void *value, size_t size) {
 
 u64 List_PushFront(List *list, void *value, size_t size) {
     if (List_IsEmpty(list)) {
-        list->head = Node_Construct(value, NULL, size);
+        list->head = LNode_Construct(value, NULL, size);
         list->tail = list->head;
     } else {
-        Node* newNode = Node_Construct(value, list->head, size);
+        LNode* newNode = LNode_Construct(value, list->head, size);
         list->head = newNode;
     }
 
@@ -101,10 +101,10 @@ int List_Insert(List *list, u64 index, void *value, size_t size) {
         return LIST_INDEX_ERROR;
     }
 
-    Node *before;
+    LNode *before;
     _List_LoopUntil(list, 1, list->length, index - 1, &before);
 
-    before->next = Node_Construct(value, before->next, size);
+    before->next = LNode_Construct(value, before->next, size);
 
     list->length++;
     return LIST_OK;
@@ -115,7 +115,7 @@ u64 List_ExpandFront(List* list, void* begin, const u64 length);
 u64 List_ExpandInsert(
     List* list, u64 index, void* begin, const u64 length);
 
-int List_Pop(List *list, u64 index, Node** outNode) {
+int List_Pop(List *list, u64 index, LNode** outNode) {
     if (List_IsEmpty(list)) {
         printf("Error: No items in list\n");
         return LIST_INDEX_ERROR;
@@ -131,7 +131,7 @@ int List_Pop(List *list, u64 index, Node** outNode) {
         *outNode = list->head;
         list->head = list->head->next;
     } else {
-        Node *before;
+        LNode *before;
         _List_LoopUntil(list, 1, list->length, index - 1, &before);
         *outNode = before->next;
         before->next = before->next->next;
@@ -141,7 +141,7 @@ int List_Pop(List *list, u64 index, Node** outNode) {
     return LIST_OK;
 }
 
-int List_PopRange(List* list, u64 start, u64 end, Node** outNodes);
+int List_PopRange(List* list, u64 start, u64 end, LNode** outNodes);
 
 int List_FreeItem(List* list, u64 index) {
     if (!List_InRange(list, index)) {
@@ -149,10 +149,10 @@ int List_FreeItem(List* list, u64 index) {
         return LIST_INDEX_ERROR;
     }
 
-    Node* node;
+    LNode* node;
     List_Pop(list, index, &node);
     node->next = NULL;
-    Node_Free(node);
+    LNode_Free(node);
 
     return LIST_OK;
 }
@@ -164,7 +164,7 @@ void List_Clear(List* list) {
     if (list->length == 0) {
         return;
     }
-    Node_Free(list->head);
+    LNode_Free(list->head);
     list->length = 0;
     list->head = NULL;
     list->tail = NULL;
@@ -205,11 +205,11 @@ void _List_LoopUntil(
     u64 start,
     u64 end,
     u64 index,
-    Node** outNode
+    LNode** outNode
 ) {
 
     u64 currentIndex = start;
-    Node* currentNode = list->head->next;
+    LNode* currentNode = list->head->next;
     while(currentNode != NULL) {
         if (currentIndex == index) {
             *outNode = currentNode;
