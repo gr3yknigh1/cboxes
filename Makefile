@@ -1,7 +1,7 @@
 MKDIR  = mkdir -p
 REMOVE = rm -rf
 
-CC     = clang
+CC     = gcc
 CFLAGS = -g -Wall
 
 MKFILE_PATH = $(abspath $(lastword $(MAKEFILE_LIST)))
