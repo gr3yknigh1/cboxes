@@ -4,8 +4,12 @@
 #include <stdlib.h>
 #include <memory.h>
 #include <string.h>
+#include <assert.h>
 
 LNode* LNode_Construct(void* value, LNode* next, size_t size) {
+    assert(value != NULL);
+    assert(size != 0);
+
     LNode* node = malloc(sizeof(LNode));
     node->value = malloc(size);
     memcpy(node->value, value, size);
@@ -15,6 +19,8 @@ LNode* LNode_Construct(void* value, LNode* next, size_t size) {
 }
 
 void LNode_Free(LNode *node) {
+    assert(node != NULL);
+
     free(node->value);
     if (node->next != NULL) {
         LNode_Free(node->next);
