@@ -48,6 +48,16 @@ typedef struct BST {
 BST* BST_Construct(BNode* root);
 BST* BST_ConstructD();
 
+int BST_Add();
+int BST_Insert();
+int BST_Remove();
+int BST_Search();
+
+BNode* BST_GetMax();
+BNode* BST_GetMin();
+
+void BST_InorderTreeWalk(void visitNode(BNode* node));
+
 void BST_Free(BST* bst);
 
 #endif // BST_H
