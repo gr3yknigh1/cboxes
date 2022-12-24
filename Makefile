@@ -1,8 +1,8 @@
 MKDIR  = mkdir -p
 REMOVE = rm -rf
 
-CC     = gcc
-CFLAGS = -g -Wall
+CC     = clang
+CFLAGS = -g -Wall -std=c17
 
 MKFILE_PATH = $(abspath $(lastword $(MAKEFILE_LIST)))
 MKFILE_DIR  = $(dir $(MKFILE_PATH))
