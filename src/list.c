@@ -18,15 +18,21 @@ LNode* LNode_Construct(void* value, LNode* next, size_t size) {
     return node;
 }
 
-void LNode_Free(LNode *node) {
+void LNode_FreeO(LNode *node, void freeItem(void* item)) {
     assert(node != NULL);
 
-    free(node->value);
+    freeItem(node->value);
     if (node->next != NULL) {
         LNode_Free(node->next);
     }
     free(node);
 }
+
+
+void LNode_Free(LNode *node) {
+    LNode_FreeO(node, free);
+}
+
 
 bool LNode_Equals(const LNode* node, const LNode* other) {
     return node->value == other->value \
@@ -173,23 +179,32 @@ int List_FreeItem(List* list, u64 index) {
 
 int List_FreeRange(List* list, u64 start, u64 end);
 
-void List_Clear(List* list) {
+void List_ClearO(List* list, void freeItem(void* item)) {
     if (list->length == 0) {
         return;
     }
-    LNode_Free(list->head);
+
+    LNode_FreeO(list->head, freeItem);
     list->length = 0;
     list->head = NULL;
     list->tail = NULL;
 }
 
-void List_Free(List *list) {
-    if (list->length == 0) {
+void List_Clear(List* list) {
+    List_ClearO(list, free);
+}
+
+void List_FreeO(List* list, void freeItem(void* item)) {
+    if (list->length != 0) {
+        List_ClearO(list, freeItem);
         return;
     }
-    List_Clear(list);
     free(list);
     list = NULL;
+}
+
+void List_Free(List *list) {
+    List_FreeO(list, free);
 }
 
 bool List_IsEmpty(const List* list) {
