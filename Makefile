@@ -16,7 +16,7 @@ BUILD_FOLDER      = $(PROJECT_DIRECTORY)build
 SOURCE_DIRECTORY  = $(PROJECT_DIRECTORY)src
 TESTS_FOLDER      = $(PROJECT_DIRECTORY)tests
 
-LIBRARY           = $(BUILD_FOLDER)/libccoll.a
+LIBRARY           = $(BUILD_FOLDER)/libccollections.a
 
 OBJ_FOLDER        = $(BUILD_FOLDER)/objs
 TESTS_BIN_FOLDER  = $(BUILD_FOLDER)/tests
