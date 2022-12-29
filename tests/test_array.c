@@ -1,7 +1,7 @@
 #include <criterion/criterion.h>
 #include <criterion/new/assert.h>
 
-#include "darray.h"
+#include "c-collections/darray.h"
 
 
 Test(test_darray, DArray_Construct) {

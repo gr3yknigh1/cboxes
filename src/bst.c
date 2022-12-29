@@ -1,4 +1,4 @@
-#include "bst.h"
+#include "c-collections/bst.h"
 #include <memory.h>
 #include <string.h>
 #include <assert.h>

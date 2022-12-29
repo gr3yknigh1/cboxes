@@ -1,10 +1,11 @@
-#include "list.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <memory.h>
 #include <string.h>
 #include <assert.h>
+
+#include "c-collections/list.h"
 
 LNode* LNode_Construct(void* value, LNode* next, size_t size) {
     assert(value != NULL);
@@ -28,11 +29,9 @@ void LNode_FreeO(LNode *node, void freeItem(void* item)) {
     free(node);
 }
 
-
 void LNode_Free(LNode *node) {
     LNode_FreeO(node, free);
 }
-
 
 bool LNode_Equals(const LNode* node, const LNode* other) {
     return node->value == other->value \

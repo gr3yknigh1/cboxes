@@ -1,7 +1,7 @@
 #include <criterion/criterion.h>
 #include <criterion/internal/assert.h>
 
-#include "list.h"
+#include "c-collections/list.h"
 
 void setup   (void) {}
 void teardown(void) {}

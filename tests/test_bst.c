@@ -1,5 +1,5 @@
 #include <criterion/criterion.h>
-#include "bst.h"
+#include "c-collections/bst.h"
 
 Test(test_bst, BST_Construct) {
     BST* bst = BST_ConstructD();

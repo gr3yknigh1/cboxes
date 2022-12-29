@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "darray.h"
+#include "c-collections/darray.h"
 
 DArray* DArray_Construct() {
     DArray* darray = malloc(sizeof(DArray));
