@@ -57,6 +57,7 @@ int List_FreeItem(List* list, u64 index);
 int List_FreeRange(List* list, u64 start, u64 end);
 
 void List_Clear(List* list);
+void List_FreeO(List* list, void freeItem(void* item));
 void List_Free(List* list);
 
 bool List_IsEmpty(const List* list);
