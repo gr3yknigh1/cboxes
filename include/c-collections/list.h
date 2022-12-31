@@ -47,16 +47,23 @@ void LNode_FreeD(void *ptr);
 bool LNode_Equals(const LNode* node, const LNode* other);
 
 
+#define COLLECTION()           \
+u64 count;                     \
+void* (*copyValue)(void* ptr); \
+void  (*freeValue)(void* ptr); \
+
+
 enum {
     LIST_OK,
     LIST_INDEX_ERROR,
 };
 
+
 typedef struct List {
+    COLLECTION()
+
     LNode* head;
     LNode* tail;
-
-    u64 count;
 } List;
 
 
