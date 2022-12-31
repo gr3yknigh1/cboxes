@@ -11,7 +11,7 @@ TestSuite(test_list, .init=setup, .fini=teardown);
 Test(test_list, List_Construct) {
     List* list = List_Construct();
     cr_expect(list != NULL, "List_Construct must return valid pointer to List");
-    cr_expect(list->length == 0, "List_Construct must initialize empty List");
+    cr_expect(list->count == 0, "List_Construct must initialize empty List");
     cr_expect(list->head == NULL, "Head must be null");
     cr_expect(list->tail == NULL, "Tail must be null");
 }
@@ -44,9 +44,9 @@ Test(test_list, List_Clear) {
         List_PushBack(list, &i, sizeof(int));
     }
 
-    List_Clear(list);
+    List_ClearD(list);
 
-    cr_expect(list->length == 0, "Length must equal to 0 in empty List");
+    cr_expect(list->count == 0, "Length must equal to 0 in empty List");
     cr_expect(list->head == NULL, "Head in empty list must be null");
     cr_expect(list->tail == NULL, "Tail in empty list must be null");
 }
@@ -62,11 +62,11 @@ Test(test_list, List_Get) {
     List_Get(list, 0, &value);
     cr_expect(*(int*)list->head->value == *(int*)value);
 
-    List_Get(list, list->length - 1, &value);
+    List_Get(list, list->count - 1, &value);
     cr_expect(*(int*)list->tail->value == *(int*)value);
 
     List_Get(list, 2, &value);
     cr_expect(*(int*)value == 2);
-    List_Free(list);
+    List_FreeD(list);
 }
 
