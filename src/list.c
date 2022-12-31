@@ -41,7 +41,7 @@ bool LNode_Equals(const LNode* node, const LNode* other) {
         && node->next == other->next;
 }
 
-List* List_Construct() {
+List* List_ConstructD() {
     List* list = malloc(sizeof(List));
     list->count = 0;
     list->head = NULL;

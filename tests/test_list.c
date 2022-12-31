@@ -9,7 +9,7 @@ void teardown(void) {}
 TestSuite(test_list, .init=setup, .fini=teardown);
 
 Test(test_list, List_Construct) {
-    List* list = List_Construct();
+    List* list = List_ConstructD();
     cr_expect(list != NULL, "List_Construct must return valid pointer to List");
     cr_expect(list->count == 0, "List_Construct must initialize empty List");
     cr_expect(list->head == NULL, "Head must be null");
@@ -17,7 +17,7 @@ Test(test_list, List_Construct) {
 }
 
 Test(test_list, List_PushBack) {
-    List* list = List_Construct();
+    List* list = List_ConstructD();
 
     const int expectedSize = 10;
     for (int i = 0; i < expectedSize; i++) {
@@ -37,7 +37,7 @@ Test(test_list, List_PushBack) {
 }
 
 Test(test_list, List_Clear) {
-    List* list = List_Construct();
+    List* list = List_ConstructD();
 
     const int expected_size = 10;
     for (int i = 0; i < expected_size; i++) {
@@ -52,7 +52,7 @@ Test(test_list, List_Clear) {
 }
 
 Test(test_list, List_Get) {
-    List* list = List_Construct();
+    List* list = List_ConstructD();
 
     for (int i = 0; i < 4; i++) {
         List_PushBack(list, &i, sizeof(int));

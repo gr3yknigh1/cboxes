@@ -60,7 +60,7 @@ typedef struct List {
 } List;
 
 
-List* List_Construct();
+List* List_ConstructD();
 
 int List_Get(const List* list, u64 index, void** out);
 int List_GetNode(const List* list, u64 index, LNode** outNode);
