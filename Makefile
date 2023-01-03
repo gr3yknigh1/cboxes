@@ -65,6 +65,7 @@ $(TESTS_BIN_FOLDER):
 
 clean veryclean:
 	$(REMOVE) $(BUILD_FOLDER)
+	$(REMOVE) compile_commands.json
 
 .PHONY: default, all, main, clean
 
