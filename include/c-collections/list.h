@@ -20,6 +20,7 @@ typedef struct Node {
 } Node;
 
 
+
 // Binary Node
 typedef struct BNode {
     NODE();
@@ -28,10 +29,8 @@ typedef struct BNode {
 } BNode;
 
 BNode* BNode_Construct(void* value, BNode* left, BNode* right, size_t size);
-
 void BNode_Free (void *ptr, void freeValue(void *ptr));
 void BNode_FreeD(void *ptr);
-
 bool BNode_Equals(const BNode* node, const BNode* other);
 
 
@@ -47,10 +46,10 @@ void LNode_FreeD(void *ptr);
 bool LNode_Equals(const LNode* node, const LNode* other);
 
 
-#define COLLECTION()           \
-u64 count;                     \
-void* (*copyValue)(void* ptr); \
-void  (*freeValue)(void* ptr); \
+#define COLLECTION()                                         \
+u64 count;                                                   \
+void* (*copyValue)(void* src, const void* dest, size_t size); \
+void  (*freeValue)(void* ptr);                                \
 
 
 enum {
@@ -60,13 +59,19 @@ enum {
 
 
 typedef struct List {
-    COLLECTION()
-
     LNode* head;
     LNode* tail;
+
+    COLLECTION()
 } List;
 
-
+List* List_Construct(
+    LNode* head,
+    LNode* tail,
+    u64 count,
+    void* (*copyValue)(void* src, const void* dest, size_t size),
+    void  (*freeValue)(void* ptr)
+    );
 List* List_ConstructD();
 
 int List_Get(const List* list, u64 index, void** out);
@@ -78,6 +83,7 @@ u64 List_PushBack(List* list, void* value, size_t size);
 u64 List_PushFront(List* list, void* value, size_t size);
 
 int List_Insert(List* list, u64 index, void* value, size_t size);
+int List_InsertNode(List* list, u64 index, LNode* node);
 
 u64 List_ExpandBack(List* list, void* begin, const u64 length);
 u64 List_ExpandFront(List* list, void* begin, const u64 length);
@@ -89,17 +95,14 @@ u64 List_ExpandBack2List(List* list, List* other, const u64 length);
 u64 List_ExpandFront2List(List* list, List* other, const u64 length);
 u64 List_ExpandInsert2List(List* list, List* other, const u64 length);
 
-int List_Pop(List* list, u64 index, LNode** outNode);
-int List_PopRange(List* list, u64 start, u64 end, LNode** outNodes);
+int List_PopNode(List* list, u64 index, LNode** outNode);
+int List_PopNodeRange(List* list, u64 start, u64 end, LNode** outNodes);
 
-int List_FreeItem(List* list, u64 index);
-int List_FreeRange(List* list, u64 start, u64 end);
+int List_FreeNode(List* list, u64 index);
+int List_FreeNodeRange(List* list, u64 start, u64 end);
 
-void List_Clear (List* list, void freeValue(void* item));
-void List_ClearD(List* list);
-
-void List_Free (List* list, void freeValue(void* item));
-void List_FreeD(List* list);
+void List_Clear(List* list);
+void List_Free(void* ptr);
 
 bool List_IsEmpty(const List* list);
 bool List_IsFirst(const List* list, const u64 index);
