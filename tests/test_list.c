@@ -44,7 +44,7 @@ Test(test_list, List_Clear) {
         List_PushBack(list, &i, sizeof(int));
     }
 
-    List_ClearD(list);
+    List_Clear(list);
 
     cr_expect(list->count == 0, "Length must equal to 0 in empty List");
     cr_expect(list->head == NULL, "Head in empty list must be null");
@@ -67,6 +67,9 @@ Test(test_list, List_Get) {
 
     List_Get(list, 2, &value);
     cr_expect(*(int*)value == 2);
-    List_FreeD(list);
+    List_Free(list);
 }
 
+Test(test_list, List_CustomStruct) {
+
+}

@@ -41,13 +41,33 @@ bool LNode_Equals(const LNode* node, const LNode* other) {
         && node->next == other->next;
 }
 
+List* List_Construct(
+    LNode* head,
+    LNode* tail,
+    u64 count,
+    void* (*copyValue)(void* src, const void* dest, size_t size),
+    void  (*freeValue)(void* ptr)
+    ) {
+
+    List* list = malloc(sizeof(List));
+    list->count = count;
+    list->head = head;
+    list->tail = tail;
+    list->freeValue = freeValue;
+    list->copyValue = copyValue;
+    return list;
+}
+
 List* List_ConstructD() {
     List* list = malloc(sizeof(List));
     list->count = 0;
     list->head = NULL;
     list->tail = NULL;
+    list->freeValue = free;
+    list->copyValue = memcpy;
     return list;
 }
+
 
 int List_Get(const List *list, u64 index, void **outNode) {
     LNode* node;
@@ -135,7 +155,7 @@ u64 List_ExpandFront(List* list, void* begin, const u64 length);
 u64 List_ExpandInsert(
     List* list, u64 index, void* begin, const u64 length);
 
-int List_Pop(List *list, u64 index, LNode** outNode) {
+int List_PopNode(List *list, u64 index, LNode** outNode) {
     if (List_IsEmpty(list)) {
         printf("Error: No items in list\n");
         return LIST_INDEX_ERROR;
@@ -161,51 +181,44 @@ int List_Pop(List *list, u64 index, LNode** outNode) {
     return LIST_OK;
 }
 
-int List_PopRange(List* list, u64 start, u64 end, LNode** outNodes);
+int List_PopNodeRange(List* list, u64 start, u64 end, LNode** outNodes);
 
-int List_FreeItem(List* list, u64 index) {
+int List_FreeNode(List* list, u64 index) {
     if (!List_InRange(list, index)) {
         printf("IndexError: List[%lu] Index(%lu)\n", list->count, index);
         return LIST_INDEX_ERROR;
     }
 
     LNode* node;
-    List_Pop(list, index, &node);
+    List_PopNode(list, index, &node);
     node->next = NULL;
-    LNode_FreeD(node);
+    LNode_Free(node, list->freeValue);
 
     return LIST_OK;
 }
 
 
-int List_FreeRange(List* list, u64 start, u64 end);
+int List_FreeNodeRange(List* list, u64 start, u64 end);
 
-void List_Clear(List* list, void freeValue(void* item)) {
+void List_Clear(List* list) {
     if (list->count == 0) {
         return;
     }
 
-    LNode_Free(list->head, freeValue);
+    LNode_Free(list->head, list->freeValue);
     list->count = 0;
     list->head = NULL;
     list->tail = NULL;
 }
 
-void List_ClearD(List* list) {
-    List_Clear(list, free);
-}
-
-void List_Free(List* list, void freeValue(void* item)) {
+void List_Free(void* ptr) {
+    List* list = (List*)ptr;
     if (list->count != 0) {
-        List_Clear(list, freeValue);
+        List_Clear(list);
         return;
     }
     free(list);
     list = NULL;
-}
-
-void List_FreeD(List *list) {
-    List_Free(list, free);
 }
 
 bool List_IsEmpty(const List* list) {
