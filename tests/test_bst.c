@@ -1,9 +1,9 @@
-#include <criterion/criterion.h>
 #include "cboxes/bst.h"
+#include <criterion/criterion.h>
 
 Test(test_bst, BST_Construct) {
-    BST* bst = BST_ConstructD();
-    BST* bst2 = BST_Construct(NULL);
+    BST *bst = BST_ConstructD();
+    BST *bst2 = BST_Construct(NULL);
 
     cr_expect(bst != NULL);
     cr_expect(bst2 != NULL);

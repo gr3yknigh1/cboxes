@@ -1,18 +1,17 @@
 #include "cboxes/bst.h"
+#include <assert.h>
 #include <memory.h>
 #include <string.h>
-#include <assert.h>
 
 SPair SPair_Construct();
 
-void SPair_Free(SPair* pair);
+void SPair_Free(SPair *pair);
 
-
-BNode* BNode_Construct(void* value, size_t size, BNode* left, BNode* right) {
+BNode *BNode_Construct(void *value, size_t size, BNode *left, BNode *right) {
     assert(value != NULL);
     assert(size != 0);
 
-    BNode* node = malloc(sizeof(BNode));
+    BNode *node = malloc(sizeof(BNode));
     node->value = malloc(size);
     memcpy(node->value, value, size);
     node->left = left;
@@ -20,11 +19,11 @@ BNode* BNode_Construct(void* value, size_t size, BNode* left, BNode* right) {
     return node;
 }
 
-BNode* BNode_ConstructD(void* value, size_t size) {
+BNode *BNode_ConstructD(void *value, size_t size) {
     return BNode_Construct(value, size, NULL, NULL);
 }
 
-u64 BNode_CountChildren(BNode* node) {
+u64 BNode_CountChildren(BNode *node) {
     u64 count = 0;
     if (node->left != NULL) {
         count += BNode_CountChildren(node->left);
@@ -35,7 +34,7 @@ u64 BNode_CountChildren(BNode* node) {
     return count;
 }
 
-void BNode_Free(BNode* node) {
+void BNode_Free(BNode *node) {
     if (node->left != NULL) {
         BNode_Free(node->left);
     }
@@ -46,9 +45,8 @@ void BNode_Free(BNode* node) {
     free(node);
 }
 
-
-BST* BST_Construct(BNode* root) {
-    BST* bst = malloc(sizeof(BST));
+BST *BST_Construct(BNode *root) {
+    BST *bst = malloc(sizeof(BST));
     bst->root = root;
     if (root != NULL) {
         bst->count = BNode_CountChildren(root) + 1;
@@ -58,11 +56,9 @@ BST* BST_Construct(BNode* root) {
     return bst;
 }
 
-BST* BST_ConstructD() {
-    return BST_Construct(NULL);
-}
+BST *BST_ConstructD() { return BST_Construct(NULL); }
 
-void BST_Free(BST* bst) {
+void BST_Free(BST *bst) {
     if (bst->root != NULL) {
         BNode_Free(bst->root);
     }

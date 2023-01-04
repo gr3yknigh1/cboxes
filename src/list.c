@@ -1,41 +1,35 @@
+#include <assert.h>
+#include <memory.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <memory.h>
 #include <string.h>
-#include <assert.h>
 
-#include "cboxes/list.h"
 #include "cboxes/error.h"
+#include "cboxes/list.h"
 #include "cboxes/nodes.h"
 
+List *List_Construct(LNode *head, LNode *tail, u64 count, size_t size,
+                     void *(*copyValue)(void *dest, const void *src,
+                                        size_t size),
+                     void (*freeValue)(void *ptr)) {
 
-List* List_Construct(
-    LNode* head,
-    LNode* tail,
-    u64 count,
-    size_t size,
-    void* (*copyValue)(void* dest, const void* src, size_t size),
-    void  (*freeValue)(void* ptr)
-    ) {
-
-    List* list = malloc(sizeof(List));
+    List *list = malloc(sizeof(List));
     list->head = head;
     list->tail = tail;
     list->count = count;
-    list->size  = size;
+    list->size = size;
     list->copyValue = copyValue;
     list->freeValue = freeValue;
     return list;
 }
 
-List* List_ConstructD(size_t size) {
+List *List_ConstructD(size_t size) {
     return List_Construct(NULL, NULL, 0, size, memcpy, free);
 }
 
-
 int List_Get(const List *list, u64 index, void **out) {
-    LNode* outNode;
+    LNode *outNode;
     u16 exitCode = List_GetNode(list, index, &outNode);
 
     if (exitCode == cboxes_Ok) {
@@ -45,7 +39,7 @@ int List_Get(const List *list, u64 index, void **out) {
     return exitCode;
 }
 
-int List_GetNode(const List* list, u64 index, LNode** outNode) {
+int List_GetNode(const List *list, u64 index, LNode **outNode) {
     if (List_IsEmpty(list)) {
         printf("Error: No items in list\n");
         return cboxes_IndexError;
@@ -71,13 +65,16 @@ int List_GetNode(const List* list, u64 index, LNode** outNode) {
 
 u64 List_PushBack(List *list, void *value) {
     if (List_IsEmpty(list)) {
-        list->head = LNode_Construct(value, NULL, list->size, list->copyValue, list->freeValue);
+        list->head = LNode_Construct(value, NULL, list->size, list->copyValue,
+                                     list->freeValue);
         list->tail = list->head;
     } else if (list->count == 1) {
-        list->tail = LNode_Construct(value, NULL, list->size, list->copyValue, list->freeValue);
+        list->tail = LNode_Construct(value, NULL, list->size, list->copyValue,
+                                     list->freeValue);
         list->head->next = list->tail;
     } else {
-        list->tail->next = LNode_Construct(value, NULL, list->size, list->copyValue, list->freeValue);
+        list->tail->next = LNode_Construct(value, NULL, list->size,
+                                           list->copyValue, list->freeValue);
         list->tail = list->tail->next;
     }
 
@@ -87,10 +84,12 @@ u64 List_PushBack(List *list, void *value) {
 
 u64 List_PushFront(List *list, void *value) {
     if (List_IsEmpty(list)) {
-        list->head = LNode_Construct(value, NULL, list->size, list->copyValue, list->freeValue);
+        list->head = LNode_Construct(value, NULL, list->size, list->copyValue,
+                                     list->freeValue);
         list->tail = list->head;
     } else {
-        LNode* newNode = LNode_Construct(value, list->head, list->size, list->copyValue, list->freeValue);
+        LNode *newNode = LNode_Construct(value, list->head, list->size,
+                                         list->copyValue, list->freeValue);
         list->head = newNode;
     }
 
@@ -113,18 +112,18 @@ int List_Insert(List *list, u64 index, void *value) {
     LNode *before;
     _List_LoopUntil(list, 1, list->count, index - 1, &before);
 
-    before->next = LNode_Construct(value, before->next, list->size, list->copyValue, list->freeValue);
+    before->next = LNode_Construct(value, before->next, list->size,
+                                   list->copyValue, list->freeValue);
 
     list->count++;
     return cboxes_Ok;
 }
 
-u64 List_ExpandBack(List* list, void* begin, const u64 length);
-u64 List_ExpandFront(List* list, void* begin, const u64 length);
-u64 List_ExpandInsert(
-    List* list, u64 index, void* begin, const u64 length);
+u64 List_ExpandBack(List *list, void *begin, const u64 length);
+u64 List_ExpandFront(List *list, void *begin, const u64 length);
+u64 List_ExpandInsert(List *list, u64 index, void *begin, const u64 length);
 
-int List_PopNode(List *list, u64 index, LNode** outNode) {
+int List_PopNode(List *list, u64 index, LNode **outNode) {
     if (List_IsEmpty(list)) {
         printf("Error: No items in list\n");
         return cboxes_IndexError;
@@ -150,15 +149,15 @@ int List_PopNode(List *list, u64 index, LNode** outNode) {
     return cboxes_Ok;
 }
 
-int List_PopNodeRange(List* list, u64 start, u64 end, LNode** outNodes);
+int List_PopNodeRange(List *list, u64 start, u64 end, LNode **outNodes);
 
-int List_FreeNode(List* list, u64 index) {
+int List_FreeNode(List *list, u64 index) {
     if (!List_InRange(list, index)) {
         printf("IndexError: List[%lu] Index(%lu)\n", list->count, index);
         return cboxes_IndexError;
     }
 
-    LNode* node;
+    LNode *node;
     List_PopNode(list, index, &node);
     node->next = NULL;
     LNode_Free(node, list->freeValue);
@@ -166,10 +165,9 @@ int List_FreeNode(List* list, u64 index) {
     return cboxes_Ok;
 }
 
+int List_FreeNodeRange(List *list, u64 start, u64 end);
 
-int List_FreeNodeRange(List* list, u64 start, u64 end);
-
-void List_Clear(List* list) {
+void List_Clear(List *list) {
     if (list->count == 0) {
         return;
     }
@@ -180,8 +178,8 @@ void List_Clear(List* list) {
     list->tail = NULL;
 }
 
-void List_Free(void* ptr) {
-    List* list = (List*)ptr;
+void List_Free(void *ptr) {
+    List *list = (List *)ptr;
     if (list->count != 0) {
         List_Clear(list);
         return;
@@ -190,38 +188,29 @@ void List_Free(void* ptr) {
     list = NULL;
 }
 
-bool List_IsEmpty(const List* list) {
-    return list->count == 0;
-}
+bool List_IsEmpty(const List *list) { return list->count == 0; }
 
-bool List_IsFirst(const List* list, const u64 index) {
-    return index == 0;
-}
+bool List_IsFirst(const List *list, const u64 index) { return index == 0; }
 
-bool List_IsLast(const List* list, const u64 index) {
+bool List_IsLast(const List *list, const u64 index) {
     return index == list->count - 1;
 }
 
-bool List_InRange(const List* list, const u64 index) {
+bool List_InRange(const List *list, const u64 index) {
     return index >= 0 && index < list->count;
 }
 
-u64 _List_IncementLength(List* list) {
+u64 _List_IncementLength(List *list) {
     list->count++;
     return list->count;
 }
 
-void _List_LoopUntil(
-    const List* list,
-    u64 start,
-    u64 end,
-    u64 index,
-    LNode** outNode
-) {
+void _List_LoopUntil(const List *list, u64 start, u64 end, u64 index,
+                     LNode **outNode) {
 
     u64 currentIndex = start;
-    LNode* currentNode = list->head->next;
-    while(currentNode != NULL) {
+    LNode *currentNode = list->head->next;
+    while (currentNode != NULL) {
         if (currentIndex == index) {
             *outNode = currentNode;
             break;
@@ -231,4 +220,3 @@ void _List_LoopUntil(
         currentNode = currentNode->next;
     }
 }
-
