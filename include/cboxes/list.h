@@ -46,8 +46,8 @@ void LNode_FreeD(void *ptr);
 bool LNode_Equals(const LNode* node, const LNode* other);
 
 
-#define COLLECTION()                                         \
-u64 count;                                                   \
+#define COLLECTION()                                          \
+u64 count;                                                    \
 void* (*copyValue)(void* src, const void* dest, size_t size); \
 void  (*freeValue)(void* ptr);                                \
 

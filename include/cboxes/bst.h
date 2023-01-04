@@ -2,7 +2,7 @@
 #define BST_H
 
 #include <stdlib.h>
-#include "c-collections/types.h"
+#include "cboxes/types.h"
 
 /*
  * String pair
