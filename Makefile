@@ -25,7 +25,12 @@ TESTS_SOURCES     = $(wildcard $(TESTS_FOLDER)/*.c)
 TESTS_BINS        = $(patsubst $(TESTS_FOLDER)/%.c, $(TESTS_BIN_FOLDER)/%, $(TESTS_SOURCES))
 
 SOURCES           = $(wildcard $(SOURCE_DIRECTORY)/*.c)
+HEADERS           = $(wildcard $(SOURCE_DIRECTORY)/*.h)
 OBJS              = $(patsubst $(SOURCE_DIRECTORY)/%.c, $(OBJ_FOLDER)/%.o, $(SOURCES))
+
+
+FORMATTER = clang-format
+FORMATTER_FLAGS = -i
 
 
 default: all
@@ -65,6 +70,15 @@ $(TESTS_BIN_FOLDER):
 
 clean veryclean:
 	$(REMOVE) $(BUILD_FOLDER)
+
+format-source:
+	$(FORMATTER) $(FORMATTER_FLAGS) $(SOURCES)
+	$(FORMATTER) $(FORMATTER_FLAGS) $(HEADERS)
+
+format-tests:
+	$(FORMATTER) $(FORMATTER_FLAGS) $(TESTS_SOURCES)
+
+format: format-source format-tests
 
 .PHONY: default, all, main, clean
 
