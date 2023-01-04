@@ -6,66 +6,31 @@
 #include <assert.h>
 
 #include "cboxes/list.h"
+#include "cboxes/error.h"
+#include "cboxes/nodes.h"
 
-LNode* LNode_Construct(void* value, LNode* next, size_t size) {
-    assert(value != NULL);
-    assert(size != 0);
-
-    LNode* node = malloc(sizeof(LNode));
-    node->value = malloc(size);
-    memcpy(node->value, value, size);
-    node->next = next;
-    node->size = size;
-    return node;
-}
-
-void LNode_Free(void *ptr, void freeValue(void* ptr)) {
-    assert(ptr != NULL);
-    LNode* node = (LNode*)ptr;
-
-    freeValue(node->value);
-    if (node->next != NULL) {
-        LNode_Free(node->next, freeValue);
-    }
-    free(node);
-}
-
-void LNode_FreeD(void *ptr) {
-    LNode* node = (LNode*)ptr;
-    LNode_Free(node, free);
-}
-
-bool LNode_Equals(const LNode* node, const LNode* other) {
-    return node->value == other->value \
-        && node->size == other->size   \
-        && node->next == other->next;
-}
 
 List* List_Construct(
     LNode* head,
     LNode* tail,
     u64 count,
+    size_t size,
     void* (*copyValue)(void* src, const void* dest, size_t size),
     void  (*freeValue)(void* ptr)
     ) {
 
     List* list = malloc(sizeof(List));
-    list->count = count;
     list->head = head;
     list->tail = tail;
+    list->count = count;
+    list->size  = size;
     list->freeValue = freeValue;
     list->copyValue = copyValue;
     return list;
 }
 
-List* List_ConstructD() {
-    List* list = malloc(sizeof(List));
-    list->count = 0;
-    list->head = NULL;
-    list->tail = NULL;
-    list->freeValue = free;
-    list->copyValue = memcpy;
-    return list;
+List* List_ConstructD(size_t size) {
+    return List_Construct(NULL, NULL, 0, size, memcpy, free);
 }
 
 
@@ -79,36 +44,36 @@ int List_Get(const List *list, u64 index, void **outNode) {
 int List_GetNode(const List* list, u64 index, LNode** outNode) {
     if (List_IsEmpty(list)) {
         printf("Error: No items in list\n");
-        return LIST_INDEX_ERROR;
+        return cboxes_IndexError;
     } else if (!List_InRange(list, index)) {
         printf("IndexError: List[%lu] Index(%lu)\n", list->count, index);
-        return LIST_INDEX_ERROR;
+        return cboxes_IndexError;
     }
 
     // NOTE: Handle first and last special cases
     if (List_IsFirst(list, index)) {
         *outNode = list->head;
-        return LIST_OK;
+        return cboxes_Ok;
     } else if (List_IsLast(list, index)) {
         *outNode = list->tail;
-        return LIST_OK;
+        return cboxes_Ok;
     } else {
         // NOTE: Staring from second item because first is already handled
         _List_LoopUntil(list, 1, list->count, index, outNode);
     }
 
-    return LIST_OK;
+    return cboxes_Ok;
 }
 
-u64 List_PushBack(List *list, void *value, size_t size) {
+u64 List_PushBack(List *list, void *value) {
     if (List_IsEmpty(list)) {
-        list->head = LNode_Construct(value, NULL, size);
+        list->head = LNode_Construct(value, NULL, list->size);
         list->tail = list->head;
     } else if (list->count == 1) {
-        list->tail = LNode_Construct(value, NULL, size);
+        list->tail = LNode_Construct(value, NULL, list->size);
         list->head->next = list->tail;
     } else {
-        list->tail->next = LNode_Construct(value, NULL, size);
+        list->tail->next = LNode_Construct(value, NULL, list->size);
         list->tail = list->tail->next;
     }
 
@@ -116,12 +81,12 @@ u64 List_PushBack(List *list, void *value, size_t size) {
     return list->count;
 }
 
-u64 List_PushFront(List *list, void *value, size_t size) {
+u64 List_PushFront(List *list, void *value) {
     if (List_IsEmpty(list)) {
-        list->head = LNode_Construct(value, NULL, size);
+        list->head = LNode_Construct(value, NULL, list->size);
         list->tail = list->head;
     } else {
-        LNode* newNode = LNode_Construct(value, list->head, size);
+        LNode* newNode = LNode_Construct(value, list->head, list->size);
         list->head = newNode;
     }
 
@@ -129,25 +94,25 @@ u64 List_PushFront(List *list, void *value, size_t size) {
     return list->count;
 }
 
-int List_Insert(List *list, u64 index, void *value, size_t size) {
+int List_Insert(List *list, u64 index, void *value) {
     if (List_IsEmpty(list) || List_IsLast(list, index)) {
-        List_PushBack(list, value, size);
-        return LIST_OK;
+        List_PushBack(list, value);
+        return cboxes_Ok;
     } else if (List_IsFirst(list, index)) {
-        List_PushFront(list, value, size);
-        return LIST_OK;
+        List_PushFront(list, value);
+        return cboxes_Ok;
     } else if (!List_InRange(list, index)) {
         printf("IndexError: List[%lu] Index(%lu)\n", list->count, index);
-        return LIST_INDEX_ERROR;
+        return cboxes_IndexError;
     }
 
     LNode *before;
     _List_LoopUntil(list, 1, list->count, index - 1, &before);
 
-    before->next = LNode_Construct(value, before->next, size);
+    before->next = LNode_Construct(value, before->next, list->size);
 
     list->count++;
-    return LIST_OK;
+    return cboxes_Ok;
 }
 
 u64 List_ExpandBack(List* list, void* begin, const u64 length);
@@ -158,13 +123,13 @@ u64 List_ExpandInsert(
 int List_PopNode(List *list, u64 index, LNode** outNode) {
     if (List_IsEmpty(list)) {
         printf("Error: No items in list\n");
-        return LIST_INDEX_ERROR;
+        return cboxes_IndexError;
     } else if (index >= list->count) {
         printf("Error: Index greater or equal to length: %lu\n", index);
-        return LIST_INDEX_ERROR;
+        return cboxes_IndexError;
     } else if (index < 0) {
         printf("Error: Index less than 0: %lu\n", index);
-        return LIST_INDEX_ERROR;
+        return cboxes_IndexError;
     }
 
     if (List_IsFirst(list, index)) {
@@ -178,7 +143,7 @@ int List_PopNode(List *list, u64 index, LNode** outNode) {
     }
 
     list->count--;
-    return LIST_OK;
+    return cboxes_Ok;
 }
 
 int List_PopNodeRange(List* list, u64 start, u64 end, LNode** outNodes);
@@ -186,7 +151,7 @@ int List_PopNodeRange(List* list, u64 start, u64 end, LNode** outNodes);
 int List_FreeNode(List* list, u64 index) {
     if (!List_InRange(list, index)) {
         printf("IndexError: List[%lu] Index(%lu)\n", list->count, index);
-        return LIST_INDEX_ERROR;
+        return cboxes_IndexError;
     }
 
     LNode* node;
@@ -194,7 +159,7 @@ int List_FreeNode(List* list, u64 index) {
     node->next = NULL;
     LNode_Free(node, list->freeValue);
 
-    return LIST_OK;
+    return cboxes_Ok;
 }
 
 

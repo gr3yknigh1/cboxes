@@ -9,19 +9,20 @@ void teardown(void) {}
 TestSuite(test_list, .init=setup, .fini=teardown);
 
 Test(test_list, List_Construct) {
-    List* list = List_ConstructD();
+    List* list = List_ConstructD(sizeof(int));
     cr_expect(list != NULL, "List_Construct must return valid pointer to List");
     cr_expect(list->count == 0, "List_Construct must initialize empty List");
+    cr_expect(list->size == 4, "Size of Int == 4");
     cr_expect(list->head == NULL, "Head must be null");
     cr_expect(list->tail == NULL, "Tail must be null");
 }
 
 Test(test_list, List_PushBack) {
-    List* list = List_ConstructD();
+    List* list = List_ConstructD(sizeof(int));
 
     const int expectedSize = 10;
     for (int i = 0; i < expectedSize; i++) {
-        List_PushBack(list, &i, sizeof(int));
+        List_PushBack(list, &i);
     }
 
     cr_expect(*(int*)list->head->value == 0, "Failed to push first element");
@@ -37,11 +38,11 @@ Test(test_list, List_PushBack) {
 }
 
 Test(test_list, List_Clear) {
-    List* list = List_ConstructD();
+    List* list = List_ConstructD(sizeof(int));
 
     const int expected_size = 10;
     for (int i = 0; i < expected_size; i++) {
-        List_PushBack(list, &i, sizeof(int));
+        List_PushBack(list, &i);
     }
 
     List_Clear(list);
@@ -52,10 +53,10 @@ Test(test_list, List_Clear) {
 }
 
 Test(test_list, List_Get) {
-    List* list = List_ConstructD();
+    List* list = List_ConstructD(sizeof(int));
 
     for (int i = 0; i < 4; i++) {
-        List_PushBack(list, &i, sizeof(int));
+        List_PushBack(list, &i);
     }
 
     void* value = NULL;
