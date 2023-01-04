@@ -1,4 +1,4 @@
-# c-collections
+# cboxes
 
 Simple collections library for C
 
