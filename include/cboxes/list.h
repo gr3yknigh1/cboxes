@@ -16,10 +16,10 @@ void  (*freeValue)(void* ptr)                                 \
 
 
 typedef struct List {
+    COLLECTION();
+
     LNode* head;
     LNode* tail;
-
-    COLLECTION();
 } List;
 
 List* List_Construct(

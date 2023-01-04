@@ -2,16 +2,40 @@
 #include <assert.h>
 #include "cboxes/nodes.h"
 
-LNode* LNode_Construct(void* value, LNode* next, size_t size) {
+LNode* LNode_Construct(
+    void* value,
+    LNode* next,
+    size_t size,
+    void* (*copyValue)(void* src, const void* dest, size_t size),
+    void  (*freeValue)(void* ptr)
+    ) {
     assert(value != NULL);
     assert(size != 0);
 
     LNode* node = malloc(sizeof(LNode));
-    node->value = malloc(size);
-    memcpy(node->value, value, size);
     node->next = next;
     node->size = size;
+    node->copyValue = copyValue;
+    node->freeValue = freeValue;
+    node->value = malloc(size);
+    node->copyValue(node->value, value, size);
     return node;
+}
+
+void* LNode_Copy(void *dest, const void *src, size_t size) {
+    const LNode* srcNode = src;
+    LNode* destNode = dest;
+    *destNode = *LNode_Construct(
+        srcNode->value,
+        srcNode->next,
+        srcNode->size,
+        srcNode->copyValue,
+        srcNode->freeValue
+        );
+    if (destNode->next != NULL) {
+        LNode_Copy(destNode->next, srcNode->next, size);
+    }
+    return dest;
 }
 
 void LNode_Free(void *ptr, void freeValue(void* ptr)) {

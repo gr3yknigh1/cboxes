@@ -32,7 +32,7 @@ Test(test_list, List_PushBack) {
     LNode* node = list->head;
     for (int i = 0; i < expectedSize; i++) {
         int pushedValue = *(int*)node->value;
-        cr_expect(pushedValue == i, "kailed to push some item correctly");
+        cr_expect(pushedValue == i, "Failed to push some item correctly");
         node = node->next;
     }
 }

@@ -15,7 +15,7 @@ List* List_Construct(
     LNode* tail,
     u64 count,
     size_t size,
-    void* (*copyValue)(void* src, const void* dest, size_t size),
+    void* (*copyValue)(void* dest, const void* src, size_t size),
     void  (*freeValue)(void* ptr)
     ) {
 
@@ -24,8 +24,8 @@ List* List_Construct(
     list->tail = tail;
     list->count = count;
     list->size  = size;
-    list->freeValue = freeValue;
     list->copyValue = copyValue;
+    list->freeValue = freeValue;
     return list;
 }
 
@@ -34,10 +34,14 @@ List* List_ConstructD(size_t size) {
 }
 
 
-int List_Get(const List *list, u64 index, void **outNode) {
-    LNode* node;
-    int exitCode = List_GetNode(list, index, &node);
-    *outNode = node->value;
+int List_Get(const List *list, u64 index, void **out) {
+    LNode* outNode;
+    u16 exitCode = List_GetNode(list, index, &outNode);
+
+    if (exitCode == cboxes_Ok) {
+        *out = outNode->value;
+    }
+
     return exitCode;
 }
 
@@ -67,13 +71,13 @@ int List_GetNode(const List* list, u64 index, LNode** outNode) {
 
 u64 List_PushBack(List *list, void *value) {
     if (List_IsEmpty(list)) {
-        list->head = LNode_Construct(value, NULL, list->size);
+        list->head = LNode_Construct(value, NULL, list->size, list->copyValue, list->freeValue);
         list->tail = list->head;
     } else if (list->count == 1) {
-        list->tail = LNode_Construct(value, NULL, list->size);
+        list->tail = LNode_Construct(value, NULL, list->size, list->copyValue, list->freeValue);
         list->head->next = list->tail;
     } else {
-        list->tail->next = LNode_Construct(value, NULL, list->size);
+        list->tail->next = LNode_Construct(value, NULL, list->size, list->copyValue, list->freeValue);
         list->tail = list->tail->next;
     }
 
@@ -83,10 +87,10 @@ u64 List_PushBack(List *list, void *value) {
 
 u64 List_PushFront(List *list, void *value) {
     if (List_IsEmpty(list)) {
-        list->head = LNode_Construct(value, NULL, list->size);
+        list->head = LNode_Construct(value, NULL, list->size, list->copyValue, list->freeValue);
         list->tail = list->head;
     } else {
-        LNode* newNode = LNode_Construct(value, list->head, list->size);
+        LNode* newNode = LNode_Construct(value, list->head, list->size, list->copyValue, list->freeValue);
         list->head = newNode;
     }
 
@@ -109,7 +113,7 @@ int List_Insert(List *list, u64 index, void *value) {
     LNode *before;
     _List_LoopUntil(list, 1, list->count, index - 1, &before);
 
-    before->next = LNode_Construct(value, before->next, list->size);
+    before->next = LNode_Construct(value, before->next, list->size, list->copyValue, list->freeValue);
 
     list->count++;
     return cboxes_Ok;

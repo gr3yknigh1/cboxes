@@ -19,6 +19,7 @@ BNode* BNode_Construct(void* value, size_t size, BNode* left, BNode* right) {
     node->right = right;
     return node;
 }
+
 BNode* BNode_ConstructD(void* value, size_t size) {
     return BNode_Construct(value, size, NULL, NULL);
 }

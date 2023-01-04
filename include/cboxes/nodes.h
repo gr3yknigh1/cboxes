@@ -6,22 +6,30 @@
 #include "cboxes/types.h"
 
 
-#define NODE() \
-void* value;   \
-size_t size    \
-
+#define NODE()                                                \
+void* value;                                                  \
+size_t size;                                                  \
+void* (*copyValue)(void* dest, const void* src, size_t size); \
+void  (*freeValue)(void* ptr)                                 \
 
 // Basic Node
 typedef struct Node {
     NODE();
+
     struct Node *parent;
     struct Node *children;
     u64 childCount;
 } Node;
 
-Node* Node_Construct(void* value, Node* left, Node* right, size_t size);
-void Node_Free (void *ptr, void freeValue(void *ptr));
-void Node_FreeD(void *ptr);
+Node* Node_Construct(
+    void* value,
+    Node* left,
+    Node* right,
+    size_t size,
+    void* (*copyValue)(void* src, const void* dest, size_t size),
+    void  (*freeValue)(void* ptr)
+    );
+void Node_Free(void *ptr);
 bool Node_IsEqual(const Node* node, const Node* other);
 
 
@@ -41,10 +49,18 @@ bool BNode_IsEqual(const BNode* node, const BNode* other);
 // Linked Node
 typedef struct LNode {
     NODE();
+
     struct LNode *next;
 } LNode;
 
-LNode* LNode_Construct(void* value, LNode* next, size_t size);
+LNode* LNode_Construct(
+    void* value,
+    LNode* next,
+    size_t size,
+    void* (*copyValue)(void* src, const void* dest, size_t size),
+    void  (*freeValue)(void* ptr)
+    );
+void* LNode_Copy(void *dest, const void *src, size_t size);
 void LNode_Free (void *ptr, void freeValue(void *ptr));
 void LNode_FreeD(void *ptr);
 bool LNode_IsEqual(const LNode* node, const LNode* other);
