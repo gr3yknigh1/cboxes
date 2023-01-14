@@ -25,7 +25,7 @@ TESTS_SOURCES     = $(wildcard $(TESTS_FOLDER)/*.c)
 TESTS_BINS        = $(patsubst $(TESTS_FOLDER)/%.c, $(TESTS_BIN_FOLDER)/%, $(TESTS_SOURCES))
 
 SOURCES           = $(wildcard $(SOURCE_DIRECTORY)/*.c)
-HEADERS           = $(wildcard $(SOURCE_DIRECTORY)/*.h)
+HEADERS           = $(wildcard $(INCLUDE_DIRECTORY)/**/*.h)
 OBJS              = $(patsubst $(SOURCE_DIRECTORY)/%.c, $(OBJ_FOLDER)/%.o, $(SOURCES))
 
 
