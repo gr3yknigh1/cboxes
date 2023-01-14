@@ -8,18 +8,15 @@
 #include "cboxes/types.h"
 #include "cboxes/error.h"
 
-#define COLLECTION()                                          \
-u64 count;                                                    \
-size_t size;                                                  \
-void* (*copyValue)(void* src, const void* dest, size_t size); \
-void  (*freeValue)(void* ptr)                                 \
-
 
 typedef struct List {
-    COLLECTION();
-
     LNode* head;
     LNode* tail;
+
+    u64 count;
+    size_t size;
+    void* (*copyValue)(void* src, const void* dest, size_t size);
+    void  (*freeValue)(void* ptr);
 } List;
 
 List* List_Construct(
