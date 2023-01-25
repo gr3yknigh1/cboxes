@@ -7,7 +7,7 @@ CFLAGS = -g -Wall -std=c17
 MKFILE_PATH = $(abspath $(lastword $(MAKEFILE_LIST)))
 MKFILE_DIR  = $(dir $(MKFILE_PATH))
 
-PROJECT_NAME      = c-collections
+PROJECT_NAME      = cboxes
 
 PROJECT_DIRECTORY = $(MKFILE_DIR:-=)
 
@@ -16,7 +16,7 @@ BUILD_FOLDER      = $(PROJECT_DIRECTORY)build
 SOURCE_DIRECTORY  = $(PROJECT_DIRECTORY)src
 TESTS_FOLDER      = $(PROJECT_DIRECTORY)tests
 
-LIBRARY           = $(BUILD_FOLDER)/libccollections.a
+LIBRARY           = $(BUILD_FOLDER)/lib$(PROJECT_NAME).a
 
 OBJ_FOLDER        = $(BUILD_FOLDER)/objs
 TESTS_BIN_FOLDER  = $(BUILD_FOLDER)/tests
