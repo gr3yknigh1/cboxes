@@ -1,69 +1,61 @@
 #ifndef LIST_H_
 #define LIST_H_
 
-#include "cboxes/lnode.h"
-#include "cboxes/types.h"
 #include <stdbool.h>
 #include <stddef.h>
-#include <stdlib.h>
 
-typedef enum {
-    cboxes_OK,
-    cboxes_ERROR,
-    cboxes_INDEX_ERROR,
-} cboxes_status;
+#include "cboxes/types.h"
 
-typedef struct List {
-    LNode *head;
-    LNode *tail;
+#define CS_LIST_GET(list, index, out) cs_List_Get(list, index, ((void**)out))
 
-    u64 count;
+typedef enum cs_Status {
+    cs_OK,
+    cs_INDEX_ERROR,
+    cs_OUT_OF_RANGE,
+} cs_Status;
+
+typedef struct cs_LNode {
+    struct cs_LNode *next;
+    struct cs_LNode *prev;
+    void *value;
+} cs_LNode;
+
+cs_LNode *cs_LNode_New(cs_LNode *next, cs_LNode *prev, void *value);
+cs_LNode *cs_LNode_NewD(void *value);
+void cs_LNode_Chain(cs_LNode *first, cs_LNode *second);
+
+typedef void (*cs_CopyFunc)(void *dest, const void *src, size_t count);
+typedef void (*cs_FreeFunc)(void *ptr);
+
+typedef struct cs_Type {
     size_t size;
-    void *(*copyValue)(void *src, const void *dest, size_t size);
-    void (*freeValue)(void *ptr);
-} List;
+    bool isReference;
+    cs_CopyFunc copy;
+    cs_FreeFunc free;
+} cs_Type;
 
-List *List_New(LNode *head, LNode *tail, u64 count, size_t size,
-                     void *(*copyValue)(void *src, const void *dest,
-                                        size_t size),
-                     void (*freeValue)(void *ptr));
-List *List_ConstructD(size_t size);
+void cs_ShallowCopy(void *dest, const void *src, size_t count);
+void cs_ShallowFree(void *ptr);
 
-cboxes_status List_Get(const List *list, u64 index, void **out);
-cboxes_status List_GetN(const List *list, u64 index, LNode **outNode);
+typedef struct cs_List {
+    cs_LNode *head;
+    cs_LNode *tail;
 
-List *List_Copy(const List *list);
+    u64 length;
+    cs_Type type;
+} cs_List;
 
-u64 List_PushBack(List *list, void *value);
-u64 List_PushFront(List *list, void *value);
+cs_List *cs_List_New(cs_Type type);
+cs_List *cs_List_NewD(size_t size);
 
-cboxes_status List_Insert(List *list, u64 index, void *value);
-cboxes_status List_InsertN(List *list, u64 index, LNode *node);
+void cs_List_PushBack(cs_List *list, void *value);
+void cs_List_PushFront(cs_List *list, void *value);
 
-u64 List_ExpandBack(List *list, void *begin, const u64 length);
-u64 List_ExpandFront(List *list, void *begin, const u64 length);
-u64 List_ExpandInsert(List *list, u64 index, void *begin, const u64 length);
+cs_Status cs_List_Get(cs_List *list, u64 index, void **out);
+cs_Status cs_List_Insert(cs_List *list, u64 index, void *value);
+cs_Status cs_List_Pop(cs_List *list);
+cs_Status cs_List_Remove(cs_List *list);
 
-u64 List_ExpandBack2List(List *list, List *other, const u64 length);
-u64 List_ExpandFront2List(List *list, List *other, const u64 length);
-u64 List_ExpandInsert2List(List *list, List *other, const u64 length);
-
-cboxes_status List_PopN(List *list, u64 index, LNode **outNode);
-cboxes_status List_PopRangeN(List *list, u64 start, u64 end, LNode **outNodes);
-
-cboxes_status List_FreeN(List *list, u64 index);
-cboxes_status List_FreeRangeN(List *list, u64 start, u64 end);
-
-void List_Clear(List *list);
-void List_Free(void *ptr);
-
-bool List_IsEmpty(const List *list);
-bool List_IsFirst(const List *list, const u64 index);
-bool List_IsLast(const List *list, const u64 index);
-bool List_InRange(const List *list, const u64 index);
-
-u64 _List_IncementLength(List *list);
-void _List_LoopUntil(const List *list, u64 start, u64 end, u64 index,
-                     LNode **outNode);
+bool cs_List_IsInRange(cs_List *list, u64 index);
 
 #endif // LIST_H

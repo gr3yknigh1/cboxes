@@ -1,210 +1,146 @@
 #include <assert.h>
-#include <memory.h>
-#include <stdbool.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 #include "cboxes/list.h"
-#include "cboxes/lnode.h"
+#include "cboxes/types.h"
 
-List *List_New(LNode *head, LNode *tail, u64 count, size_t size,
-                     void *(*copyValue)(void *dest, const void *src,
-                                        size_t size),
-                     void (*freeValue)(void *ptr)) {
+cs_LNode *cs_LNode_New(cs_LNode *next, cs_LNode *prev, void *value) {
+    cs_LNode *node = malloc(sizeof(cs_LNode));
+    *node = (cs_LNode) {
+        .next = next,
+        .prev = prev,
+        .value = value,
+    };
+    return node;
+}
 
-    List *list = malloc(sizeof(List));
-    list->head = head;
-    list->tail = tail;
-    list->count = count;
-    list->size = size;
-    list->copyValue = copyValue;
-    list->freeValue = freeValue;
+cs_LNode *cs_LNode_NewD(void *value) {
+    return cs_LNode_New(NULL, NULL, value);
+}
+
+void cs_LNode_Chain(cs_LNode *first, cs_LNode *second) {
+    first->next = second;
+    second->prev = first;
+}
+
+void cs_ShallowCopy(void *dest, const void *src, size_t count) {
+    for (size_t i = 0; i < count; i++) {
+        ((byte*)dest)[i] = ((byte*)src)[i];
+    }
+}
+
+void cs_ShallowFree(void *ptr) { free(ptr); }
+
+cs_List *cs_List_New(cs_Type type) {
+    assert(type.size > 0);
+
+    cs_List *list = malloc(sizeof(cs_List));
+    *list = (cs_List) {
+        .head = NULL,
+        .tail = NULL,
+        .length = 0,
+        .type = type,
+    };
     return list;
 }
 
-List *List_NewD(size_t size) {
-    return List_New(NULL, NULL, 0, size, memcpy, free);
+cs_List *cs_List_NewD(size_t size) {
+    return cs_List_New(
+        (cs_Type) { size, false, cs_ShallowCopy, cs_ShallowFree }
+    );
 }
 
-cboxes_status List_Get(const List *list, u64 index, void **out) {
-    LNode *outNode;
-    u16 statusCode = List_GetN(list, index, &outNode);
+static void *cs_List_StoreValue(cs_List *list, void *value) {
+    // NOTE: Still thing this not good idea
+    if (value == NULL) { return NULL; }
 
-    if (statusCode == cboxes_OK) {
-        *out = outNode->value;
-    }
-
-    return statusCode;
-}
-
-cboxes_status List_GetN(const List *list, u64 index, LNode **outNode) {
-    if (List_IsEmpty(list) || !List_InRange(list, index)) {
-        return cboxes_INDEX_ERROR;
-    }
-
-    // NOTE: Handle first and last special cases
-    if (List_IsFirst(list, index)) {
-        *outNode = list->head;
-    } else if (List_IsLast(list, index)) {
-        *outNode = list->tail;
+    cs_Type type = list->type;
+    if (type.isReference) {
+        return value;
     } else {
-        // NOTE: Staring from second item because first is already handled
-        _List_LoopUntil(list, 1, list->count, index, outNode);
+        // TODO(gr3yknigh1): Replace with Copy function
+        void *stored = malloc(sizeof(type.size));
+        type.copy(stored, value, type.size);
+        return stored;
     }
-
-    return cboxes_OK;
 }
 
-u64 List_PushBack(List *list, void *value) {
-    if (List_IsEmpty(list)) {
-        list->head = LNode_Construct(value, NULL, list->size, list->copyValue,
-                                     list->freeValue);
-        list->tail = list->head;
-    } else if (list->count == 1) {
-        list->tail = LNode_Construct(value, NULL, list->size, list->copyValue,
-                                     list->freeValue);
-        list->head->next = list->tail;
+void cs_List_PushBack(cs_List *list, void *value) {
+    cs_LNode *node = cs_LNode_NewD(cs_List_StoreValue(list, value));
+
+    if (list->length == 0) {
+        list->head = node;
     } else {
-        list->tail->next = LNode_Construct(value, NULL, list->size,
-                                           list->copyValue, list->freeValue);
-        list->tail = list->tail->next;
+        cs_LNode_Chain(list->tail, node);
     }
 
-    list->count++;
-    return list->count;
+    list->tail = node;
+    list->length++;
 }
 
-u64 List_PushFront(List *list, void *value) {
-    if (List_IsEmpty(list)) {
-        list->head = LNode_Construct(value, NULL, list->size, list->copyValue,
-                                     list->freeValue);
-        list->tail = list->head;
+void cs_List_PushFront(cs_List *list, void *value) {
+    cs_LNode *node = cs_LNode_NewD(cs_List_StoreValue(list, value));
+
+    if (list->length == 0) {
+        list->head = node;
     } else {
-        LNode *newNode = LNode_Construct(value, list->head, list->size,
-                                         list->copyValue, list->freeValue);
-        list->head = newNode;
+        cs_LNode_Chain(node, list->head);
     }
 
-    list->count++;
-    return list->count;
+    list->head = node;
+    list->length++;
 }
 
-cboxes_status List_Insert(List *list, u64 index, void *value) {
-    if (List_IsEmpty(list) || List_IsLast(list, index)) {
-        List_PushBack(list, value);
-        return cboxes_OK;
-    } else if (List_IsFirst(list, index)) {
-        List_PushFront(list, value);
-        return cboxes_OK;
-    } else if (!List_InRange(list, index)) {
-        return cboxes_INDEX_ERROR;
+static cs_Status cs_List_GetNode(cs_List *list, u64 index, cs_LNode **outNode) {
+    if (!cs_List_IsInRange(list, index)) {
+        return cs_INDEX_ERROR;
     }
 
-    LNode *before;
-    _List_LoopUntil(list, 1, list->count, index - 1, &before);
-
-    before->next = LNode_Construct(value, before->next, list->size,
-                                   list->copyValue, list->freeValue);
-
-    list->count++;
-    return cboxes_OK;
-}
-
-u64 List_ExpandBack(List *list, void *begin, const u64 length);
-u64 List_ExpandFront(List *list, void *begin, const u64 length);
-u64 List_ExpandInsert(List *list, u64 index, void *begin, const u64 length);
-
-cboxes_status List_PopN(List *list, u64 index, LNode **outNode) {
-    if (List_IsEmpty(list)) {
-        return cboxes_INDEX_ERROR;
-    } else if (index >= list->count) {
-        return cboxes_INDEX_ERROR;
-    } else if (index < 0) {
-        return cboxes_INDEX_ERROR;
-    }
-
-    if (List_IsFirst(list, index)) {
-        *outNode = list->head;
-        list->head = list->head->next;
-    } else {
-        LNode *before;
-        _List_LoopUntil(list, 1, list->count, index - 1, &before);
-        *outNode = before->next;
-        before->next = before->next->next;
-    }
-
-    list->count--;
-    return cboxes_OK;
-}
-
-cboxes_status List_PopRangeN(List *list, u64 start, u64 end, LNode **outNodes);
-
-cboxes_status List_FreeN(List *list, u64 index) {
-    if (!List_InRange(list, index)) {
-        return cboxes_INDEX_ERROR;
-    }
-
-    LNode *node;
-    List_PopN(list, index, &node);
-    node->next = NULL;
-    LNode_Free(node, list->freeValue);
-
-    return cboxes_OK;
-}
-
-cboxes_status List_FreeRangeN(List *list, u64 start, u64 end);
-
-void List_Clear(List *list) {
-    if (list->count == 0) {
-        return;
-    }
-
-    LNode_Free(list->head, list->freeValue);
-    list->count = 0;
-    list->head = NULL;
-    list->tail = NULL;
-}
-
-void List_Free(void *ptr) {
-    List *list = (List *)ptr;
-    if (list->count != 0) {
-        List_Clear(list);
-        return;
-    }
-    free(list);
-    list = NULL;
-}
-
-bool List_IsEmpty(const List *list) { return list->count == 0; }
-
-bool List_IsFirst(const List *list, const u64 index) { return index == 0; }
-
-bool List_IsLast(const List *list, const u64 index) {
-    return index == list->count - 1;
-}
-
-bool List_InRange(const List *list, const u64 index) {
-    return index >= 0 && index < list->count;
-}
-
-u64 _List_IncementLength(List *list) {
-    list->count++;
-    return list->count;
-}
-
-void _List_LoopUntil(const List *list, u64 start, u64 end, u64 index,
-                     LNode **outNode) {
-
-    u64 currentIndex = start;
-    LNode *currentNode = list->head->next;
-    while (currentNode != NULL) {
-        if (currentIndex == index) {
-            *outNode = currentNode;
-            break;
+    cs_LNode *current = list->head;
+    for (u64 i = 0; current != NULL; current = current->next) {
+        if (i == index) {
+            *outNode = current;
+            return cs_OK;
         }
-
-        currentIndex++;
-        currentNode = currentNode->next;
+        i++;
     }
+
+    return cs_OUT_OF_RANGE;
+}
+
+cs_Status cs_List_Get(cs_List *list, u64 index, void **out) {
+    cs_LNode *node = NULL;
+    cs_Status status = cs_List_GetNode(list, index, &node);
+    if (status == cs_OK) {
+        *out = node->value;
+    }
+    return status;
+}
+
+cs_Status cs_List_Insert(cs_List *list, u64 index, void *value) {
+    if (!cs_List_IsInRange(list, index)) {
+        return cs_INDEX_ERROR;
+    }
+
+    if (list->length == 0) {
+        cs_List_PushBack(list, value);
+    } else if (index == 0) {
+        cs_List_PushFront(list, value);
+    } else {
+        cs_LNode *prevNode = NULL;
+        cs_Status status = cs_List_GetNode(list, index, &prevNode);
+        if (status != cs_OK) { return status; }
+
+        cs_LNode *nextNode = prevNode->next;
+        cs_LNode *node = cs_LNode_NewD(cs_List_StoreValue(list, value));
+
+        cs_LNode_Chain(prevNode, node);
+        cs_LNode_Chain(node, nextNode);
+    }
+
+    return cs_OK;
+}
+
+bool cs_List_IsInRange(cs_List *list, u64 index) {
+    return index >= 0 && index < list->length;
 }
