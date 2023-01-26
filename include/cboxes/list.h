@@ -1,13 +1,17 @@
-#ifndef LIST_H
-#define LIST_H
+#ifndef LIST_H_
+#define LIST_H_
 
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdlib.h>
-#include "cboxes/nodes.h"
+#include "cboxes/lnode.h"
 #include "cboxes/types.h"
-#include "cboxes/error.h"
 
+typedef enum {
+    cboxes_OK,
+    cboxes_ERROR,
+    cboxes_INDEX_ERROR,
+} cboxes_status;
 
 typedef struct List {
     LNode* head;
@@ -29,7 +33,7 @@ List* List_Construct(
     );
 List* List_ConstructD(size_t size);
 
-int List_Get(const List* list, u64 index, void** out);
+cboxes_status List_Get(const List* list, u64 index, void** out);
 int List_GetNode(const List* list, u64 index, LNode** outNode);
 
 List* List_Copy(const List* list);
