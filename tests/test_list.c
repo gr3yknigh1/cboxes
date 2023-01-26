@@ -8,6 +8,4 @@ void teardown(void) {}
 
 TestSuite(test_list, .init = setup, .fini = teardown);
 
-Test(test_list, List_Construct) {
-}
-
+Test(test_list, List_Construct) {}

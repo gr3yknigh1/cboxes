@@ -8,7 +8,7 @@
 #include "cboxes/list.h"
 #include "cboxes/lnode.h"
 
-List *List_Construct(LNode *head, LNode *tail, u64 count, size_t size,
+List *List_New(LNode *head, LNode *tail, u64 count, size_t size,
                      void *(*copyValue)(void *dest, const void *src,
                                         size_t size),
                      void (*freeValue)(void *ptr)) {
@@ -23,13 +23,13 @@ List *List_Construct(LNode *head, LNode *tail, u64 count, size_t size,
     return list;
 }
 
-List *List_ConstructD(size_t size) {
-    return List_Construct(NULL, NULL, 0, size, memcpy, free);
+List *List_NewD(size_t size) {
+    return List_New(NULL, NULL, 0, size, memcpy, free);
 }
 
 cboxes_status List_Get(const List *list, u64 index, void **out) {
     LNode *outNode;
-    u16 statusCode = List_GetNode(list, index, &outNode);
+    u16 statusCode = List_GetN(list, index, &outNode);
 
     if (statusCode == cboxes_OK) {
         *out = outNode->value;
@@ -38,7 +38,7 @@ cboxes_status List_Get(const List *list, u64 index, void **out) {
     return statusCode;
 }
 
-int List_GetNode(const List *list, u64 index, LNode **outNode) {
+cboxes_status List_GetN(const List *list, u64 index, LNode **outNode) {
     if (List_IsEmpty(list) || !List_InRange(list, index)) {
         return cboxes_INDEX_ERROR;
     }
@@ -90,7 +90,7 @@ u64 List_PushFront(List *list, void *value) {
     return list->count;
 }
 
-int List_Insert(List *list, u64 index, void *value) {
+cboxes_status List_Insert(List *list, u64 index, void *value) {
     if (List_IsEmpty(list) || List_IsLast(list, index)) {
         List_PushBack(list, value);
         return cboxes_OK;
@@ -115,7 +115,7 @@ u64 List_ExpandBack(List *list, void *begin, const u64 length);
 u64 List_ExpandFront(List *list, void *begin, const u64 length);
 u64 List_ExpandInsert(List *list, u64 index, void *begin, const u64 length);
 
-int List_PopNode(List *list, u64 index, LNode **outNode) {
+cboxes_status List_PopN(List *list, u64 index, LNode **outNode) {
     if (List_IsEmpty(list)) {
         return cboxes_INDEX_ERROR;
     } else if (index >= list->count) {
@@ -138,23 +138,22 @@ int List_PopNode(List *list, u64 index, LNode **outNode) {
     return cboxes_OK;
 }
 
-int List_PopNodeRange(List *list, u64 start, u64 end, LNode **outNodes);
+cboxes_status List_PopRangeN(List *list, u64 start, u64 end, LNode **outNodes);
 
-int List_FreeNode(List *list, u64 index) {
+cboxes_status List_FreeN(List *list, u64 index) {
     if (!List_InRange(list, index)) {
-        printf("IndexError: List[%lu] Index(%lu)\n", list->count, index);
         return cboxes_INDEX_ERROR;
     }
 
     LNode *node;
-    List_PopNode(list, index, &node);
+    List_PopN(list, index, &node);
     node->next = NULL;
     LNode_Free(node, list->freeValue);
 
     return cboxes_OK;
 }
 
-int List_FreeNodeRange(List *list, u64 start, u64 end);
+cboxes_status List_FreeRangeN(List *list, u64 start, u64 end);
 
 void List_Clear(List *list) {
     if (list->count == 0) {

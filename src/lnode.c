@@ -8,7 +8,7 @@ LNode *LNode_Construct(void *value, LNode *next, size_t size,
                        void (*freeValue)(void *ptr)) {
     assert(value != NULL);
     assert(size != 0);
-LNode *node = malloc(sizeof(LNode));
+    LNode *node = malloc(sizeof(LNode));
     node->next = next;
     node->size = size;
     node->copyValue = copyValue;
