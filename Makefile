@@ -9,24 +9,24 @@ MKFILE_DIR  = $(dir $(MKFILE_PATH))
 
 PROJECT_NAME      = cboxes
 
-PROJECT_DIRECTORY = $(MKFILE_DIR:-=)
+PROJECT_DIR = $(MKFILE_DIR:-=)
 
-INCLUDE_DIRECTORY = $(PROJECT_DIRECTORY)include
-BUILD_FOLDER      = $(PROJECT_DIRECTORY)build
-SOURCE_DIRECTORY  = $(PROJECT_DIRECTORY)src
-TESTS_FOLDER      = $(PROJECT_DIRECTORY)tests
+INCLUDE_DIR = $(PROJECT_DIR)include
+SOURCES_DIR = $(PROJECT_DIR)src
+BUILD_DIR   = $(PROJECT_DIR)build
+TESTS_DIR   = $(PROJECT_DIR)tests
 
-LIBRARY           = $(BUILD_FOLDER)/lib$(PROJECT_NAME).a
+LIBRARY     = $(BUILD_DIR)/lib$(PROJECT_NAME).a
 
-OBJ_FOLDER        = $(BUILD_FOLDER)/objs
-TESTS_BIN_FOLDER  = $(BUILD_FOLDER)/tests
+OBJ_DIR       = $(BUILD_DIR)/objs
+TESTS_BIN_DIR = $(BUILD_DIR)/tests
 
-TESTS_SOURCES     = $(wildcard $(TESTS_FOLDER)/*.c)
-TESTS_BINS        = $(patsubst $(TESTS_FOLDER)/%.c, $(TESTS_BIN_FOLDER)/%, $(TESTS_SOURCES))
+TESTS_SOURCES = $(wildcard $(TESTS_DIR)/*.c)
+TESTS_BINS    = $(patsubst $(TESTS_DIR)/%.c, $(TESTS_BIN_DIR)/%, $(TESTS_SOURCES))
 
-SOURCES           = $(wildcard $(SOURCE_DIRECTORY)/*.c)
-HEADERS           = $(wildcard $(INCLUDE_DIRECTORY)/**/*.h)
-OBJS              = $(patsubst $(SOURCE_DIRECTORY)/%.c, $(OBJ_FOLDER)/%.o, $(SOURCES))
+SOURCES = $(wildcard $(SOURCES_DIR)/*.c)
+HEADERS = $(wildcard $(INCLUDE_DIR)/**/*.h)
+OBJS    = $(patsubst $(SOURCES_DIR)/%.c, $(OBJ_DIR)/%.o, $(SOURCES))
 
 
 FORMATTER = clang-format
@@ -41,35 +41,35 @@ release: clean
 release: $(LIBRARY)
 
 
-$(LIBRARY): $(BUILD_FOLDER) $(OBJ_FOLDER) $(OBJS)
+$(LIBRARY): $(BUILD_DIR) $(OBJ_DIR) $(OBJS)
 	$(RM) $(LIBRARY)
 	ar -cvrs $(LIBRARY) $(OBJS)
 
-$(BUILD_FOLDER):
+$(BUILD_DIR):
 	$(MKDIR) $@
 
-$(OBJ_FOLDER):
+$(OBJ_DIR):
 	$(MKDIR) $@
 
-$(OBJ_FOLDER)/%.o: $(SOURCE_DIRECTORY)/%.c $(INCLUDE_DIRECTORY)/$(PROJECT_NAME)/%.h
-	$(CC) $(CFLAGS) -c $< -o $@ -I$(INCLUDE_DIRECTORY)
+$(OBJ_DIR)/%.o: $(SOURCES_DIR)/%.c $(INCLUDE_DIR)/$(PROJECT_NAME)/%.h
+	$(CC) $(CFLAGS) -c $< -o $@ -I$(INCLUDE_DIR)
 
-$(OBJ_FOLDER)/%.o: $(SOURCE_DIRECTORY)/%.c
-	$(CC) $(CFLAGS) -c $< -o $@ -I$(INCLUDE_DIRECTORY)
+$(OBJ_DIR)/%.o: $(SOURCES_DIR)/%.c
+	$(CC) $(CFLAGS) -c $< -o $@ -I$(INCLUDE_DIR)
 
 
-$(TESTS_BIN_FOLDER)/%: $(TESTS_FOLDER)/%.c
-	$(CC) $(CFLAGS) $< $(OBJS) -o $@ -lcriterion -I$(INCLUDE_DIRECTORY)
+$(TESTS_BIN_DIR)/%: $(TESTS_DIR)/%.c
+	$(CC) $(CFLAGS) $< $(OBJS) -o $@ -lcriterion -I$(INCLUDE_DIR)
 
-tests: $(LIBRARY) $(TESTS_BIN_FOLDER) $(TESTS_BINS)
+tests: $(LIBRARY) $(TESTS_BIN_DIR) $(TESTS_BINS)
 	for test in $(TESTS_BINS); do $$test ; done
 
-$(TESTS_BIN_FOLDER):
+$(TESTS_BIN_DIR):
 	$(MKDIR) $@
 
 
 clean veryclean:
-	$(REMOVE) $(BUILD_FOLDER)
+	$(REMOVE) $(BUILD_DIR)
 
 format-source:
 	$(FORMATTER) $(FORMATTER_FLAGS) $(SOURCES)
