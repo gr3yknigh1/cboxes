@@ -7,16 +7,16 @@
 #include "cboxes/types.h"
 
 #define CS_LIST_GET(list, index, out) cs_List_Get(list, index, ((void**)out))
-#define CS_LIST_FOREACH(list, i, n, body) \
-    do {                               \
-        cs_LNode *n = list->head;      \
-        u64 i = 0;                     \
-        while (n != NULL) {            \
-            body;                      \
-            n = n->next;               \
-            i++;                       \
-        }                              \
-    } while (0)                        \
+#define CS_LIST_FOREACHN(list, i, n, body) \
+    do {                                   \
+        cs_LNode *n = list->head;          \
+        u64 i = 0;                         \
+        while (n != NULL) {                \
+            body;                          \
+            n = n->next;                   \
+            i++;                           \
+        }                                  \
+    } while (0)                            \
 
 typedef enum cs_Status {
     cs_OK,

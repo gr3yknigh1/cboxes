@@ -97,7 +97,7 @@ static cs_Status cs_List_GetNode(cs_List *list, u64 index, cs_LNode **outNode) {
         return cs_INDEX_ERROR;
     }
 
-    CS_LIST_FOREACH(list, i, n, {
+    CS_LIST_FOREACHN(list, i, n, {
         if (i == index) {
             *outNode = n;
             return cs_OK;
@@ -145,7 +145,7 @@ bool cs_List_IsInRange(cs_List *list, u64 index) {
 }
 
 void cs_List_Print(const cs_List* list, void (*printValue)(cs_LNode*)) {
-    CS_LIST_FOREACH(list, i, n, {
+    CS_LIST_FOREACHN(list, i, n, {
         printf("<LNode [%lu]>\n", i);
 
         printf("prev: ");
