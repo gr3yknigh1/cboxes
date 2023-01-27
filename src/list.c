@@ -3,14 +3,14 @@
 #include <stdlib.h>
 
 #include "cboxes/list.h"
-#include "cboxes/types.h"
 #include "cboxes/shallow.h"
+#include "cboxes/types.h"
 
 cs_List *cs_List_New(cs_Type type) {
     assert(type.size > 0);
 
     cs_List *list = malloc(sizeof(cs_List));
-    *list = (cs_List) {
+    *list = (cs_List){
         .head = NULL,
         .tail = NULL,
         .length = 0,
@@ -20,14 +20,14 @@ cs_List *cs_List_New(cs_Type type) {
 }
 
 cs_List *cs_List_NewD(size_t size) {
-    return cs_List_New(
-        (cs_Type) { size, false, cs_ShallowCopy, cs_ShallowFree }
-    );
+    return cs_List_New((cs_Type){size, false, cs_ShallowCopy, cs_ShallowFree});
 }
 
 static void *cs_List_StoreValue(cs_List *list, void *value) {
     // NOTE: Still thing this not good idea
-    if (value == NULL) { return NULL; }
+    if (value == NULL) {
+        return NULL;
+    }
 
     cs_Type type = list->type;
     if (type.isReference) {
@@ -113,7 +113,9 @@ cs_Status cs_List_Insert(cs_List *list, u64 index, void *value) {
     } else {
         cs_LNode *prevNode = NULL;
         cs_Status status = cs_List_GetNode(list, index, &prevNode);
-        if (status != cs_OK) { return status; }
+        if (status != cs_OK) {
+            return status;
+        }
 
         cs_LNode *nextNode = prevNode->next;
         cs_LNode *node = cs_LNode_NewD(cs_List_StoreValue(list, value));
@@ -129,7 +131,7 @@ bool cs_List_IsInRange(cs_List *list, u64 index) {
     return index >= 0 && index < list->length;
 }
 
-void cs_List_Print(const cs_List* list, void (*printValue)(cs_LNode*)) {
+void cs_List_Print(const cs_List *list, void (*printValue)(cs_LNode *)) {
     CS_LIST_FOREACHN(list, i, n, {
         printf("<LNode [%lu]>\n", i);
 
@@ -148,7 +150,7 @@ void cs_List_Print(const cs_List* list, void (*printValue)(cs_LNode*)) {
         }
 
         printf("Value: ");
-            printValue(n);
+        printValue(n);
         printf("\n\n");
     });
 }

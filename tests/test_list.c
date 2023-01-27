@@ -19,7 +19,7 @@ Test(test_list, List_Basic) {
     cs_LNode *cur = list->head;
     u32 idx = 0;
     while (cur != NULL) {
-        cr_assert(*(int*)cur->value == idx);
+        cr_assert(*(int *)cur->value == idx);
 
         cur = cur->next;
         idx++;

@@ -11,7 +11,7 @@ typedef signed int i32;
 typedef signed short i16;
 
 typedef double f64;
-typedef float  f32;
+typedef float f32;
 
 typedef unsigned char byte;
 
