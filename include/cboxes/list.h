@@ -18,14 +18,17 @@
         }                                  \
     } while (0)                            \
 
-#define CS_LIST_FOREACH(list, type, i, v, s, body)          \
-    do {                                                    \
-        for (u64 i = 0; i < list->length; i++) {            \
-            type *v = NULL;                                 \
-            cs_Status s = cs_List_Get(list, i, ((void**)&v));\
-            body;                                           \
-        }                                                   \
-    } while(0)                                              \
+// TODO: Add offsets
+#define CS_LIST_FOREACH(list, type, v, body) \
+    do {                                     \
+        cs_LNode *__n = list->head;          \
+        while (__n != NULL) {                \
+            type *v = NULL;                  \
+            v = (type *)(__n->value);        \
+            body;                            \
+            __n = __n->next;                 \
+        }                                    \
+    } while(0)                               \
 
 
 typedef enum cs_Status {
