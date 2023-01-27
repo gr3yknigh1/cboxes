@@ -30,6 +30,21 @@
         }                                    \
     } while(0)                               \
 
+#define CS_LIST_FOREACHO(list, type, v, i, s, e, body) \
+    do {                                     \
+        cs_LNode *__n = list->head;          \
+        u64 i = 0;                           \
+        while (__n != NULL) {                \
+            if (i < s)       { continue; }   \
+            else if (i >= e) { break;    }   \
+            type *v = NULL;                  \
+            v = (type *)(__n->value);        \
+            body;                            \
+            __n = __n->next;                 \
+            i++; \
+        }                                    \
+    } while(0)                               \
+
 
 typedef enum cs_Status {
     cs_OK,
