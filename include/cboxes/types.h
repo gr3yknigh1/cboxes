@@ -1,7 +1,8 @@
-#ifndef TYPES_H
-#define TYPES_H
+#ifndef TYPES_H_
+#define TYPES_H_
 
 #include <stdint.h>
+
 typedef unsigned long u64;
 typedef unsigned int u32;
 typedef unsigned short u16;
@@ -15,4 +16,4 @@ typedef float f32;
 
 typedef unsigned char byte;
 
-#endif // TYPES_H
+#endif // TYPES_H_
