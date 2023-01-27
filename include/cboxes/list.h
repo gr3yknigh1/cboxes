@@ -50,9 +50,6 @@
         }                                              \
     } while(0)                                         \
 
-void cs_ShallowCopy(void *dest, const void *src, size_t count);
-void cs_ShallowFree(void *ptr);
-
 typedef struct cs_List {
     cs_LNode *head;
     cs_LNode *tail;

@@ -4,14 +4,7 @@
 
 #include "cboxes/list.h"
 #include "cboxes/types.h"
-
-void cs_ShallowCopy(void *dest, const void *src, size_t count) {
-    for (size_t i = 0; i < count; i++) {
-        ((byte*)dest)[i] = ((byte*)src)[i];
-    }
-}
-
-void cs_ShallowFree(void *ptr) { free(ptr); }
+#include "cboxes/shallow.h"
 
 cs_List *cs_List_New(cs_Type type) {
     assert(type.size > 0);
