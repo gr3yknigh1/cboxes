@@ -97,14 +97,12 @@ static cs_Status cs_List_GetNode(cs_List *list, u64 index, cs_LNode **outNode) {
         return cs_INDEX_ERROR;
     }
 
-    cs_LNode *current = list->head;
-    for (u64 i = 0; current != NULL; current = current->next) {
+    CS_LIST_FOREACH(list, i, n, {
         if (i == index) {
-            *outNode = current;
+            *outNode = n;
             return cs_OK;
         }
-        i++;
-    }
+    });
 
     return cs_OUT_OF_RANGE;
 }
