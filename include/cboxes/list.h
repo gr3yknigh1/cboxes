@@ -18,6 +18,16 @@
         }                                  \
     } while (0)                            \
 
+#define CS_LIST_FOREACH(list, type, i, v, s, body)          \
+    do {                                                    \
+        for (u64 i = 0; i < list->length; i++) {            \
+            type *v = NULL;                                 \
+            cs_Status s = cs_List_Get(list, i, ((void**)v)) \
+            body;                                           \
+        }                                                   \
+    } while(0)                                              \
+
+
 typedef enum cs_Status {
     cs_OK,
     cs_INDEX_ERROR,
