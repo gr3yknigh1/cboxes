@@ -18,7 +18,6 @@
         }                                  \
     } while (0)                            \
 
-// TODO: Add offsets
 #define CS_LIST_FOREACH(list, type, v, body) \
     do {                                     \
         cs_LNode *__n = list->head;          \
