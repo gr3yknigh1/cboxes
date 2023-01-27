@@ -5,6 +5,7 @@
 #include <stddef.h>
 
 #include "cboxes/types.h"
+#include "cboxes/type.h"
 
 #define CS_LIST_GET(list, index, out) cs_List_Get(list, index, ((void**)out))
 
@@ -47,7 +48,6 @@
         }                                              \
     } while(0)                                         \
 
-
 typedef enum cs_Status {
     cs_OK,
     cs_INDEX_ERROR,
@@ -65,15 +65,6 @@ cs_LNode *cs_LNode_New(cs_LNode *next, cs_LNode *prev, void *value);
 cs_LNode *cs_LNode_NewD(void *value);
 void cs_LNode_Chain(cs_LNode *first, cs_LNode *second);
 
-typedef void (*cs_CopyFunc)(void *dest, const void *src, size_t count);
-typedef void (*cs_FreeFunc)(void *ptr);
-
-typedef struct cs_Type {
-    size_t size;
-    bool isReference;
-    cs_CopyFunc copy;
-    cs_FreeFunc free;
-} cs_Type;
 
 void cs_ShallowCopy(void *dest, const void *src, size_t count);
 void cs_ShallowFree(void *ptr);
