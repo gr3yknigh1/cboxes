@@ -146,17 +146,6 @@ bool cs_List_IsInRange(cs_List *list, u64 index) {
     return index >= 0 && index < list->length;
 }
 
-#define CS_LIST_FOREACH(list, i, n, body) \
-    do {                               \
-        cs_LNode *n = list->head;      \
-        u64 i = 0;                     \
-        while (n != NULL) {            \
-            body;                      \
-            n = n->next;               \
-            i++;                       \
-        }                              \
-    } while (0)                        \
-
 void cs_List_Print(const cs_List* list, void (*printValue)(cs_LNode*)) {
     CS_LIST_FOREACH(list, i, n, {
         printf("<LNode [%lu]>\n", i);
