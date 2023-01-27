@@ -7,6 +7,7 @@
 #include "cboxes/status.h"
 #include "cboxes/types.h"
 #include "cboxes/type.h"
+#include "cboxes/lnode.h"
 
 #define CS_LIST_GET(list, index, out) cs_List_Get(list, index, ((void**)out))
 
@@ -48,17 +49,6 @@
             i++;                                       \
         }                                              \
     } while(0)                                         \
-
-typedef struct cs_LNode {
-    struct cs_LNode *next;
-    struct cs_LNode *prev;
-    void *value;
-} cs_LNode;
-
-cs_LNode *cs_LNode_New(cs_LNode *next, cs_LNode *prev, void *value);
-cs_LNode *cs_LNode_NewD(void *value);
-void cs_LNode_Chain(cs_LNode *first, cs_LNode *second);
-
 
 void cs_ShallowCopy(void *dest, const void *src, size_t count);
 void cs_ShallowFree(void *ptr);
