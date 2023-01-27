@@ -34,13 +34,14 @@
         cs_LNode *__n = list->head;          \
         u64 i = 0;                           \
         while (__n != NULL) {                \
-            if (i < s)       { continue; }   \
-            else if (i >= e) { break;    }   \
+            if (i >= e) break; \
+            if (i >= s || i < e) { \
             type *v = NULL;                  \
             v = (type *)(__n->value);        \
             body;                            \
+            } \
             __n = __n->next;                 \
-            i++; \
+            i++;                             \
         }                                    \
     } while(0)                               \
 
