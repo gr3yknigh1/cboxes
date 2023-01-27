@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+#include "cboxes/status.h"
 #include "cboxes/types.h"
 #include "cboxes/type.h"
 
@@ -47,13 +48,6 @@
             i++;                                       \
         }                                              \
     } while(0)                                         \
-
-typedef enum cs_Status {
-    cs_OK,
-    cs_INDEX_ERROR,
-    cs_OUT_OF_RANGE,
-    cs_COLLECTION_IS_EMPTY,
-} cs_Status;
 
 typedef struct cs_LNode {
     struct cs_LNode *next;
