@@ -91,8 +91,19 @@ void cs_List_PushFront(cs_List *list, void *value) {
     list->head = node;
     list->length++;
 }
-
 static cs_Status cs_List_GetNode(cs_List *list, u64 index, cs_LNode **outNode) {
+    if (list->length == 0) {
+        return cs_COLLECTION_IS_EMPTY;
+    }
+
+    if (index == 0) {
+        *outNode = list->head;
+        return cs_OK;
+    } else if (index == list->length - 1) {
+        *outNode = list->tail;
+        return cs_OK;
+    }
+
     if (!cs_List_IsInRange(list, index)) {
         return cs_INDEX_ERROR;
     }

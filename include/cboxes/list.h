@@ -49,6 +49,7 @@ typedef enum cs_Status {
     cs_OK,
     cs_INDEX_ERROR,
     cs_OUT_OF_RANGE,
+    cs_COLLECTION_IS_EMPTY,
 } cs_Status;
 
 typedef struct cs_LNode {
@@ -93,6 +94,7 @@ cs_Status cs_List_Insert(cs_List *list, u64 index, void *value);
 cs_Status cs_List_Pop(cs_List *list);
 cs_Status cs_List_Remove(cs_List *list);
 
+// TODO: Add is empty function (?)
 bool cs_List_IsInRange(cs_List *list, u64 index);
 
 void cs_List_Print(const cs_List* list, void (*printNode)(cs_LNode*));
