@@ -22,7 +22,7 @@
     do {                                                    \
         for (u64 i = 0; i < list->length; i++) {            \
             type *v = NULL;                                 \
-            cs_Status s = cs_List_Get(list, i, ((void**)v)) \
+            cs_Status s = cs_List_Get(list, i, ((void**)v));\
             body;                                           \
         }                                                   \
     } while(0)                                              \
