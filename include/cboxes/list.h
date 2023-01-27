@@ -58,4 +58,6 @@ cs_Status cs_List_Remove(cs_List *list);
 
 bool cs_List_IsInRange(cs_List *list, u64 index);
 
+void cs_List_Print(const cs_List* list, void (*printNode)(cs_LNode*));
+
 #endif // LIST_H

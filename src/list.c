@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "cboxes/list.h"
@@ -143,4 +144,40 @@ cs_Status cs_List_Insert(cs_List *list, u64 index, void *value) {
 
 bool cs_List_IsInRange(cs_List *list, u64 index) {
     return index >= 0 && index < list->length;
+}
+
+#define CS_LIST_FOREACH(list, i, body) \
+    do {                               \
+        cs_LNode *_node = list->head;  \
+        u64 i = 0;                     \
+        while (_node != NULL) {        \
+            body;                      \
+            _node = _node->next;       \
+            i++;                       \
+        }                              \
+    } while (0)                        \
+
+void cs_List_Print(const cs_List* list, void (*printValue)(cs_LNode*)) {
+
+    CS_LIST_FOREACH(list, i, {
+        printf("<LNode [%lu]>\n", i);
+
+        printf("prev: ");
+        if (_node->prev != NULL) {
+            printf("[%lu]\n", i - 1);
+        } else {
+            printf("NULL\n");
+        }
+
+        printf("next: ");
+        if (_node->next != NULL) {
+            printf("[%lu]\n", i + 1);
+        } else {
+            printf("NULL\n");
+        }
+
+        printf("Value: ");
+            printValue(_node);
+        printf("\n\n");
+    });
 }
