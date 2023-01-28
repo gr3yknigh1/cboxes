@@ -57,7 +57,7 @@ void cs_List_PushFront(cs_List *list, void *value) {
     cs_LNode *node = cs_LNode_NewD(cs_List_StoreValue(list, value));
 
     if (list->length == 0) {
-        list->head = node;
+        list->tail = node;
     } else {
         cs_LNode_Chain(node, list->head);
     }
@@ -65,6 +65,7 @@ void cs_List_PushFront(cs_List *list, void *value) {
     list->head = node;
     list->length++;
 }
+
 static cs_Status cs_List_GetNode(cs_List *list, u64 index, cs_LNode **outNode) {
     if (list->length == 0) {
         return cs_COLLECTION_IS_EMPTY;
