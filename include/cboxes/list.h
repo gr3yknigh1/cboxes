@@ -22,14 +22,16 @@
         }                                                                      \
     } while (0)
 
-#define CS_LIST_FOREACH(list, type, v, body)                                   \
+#define CS_LIST_FOREACH(list, type, i, v, body)                                \
     do {                                                                       \
         cs_LNode *__n = list->head;                                            \
+        u64 i = 0;                                                             \
         while (__n != NULL) {                                                  \
             type *v = NULL;                                                    \
             v = (type *)(__n->value);                                          \
             body;                                                              \
             __n = __n->next;                                                   \
+            i++;                                                               \
         }                                                                      \
     } while (0)
 
