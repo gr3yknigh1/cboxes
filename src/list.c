@@ -128,7 +128,6 @@ cs_Status cs_List_Insert(cs_List *list, u64 index, void *value) {
     return cs_OK;
 }
 
-bool cs_List_IsInRange(cs_List *list, u64 index) {
 void cs_List_Free(cs_List *list) {
     if (list->length != 0) {
         cs_Type type = list->type;
@@ -146,6 +145,7 @@ void cs_List_Free(cs_List *list) {
     free(list);
 }
 
+inline bool cs_List_IsInRange(cs_List *list, u64 index) {
     return index >= 0 && index < list->length;
 }
 
