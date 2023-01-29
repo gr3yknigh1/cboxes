@@ -74,8 +74,8 @@ cs_Status cs_List_Remove(cs_List *list);
 
 void cs_List_Free(cs_List *list);
 
-inline bool cs_List_IsInRange(cs_List *list, u64 index);
-inline bool cs_List_IsEmpty  (cs_List *list);
+extern inline bool cs_List_IsInRange(cs_List *list, u64 index);
+extern inline bool cs_List_IsEmpty  (cs_List *list);
 
 void cs_List_Print(const cs_List *list, void (*printNode)(cs_LNode *));
 

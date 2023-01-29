@@ -150,11 +150,11 @@ void cs_List_Free(cs_List *list) {
     free(list);
 }
 
-inline bool cs_List_IsInRange(cs_List *list, u64 index) {
+extern inline bool cs_List_IsInRange(cs_List *list, u64 index) {
     return index >= 0 && index < list->length;
 }
 
-inline bool cs_List_IsEmpty(cs_List *list) {
+extern inline bool cs_List_IsEmpty(cs_List *list) {
     return list->length == 0;
 }
 
