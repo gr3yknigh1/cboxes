@@ -20,12 +20,10 @@ cs_List *cs_List_New(cs_Type type) {
 }
 
 cs_List *cs_List_NewD(size_t size) {
-    return cs_List_New((cs_Type){
-        .size = size,
-        .isReference = false,
-        .copy = cs_ShallowCopy,
-        .free = cs_ShallowFree
-    });
+    return cs_List_New((cs_Type){.size = size,
+                                 .isReference = false,
+                                 .copy = cs_ShallowCopy,
+                                 .free = cs_ShallowFree});
 }
 
 static void *cs_List_StoreValue(cs_List *list, void *value) {
@@ -138,7 +136,7 @@ void cs_List_Free(cs_List *list) {
         cs_Type type = list->type;
         cs_LNode *cur = list->head;
         cs_LNode *nxt;
-        while(cur != NULL) {
+        while (cur != NULL) {
             nxt = cur->next;
             if (!type.isReference) {
                 type.free(cur->value);
@@ -154,9 +152,7 @@ extern inline bool cs_List_IsInRange(cs_List *list, u64 index) {
     return index >= 0 && index < list->length;
 }
 
-extern inline bool cs_List_IsEmpty(cs_List *list) {
-    return list->length == 0;
-}
+extern inline bool cs_List_IsEmpty(cs_List *list) { return list->length == 0; }
 
 void cs_List_Print(const cs_List *list, void (*printValue)(cs_LNode *)) {
     CS_LIST_FOREACHN(list, i, n, {

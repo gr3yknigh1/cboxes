@@ -1,21 +1,17 @@
+#include <criterion/criterion.h>
 #include <stdlib.h>
 #include <time.h>
-#include <criterion/criterion.h>
 
 #include "cboxes/list.h"
 #include "cboxes/shallow.h"
 
-void setup(void) {
-    srand(time(NULL));
-}
+void setup(void) { srand(time(NULL)); }
 
 void teardown(void) {}
 
 TestSuite(test_list, .init = setup, .fini = teardown);
 
-int randInt(int min, int max) {
-    return min + rand() % (max + 1 - min);
-}
+int randInt(int min, int max) { return min + rand() % (max + 1 - min); }
 
 int *generateArray(size_t length, int min, int max) {
     int *array = malloc(sizeof(int) * length);
@@ -66,7 +62,6 @@ Test(test_list, List_Creation_Default) {
     cs_List_Free(list);
 }
 
-
 Test(test_list, List_Operations_PushBack) {
     cs_List *list = cs_List_NewD(sizeof(int));
 
@@ -110,7 +105,6 @@ Test(test_list, List_Operations_PushFront) {
     cr_assert(list->head->prev == NULL);
     cr_assert(list->tail->next == NULL);
 }
-
 
 Test(test_list, List_Free) {
     cs_List *list = cs_List_NewD(sizeof(int));
