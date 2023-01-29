@@ -5,12 +5,6 @@
 #include "cboxes/list.h"
 #include "cboxes/shallow.h"
 
-void setup(void) { srand(time(NULL)); }
-
-void teardown(void) {}
-
-TestSuite(test_list, .init = setup, .fini = teardown);
-
 int randInt(int min, int max) { return min + rand() % (max + 1 - min); }
 
 int *generateArray(size_t length, int min, int max) {
@@ -23,14 +17,27 @@ int *generateArray(size_t length, int min, int max) {
 
 cs_List *generateList(size_t length, int min, int max) {
     cs_List *list = cs_List_NewD(sizeof(int));
-
     for (size_t i = 0; i < length; i++) {
         int randNum = randInt(min, max);
         cs_List_PushBack(list, &randNum);
     }
-
     return list;
 }
+
+struct {
+    cs_List *intList;
+} sdata;
+
+void setup(void) {
+    srand(time(NULL));
+    sdata.intList = generateList(10, 0, 20);
+}
+
+void teardown(void) {
+    cs_List_Free(sdata.intList);
+}
+
+TestSuite(test_list, .init = setup, .fini = teardown);
 
 Test(test_list, List_Creation_Full) {
     cs_Type type = {
@@ -104,6 +111,27 @@ Test(test_list, List_Operations_PushFront) {
 
     cr_assert(list->head->prev == NULL);
     cr_assert(list->tail->next == NULL);
+}
+
+Test(test_list, List_DataAccess) {
+    cs_List *list = sdata.intList;
+
+    for (u64 i = 0; i < list->length; i++) {
+        int *x = NULL;
+        cs_Status status = cs_List_Get(list, i, (void **)(&x));
+        cr_assert(status == cs_OK);
+        cr_assert(x != NULL);
+    }
+
+    int *x; cs_Status status;
+    int indexes[3] = { -1, list->length, list->length + 1};
+
+    for (int i = 0; i < 3; i++) {
+        x = NULL;
+        status = CS_LIST_GET(list, indexes[i], x);
+        cr_assert(status == cs_INDEX_ERROR, "Tryed access '%d' index\n", indexes[i]);
+        cr_assert(x == NULL, "Tryed access '%d' index\n", indexes[i]);
+    }
 }
 
 Test(test_list, List_Free) {
