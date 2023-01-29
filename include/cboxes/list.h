@@ -72,10 +72,11 @@ cs_Status cs_List_Insert(cs_List *list, u64 index, void *value);
 cs_Status cs_List_Pop(cs_List *list);
 cs_Status cs_List_Remove(cs_List *list);
 
-// TODO: Add is empty function (?)
 void cs_List_Free(cs_List *list);
 
 inline bool cs_List_IsInRange(cs_List *list, u64 index);
+inline bool cs_List_IsEmpty  (cs_List *list);
+
 void cs_List_Print(const cs_List *list, void (*printNode)(cs_LNode *));
 
 #endif // LIST_H_
