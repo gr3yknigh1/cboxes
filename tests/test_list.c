@@ -25,6 +25,17 @@ int *generateArray(size_t length, int min, int max) {
     return array;
 }
 
+cs_List *generateList(size_t length, int min, int max) {
+    cs_List *list = cs_List_NewD(sizeof(int));
+
+    for (size_t i = 0; i < length; i++) {
+        int randNum = randInt(min, max);
+        cs_List_PushBack(list, &randNum);
+    }
+
+    return list;
+}
+
 Test(test_list, List_Creation_Full) {
     cs_Type type = {
         .isReference = false,
@@ -39,6 +50,8 @@ Test(test_list, List_Creation_Full) {
     cr_assert(list->tail == NULL);
     cr_assert(list->length == 0);
     cr_assert(sizeof(*list) == 56);
+
+    cs_List_Free(list);
 }
 
 Test(test_list, List_Creation_Default) {
@@ -49,7 +62,10 @@ Test(test_list, List_Creation_Default) {
     cr_assert(list->tail == NULL);
     cr_assert(list->length == 0);
     cr_assert(sizeof(*list) == 56);
+
+    cs_List_Free(list);
 }
+
 
 Test(test_list, List_Operations_PushBack) {
     cs_List *list = cs_List_NewD(sizeof(int));
@@ -96,3 +112,8 @@ Test(test_list, List_Operations_PushFront) {
 }
 
 
+Test(test_list, List_Free) {
+    cs_List *list = cs_List_NewD(sizeof(int));
+
+    cs_List_Free(list);
+}
