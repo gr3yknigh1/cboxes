@@ -20,7 +20,12 @@ cs_List *cs_List_New(cs_Type type) {
 }
 
 cs_List *cs_List_NewD(size_t size) {
-    return cs_List_New((cs_Type){size, false, cs_ShallowCopy, cs_ShallowFree});
+    return cs_List_New((cs_Type){
+        .size = size,
+        .isReference = false,
+        .copy = cs_ShallowCopy,
+        .free = cs_ShallowFree
+    });
 }
 
 static void *cs_List_StoreValue(cs_List *list, void *value) {
