@@ -89,6 +89,8 @@ Test(test_list, List_Operations_PushBack) {
 
     cr_assert(list->head->prev == NULL);
     cr_assert(list->tail->next == NULL);
+
+    cs_List_Free(list);
 }
 
 Test(test_list, List_Operations_PushFront) {
@@ -111,6 +113,8 @@ Test(test_list, List_Operations_PushFront) {
 
     cr_assert(list->head->prev == NULL);
     cr_assert(list->tail->next == NULL);
+
+    cs_List_Free(list);
 }
 
 Test(test_list, List_DataAccess) {
@@ -136,6 +140,10 @@ Test(test_list, List_DataAccess) {
 
 Test(test_list, List_Free) {
     cs_List *list = cs_List_NewD(sizeof(int));
+    cs_List_Free(list);
+}
 
+Test(test_list, List_FreeFull) {
+    cs_List *list = generateList(10, 0, 20);
     cs_List_Free(list);
 }
