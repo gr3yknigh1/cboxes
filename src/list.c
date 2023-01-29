@@ -48,7 +48,7 @@ static void *cs_List_StoreValue(cs_List *list, void *value) {
 void cs_List_PushBack(cs_List *list, void *value) {
     cs_LNode *node = cs_LNode_NewD(cs_List_StoreValue(list, value));
 
-    if (list->length == 0) {
+    if (cs_List_IsEmpty(list)) {
         list->head = node;
     } else {
         cs_LNode_Chain(list->tail, node);
@@ -61,7 +61,7 @@ void cs_List_PushBack(cs_List *list, void *value) {
 void cs_List_PushFront(cs_List *list, void *value) {
     cs_LNode *node = cs_LNode_NewD(cs_List_StoreValue(list, value));
 
-    if (list->length == 0) {
+    if (cs_List_IsEmpty(list)) {
         list->tail = node;
     } else {
         cs_LNode_Chain(node, list->head);
@@ -72,7 +72,7 @@ void cs_List_PushFront(cs_List *list, void *value) {
 }
 
 static cs_Status cs_List_GetNode(cs_List *list, u64 index, cs_LNode **outNode) {
-    if (list->length == 0) {
+    if (cs_List_IsEmpty(list)) {
         return cs_COLLECTION_IS_EMPTY;
     }
 
@@ -112,7 +112,7 @@ cs_Status cs_List_Insert(cs_List *list, u64 index, void *value) {
         return cs_INDEX_ERROR;
     }
 
-    if (list->length == 0) {
+    if (cs_List_IsEmpty(list)) {
         cs_List_PushBack(list, value);
     } else if (index == 0) {
         cs_List_PushFront(list, value);
