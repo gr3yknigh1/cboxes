@@ -74,6 +74,7 @@ cs_Status cs_List_Remove(cs_List *list);
 
 // TODO: Add is empty function (?)
 bool cs_List_IsInRange(cs_List *list, u64 index);
+void cs_List_Free(cs_List *list);
 
 void cs_List_Print(const cs_List *list, void (*printNode)(cs_LNode *));
 

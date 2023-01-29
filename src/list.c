@@ -129,6 +129,23 @@ cs_Status cs_List_Insert(cs_List *list, u64 index, void *value) {
 }
 
 bool cs_List_IsInRange(cs_List *list, u64 index) {
+void cs_List_Free(cs_List *list) {
+    if (list->length != 0) {
+        cs_Type type = list->type;
+        cs_LNode *cur = list->head;
+        cs_LNode *nxt;
+        while(cur != NULL) {
+            nxt = cur->next;
+            if (!type.isReference) {
+                type.free(cur->value);
+            }
+            free(cur);
+            cur = nxt;
+        }
+    }
+    free(list);
+}
+
     return index >= 0 && index < list->length;
 }
 
