@@ -57,12 +57,11 @@ $(OBJ_DIR)/%.o: $(SOURCES_DIR)/%.c $(INCLUDE_DIR)/$(PROJECT_NAME)/%.h
 $(OBJ_DIR)/%.o: $(SOURCES_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@ -I$(INCLUDE_DIR)
 
-
 $(TESTS_BIN_DIR)/%: $(TESTS_DIR)/%.c
 	$(CC) $(CFLAGS) $< $(OBJS) -o $@ -lcriterion -I$(INCLUDE_DIR)
 
 tests: $(LIBRARY) $(TESTS_BIN_DIR) $(TESTS_BINS)
-	for test in $(TESTS_BINS); do $$test ; done
+	@for test in $(TESTS_BINS); do $$test ; done
 
 $(TESTS_BIN_DIR):
 	$(MKDIR) $@
