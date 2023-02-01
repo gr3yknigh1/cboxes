@@ -6,6 +6,7 @@ typedef enum cs_Status {
     cs_INDEX_ERROR,
     cs_OUT_OF_RANGE,
     cs_COLLECTION_IS_EMPTY,
+    cs_NULL_REFERENCE_ERROR,
 } cs_Status;
 
 #endif // STATUS_H_

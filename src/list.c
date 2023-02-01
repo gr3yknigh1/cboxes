@@ -4,6 +4,7 @@
 
 #include "cboxes/list.h"
 #include "cboxes/shallow.h"
+#include "cboxes/status.h"
 #include "cboxes/types.h"
 
 cs_List *cs_List_New(cs_Type type) {
@@ -131,8 +132,67 @@ cs_Status cs_List_Insert(cs_List *list, u64 index, void *value) {
     return cs_OK;
 }
 
+static cs_Status cs_List_PopNode(cs_List *list, u64 index, cs_LNode **out) {
+    if (list == NULL)
+        return cs_NULL_REFERENCE_ERROR;
+    if (cs_List_IsEmpty(list))
+        return cs_OK;
+    if (!cs_List_IsInRange(list, index))
+        return cs_INDEX_ERROR;
+
+    if (index == 0) {
+        *out = list->head;
+        list->head = (*out)->next;
+        list->head->prev = NULL;
+    } else if (index == list->length - 1) {
+        *out = list->tail;
+        list->tail = (*out)->prev;
+        list->tail->next = NULL;
+    } else {
+        CS_LIST_FOREACHN(list, i, n, {
+            if (i == index) {
+                *out = n;
+                break;
+            }
+        });
+
+        if (*out == NULL)
+            return cs_OUT_OF_RANGE;
+
+        cs_LNode_Chain((*out)->prev, (*out)->next);
+    }
+
+    (*out)->next = NULL;
+    (*out)->prev = NULL;
+
+    list->length--;
+    return cs_OK;
+}
+
+cs_Status cs_List_Pop(cs_List *list, u64 index, void **out) {
+    cs_LNode *outNode = NULL;
+    cs_Status status = cs_List_PopNode(list, index, &outNode);
+    if (status == cs_OK) {
+        *out = outNode->value;
+    }
+    return status;
+}
+
+cs_Status cs_List_Remove(cs_List *list, u64 index) {
+    cs_LNode *node = NULL;
+    cs_Status status = cs_List_PopNode(list, index, &node);
+    if (status == cs_OK && node != NULL) {
+        if (!list->type.isReference) {
+            list->type.free(node->value);
+        }
+        free(node);
+    }
+    return status;
+}
+
 void cs_List_Clear(cs_List *list) {
-    if (cs_List_IsEmpty(list)) return;
+    if (cs_List_IsEmpty(list))
+        return;
 
     cs_Type type = list->type;
     cs_LNode *cur = list->head;
@@ -140,11 +200,14 @@ void cs_List_Clear(cs_List *list) {
     while (cur != NULL) {
         nxt = cur->next;
 
-        if (!type.isReference) type.free(cur->value);
+        if (!type.isReference)
+            type.free(cur->value);
 
         free(cur);
         cur = nxt;
     }
+
+    list->length = 0;
 }
 
 void cs_List_Free(cs_List *list) {

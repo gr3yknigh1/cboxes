@@ -69,8 +69,8 @@ void cs_List_PushFront(cs_List *list, void *value);
 
 cs_Status cs_List_Get(cs_List *list, u64 index, void **out);
 cs_Status cs_List_Insert(cs_List *list, u64 index, void *value);
-cs_Status cs_List_Pop(cs_List *list);
-cs_Status cs_List_Remove(cs_List *list);
+cs_Status cs_List_Pop(cs_List *list, u64 index, void **out);
+cs_Status cs_List_Remove(cs_List *list, u64 index);
 
 void cs_List_Clear(cs_List *list);
 void cs_List_Free(cs_List *list);

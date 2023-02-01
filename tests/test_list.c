@@ -138,6 +138,46 @@ Test(test_list, List_DataAccess) {
     }
 }
 
+void testing_CheckListNodeRefs(cs_List *list) {
+    CS_LIST_FOREACHN(list, i, n, {
+        if (i != 0) cr_assert(n->prev != NULL);
+        if (i != list->length -1) cr_assert(n->next != NULL);
+    });
+}
+
+void testing_CheckListPopAtIndex(cs_List *list, unsigned long index) {
+    unsigned long lengthBefore = list->length;
+
+    int *valueFromGet = NULL;
+    CS_LIST_GET(list, index, &valueFromGet);
+
+    int *valueFromPop = NULL;
+    cr_assert(cs_List_Pop(list, index, (void**)(&valueFromPop)) == cs_OK);
+
+    cr_assert(list->length == lengthBefore - 1);
+    cr_assert(valueFromGet == valueFromPop);
+    cr_assert(*valueFromGet == *valueFromPop);
+}
+
+Test(test_list, List_Deletion_Pop_First) {
+    cs_List *list = sdata.intList;
+
+    testing_CheckListPopAtIndex(list, 0);
+    testing_CheckListNodeRefs(list);
+}
+
+Test(test_list, List_Deletion_Pop_Middle) {
+    cs_List *list = sdata.intList;
+    testing_CheckListPopAtIndex(list, list->length / 2);
+    testing_CheckListNodeRefs(list);
+}
+
+Test(test_list, List_Deletion_Pop_Last) {
+    cs_List *list = sdata.intList;
+    testing_CheckListPopAtIndex(list, list->length - 1);
+    testing_CheckListNodeRefs(list);
+}
+
 Test(test_list, List_Free) {
     cs_List *list = cs_List_NewD(sizeof(int));
     cs_List_Free(list);
