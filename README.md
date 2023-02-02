@@ -24,7 +24,7 @@ make clean all tests
 
 ## To Do
 
-- [ ] Linked List
+- [X] Linked List
 - [ ] Dynamic Array
 - [ ] Hash Map
 - [ ] 2D Dynamic Array
