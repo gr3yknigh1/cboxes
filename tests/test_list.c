@@ -229,6 +229,17 @@ Test(test_list, List_Deletion_Remove_Last) {
     testing_CheckListNodeRefs(list);
 }
 
+Test(test_list, List_Deletion_Clear) {
+    cs_List *list = sdata.intList;
+    cs_List_Clear(list);
+
+    cr_assert(list->length == 0);
+    cr_assert(list->head == NULL);
+    cr_assert(list->tail == NULL);
+
+    testing_CheckListNodeRefs(list);
+}
+
 Test(test_list, List_Free) {
     cs_List *list = cs_List_NewD(sizeof(int));
     cs_List_Free(list);

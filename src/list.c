@@ -208,6 +208,8 @@ void cs_List_Clear(cs_List *list) {
     }
 
     list->length = 0;
+    list->head = NULL;
+    list->tail = NULL;
 }
 
 void cs_List_Free(cs_List *list) {
