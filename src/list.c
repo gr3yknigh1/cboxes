@@ -116,17 +116,17 @@ cs_Status cs_List_Insert(cs_List *list, u64 index, void *value) {
     } else if (index == 0) {
         cs_List_PushFront(list, value);
     } else {
-        cs_LNode *prevNode = NULL;
-        cs_Status status = cs_List_GetNode(list, index, &prevNode);
+        cs_LNode *targetNode = NULL;
+        cs_Status status = cs_List_GetNode(list, index, &targetNode);
         if (status != cs_OK) {
             return status;
         }
 
-        cs_LNode *nextNode = prevNode->next;
+        cs_LNode *prevNode = targetNode->prev;
         cs_LNode *node = cs_LNode_NewD(cs_List_StoreValue(list, value));
 
         cs_LNode_Chain(prevNode, node);
-        cs_LNode_Chain(node, nextNode);
+        cs_LNode_Chain(node, targetNode);
     }
 
     return cs_OK;
