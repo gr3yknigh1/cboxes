@@ -139,10 +139,35 @@ Test(test_list, List_DataAccess) {
 
     for (int i = 0; i < 3; i++) {
         x = NULL;
-        status = CS_LIST_GET(list, indexes[i], x);
+        status = CS_LIST_GET(list, indexes[i], &x);
         cr_assert(status == cs_INDEX_ERROR, "Tryed access '%d' index\n",
                   indexes[i]);
         cr_assert(x == NULL, "Tryed access '%d' index\n", indexes[i]);
+    }
+}
+
+void testing_CheckListInsertingAtIndex(cs_List *list, unsigned long index) {
+
+    int randNum = randInt(0, 10);
+
+    cs_Status status;
+    CS_LIST_INSERT(list, index, randNum, status);
+
+    cr_assert(status == cs_OK);
+
+    int *storedNum = NULL;
+    testing_IS_OK(CS_LIST_GET(list, index, &storedNum));
+
+    cr_assert(*storedNum == randNum, "%lu %d %d", index, *storedNum, randNum);
+}
+
+Test(test_list, List_Inserting) {
+    cs_List *list = sdata.intList;
+
+    int indexes[] = {0, list->length / 2, list->length - 1};
+
+    for (int i = 0; i < 3; i++) {
+        testing_CheckListInsertingAtIndex(list, indexes[i]);
     }
 }
 
