@@ -5,6 +5,8 @@
 #include "cboxes/list.h"
 #include "cboxes/shallow.h"
 
+// TODO(gr3yknigh1): Add tests for deep refed structs
+
 #define testing_IS_OK(expr, ...)                                               \
     do {                                                                       \
         cs_Status status = expr;                                               \
