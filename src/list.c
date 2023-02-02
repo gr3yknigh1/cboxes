@@ -111,7 +111,7 @@ cs_Status cs_List_Insert(cs_List *list, u64 index, void *value) {
         return cs_INDEX_ERROR;
     }
 
-    if (cs_List_IsEmpty(list)) {
+    if (cs_List_IsEmpty(list) || index == list->length - 1) {
         cs_List_PushBack(list, value);
     } else if (index == 0) {
         cs_List_PushFront(list, value);
