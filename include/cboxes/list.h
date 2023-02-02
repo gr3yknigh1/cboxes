@@ -13,9 +13,9 @@
 #define CS_LIST_INSERT(list, index, in, status)                                \
     do {                                                                       \
         void *ptr = &in;                                                       \
-        status = cs_List_Insert(list, index, (void **)(&ptr));                 \
-        in = *((int *)ptr);                                                    \
+        status = cs_List_Insert(list, index, ptr);                             \
     } while (0)
+
 
 #define CS_LIST_FOREACHN(list, i, n, body)                                     \
     do {                                                                       \
