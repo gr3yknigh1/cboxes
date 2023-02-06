@@ -5,6 +5,8 @@
 #include "cboxes/list.h"
 #include "cboxes/shallow.h"
 
+#include "tools/common.h"
+
 // TODO(gr3yknigh1): Add tests for deep refed structs
 
 #define testing_IS_OK(expr, ...)                                               \
@@ -13,16 +15,6 @@
         cr_assert(status == cs_OK, "CS call != cs_OK; status == %d\n",         \
                   status __VA_OPT__(, ) __VA_ARGS__);                          \
     } while (0)
-
-int randInt(int min, int max) { return min + rand() % (max + 1 - min); }
-
-int *generateArray(size_t length, int min, int max) {
-    int *array = malloc(sizeof(int) * length);
-    for (size_t i = 0; i < length; i++) {
-        array[i] = randInt(min, max);
-    }
-    return array;
-}
 
 cs_List *generateList(size_t length, int min, int max) {
     cs_List *list = cs_List_NewD(sizeof(int));
