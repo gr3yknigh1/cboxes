@@ -1,5 +1,5 @@
-#ifndef TYPE_H
-#define TYPE_H
+#ifndef TYPE_H_
+#define TYPE_H_
 
 #include <stdbool.h>
 #include <stdlib.h>
@@ -14,4 +14,4 @@ typedef struct cs_Type {
     cs_FreeFunc free;
 } cs_Type;
 
-#endif // TYPE_H
+#endif // TYPE_H_
