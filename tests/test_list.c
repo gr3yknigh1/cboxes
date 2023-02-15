@@ -39,19 +39,15 @@ void teardown(void) { cs_List_Free(sdata.intList); }
 TestSuite(test_list, .init = setup, .fini = teardown);
 
 Test(test_list, List_Creation_Full) {
-    cs_Type type = {
-        .isReference = false,
-        .size = sizeof(int),
-        .copy = cs_ShallowCopy,
-        .free = cs_ShallowFree,
-    };
-    cs_List *list = cs_List_New(type);
+    cs_List *list = cs_List_New(
+        cs_Type_New(sizeof(int), false, cs_ShallowCopy, cs_ShallowFree)
+    );
 
     cr_assert(list != NULL);
     cr_assert(list->head == NULL);
     cr_assert(list->tail == NULL);
     cr_assert(list->length == 0);
-    cr_assert(sizeof(*list) == 56);
+    cr_assert(sizeof(*list) == 32);
 
     cs_List_Free(list);
 }
@@ -63,7 +59,7 @@ Test(test_list, List_Creation_Default) {
     cr_assert(list->head == NULL);
     cr_assert(list->tail == NULL);
     cr_assert(list->length == 0);
-    cr_assert(sizeof(*list) == 56);
+    cr_assert(sizeof(*list) == 32);
 
     cs_List_Free(list);
 }

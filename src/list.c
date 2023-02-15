@@ -7,8 +7,8 @@
 #include "cboxes/status.h"
 #include "cboxes/types.h"
 
-cs_List *cs_List_New(cs_Type type) {
-    assert(type.size > 0);
+cs_List *cs_List_New(cs_Type *type) {
+    assert(type->size > 0);
 
     cs_List *list = malloc(sizeof(cs_List));
     *list = (cs_List){
@@ -21,10 +21,9 @@ cs_List *cs_List_New(cs_Type type) {
 }
 
 cs_List *cs_List_NewD(size_t size) {
-    return cs_List_New((cs_Type){.size = size,
-                                 .isReference = false,
-                                 .copy = cs_ShallowCopy,
-                                 .free = cs_ShallowFree});
+    return cs_List_New(cs_Type_New(
+        size, false, cs_ShallowCopy, cs_ShallowFree
+    ));
 }
 
 static void *cs_List_StoreValue(cs_List *list, void *value) {
@@ -33,13 +32,13 @@ static void *cs_List_StoreValue(cs_List *list, void *value) {
         return NULL;
     }
 
-    cs_Type type = list->type;
-    if (type.isReference) {
+    cs_Type *type = list->type;
+    if (type->isReference) {
         return value;
     } else {
         // TODO(gr3yknigh1): Replace with Copy function
-        void *stored = malloc(sizeof(type.size));
-        type.copy(stored, value, type.size);
+        void *stored = malloc(sizeof(type->size));
+        type->copy(stored, value, type->size);
         return stored;
     }
 }
@@ -182,8 +181,8 @@ cs_Status cs_List_Remove(cs_List *list, u64 index) {
     cs_LNode *node = NULL;
     cs_Status status = cs_List_PopNode(list, index, &node);
     if (status == cs_OK && node != NULL) {
-        if (!list->type.isReference) {
-            list->type.free(node->value);
+        if (!list->type->isReference) {
+            list->type->free(node->value);
         }
         free(node);
     }
@@ -194,14 +193,14 @@ void cs_List_Clear(cs_List *list) {
     if (cs_List_IsEmpty(list))
         return;
 
-    cs_Type type = list->type;
+    cs_Type *type = list->type;
     cs_LNode *cur = list->head;
     cs_LNode *nxt;
     while (cur != NULL) {
         nxt = cur->next;
 
-        if (!type.isReference)
-            type.free(cur->value);
+        if (!type->isReference)
+            type->free(cur->value);
 
         free(cur);
         cur = nxt;
@@ -214,6 +213,7 @@ void cs_List_Clear(cs_List *list) {
 
 void cs_List_Free(cs_List *list) {
     cs_List_Clear(list);
+    free(list->type);
     free(list);
 }
 

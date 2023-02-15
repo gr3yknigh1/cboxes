@@ -64,10 +64,10 @@ typedef struct cs_List {
     cs_LNode *tail;
 
     u64 length;
-    cs_Type type;
+    cs_Type *type;
 } cs_List;
 
-cs_List *cs_List_New(cs_Type type);
+cs_List *cs_List_New(cs_Type *type);
 cs_List *cs_List_NewD(size_t size);
 
 void cs_List_PushBack(cs_List *list, void *value);
