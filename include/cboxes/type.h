@@ -14,4 +14,6 @@ typedef struct cs_Type {
     cs_FreeFunc free;
 } cs_Type;
 
+cs_Type *cs_Type_New(size_t size, bool isReference, cs_CopyFunc copy, cs_FreeFunc free);
+
 #endif // TYPE_H_
