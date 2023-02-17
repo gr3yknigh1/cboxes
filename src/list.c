@@ -5,7 +5,7 @@
 #include "cboxes/list.h"
 #include "cboxes/shallow.h"
 #include "cboxes/status.h"
-#include "cboxes/types.h"
+#include "cboxes/numtypes.h"
 
 cs_List *cs_List_New(cs_Type *type) {
     assert(type->size > 0);

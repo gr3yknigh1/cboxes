@@ -1,5 +1,5 @@
 #include "cboxes/shallow.h"
-#include "cboxes/types.h"
+#include "cboxes/numtypes.h"
 
 void *cs_ShallowCopy(void *dest, const void *src, size_t count) {
     for (size_t i = 0; i < count; i++) {
