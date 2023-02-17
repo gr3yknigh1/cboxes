@@ -1,8 +1,6 @@
 #ifndef TYPES_H_
 #define TYPES_H_
 
-#include <stdint.h>
-
 typedef unsigned long u64;
 typedef unsigned int u32;
 typedef unsigned short u16;
