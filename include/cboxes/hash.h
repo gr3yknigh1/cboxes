@@ -2,6 +2,7 @@
 #define HASH_H_
 
 #include "cboxes/numtypes.h"
+#include "cboxes/str.h"
 
 // Stoled from http://www.cse.yorku.ca/~oz/hash.html
 u64 cs_lose_lose_hash(const byte *str);
