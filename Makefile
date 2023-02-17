@@ -4,17 +4,14 @@ REMOVE = rm -rf
 CC     = clang
 CFLAGS = -g -Wall -std=c17
 
-MKFILE_PATH = $(abspath $(lastword $(MAKEFILE_LIST)))
-MKFILE_DIR  = $(dir $(MKFILE_PATH))
+PROJECT_NAME = cboxes
 
-PROJECT_NAME      = cboxes
+PROJECT_DIR = $(CURDIR)
 
-PROJECT_DIR = $(MKFILE_DIR:-=)
-
-INCLUDE_DIR = $(PROJECT_DIR)include
-SOURCES_DIR = $(PROJECT_DIR)src
-BUILD_DIR   = $(PROJECT_DIR)build
-TESTS_DIR   = $(PROJECT_DIR)tests
+INCLUDE_DIR = $(PROJECT_DIR)/include
+SOURCES_DIR = $(PROJECT_DIR)/src
+BUILD_DIR   = $(PROJECT_DIR)/build
+TESTS_DIR   = $(PROJECT_DIR)/tests
 
 LIBRARY     = $(BUILD_DIR)/lib$(PROJECT_NAME).a
 
