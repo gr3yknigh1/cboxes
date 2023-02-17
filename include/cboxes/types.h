@@ -13,7 +13,7 @@ typedef double f64;
 typedef float f32;
 
 typedef const char *cstr;
-
 typedef unsigned char byte;
+typedef unsigned char *bytes;
 
 #endif // TYPES_H_
