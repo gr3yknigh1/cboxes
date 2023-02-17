@@ -7,6 +7,7 @@ typedef enum cs_Status {
     cs_OUT_OF_RANGE,
     cs_COLLECTION_IS_EMPTY,
     cs_NULL_REFERENCE_ERROR,
+    cs_KEY_ERROR,
 } cs_Status;
 
 #endif // STATUS_H_

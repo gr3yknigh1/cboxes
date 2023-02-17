@@ -40,8 +40,7 @@ TestSuite(test_list, .init = setup, .fini = teardown);
 
 Test(test_list, List_Creation_Full) {
     cs_List *list = cs_List_New(
-        cs_Type_New(sizeof(int), false, cs_ShallowCopy, cs_ShallowFree)
-    );
+        cs_Type_New(sizeof(int), false, cs_ShallowCopy, cs_ShallowFree));
 
     cr_assert(list != NULL);
     cr_assert(list->head == NULL);

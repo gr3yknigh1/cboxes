@@ -16,7 +16,6 @@
         status = cs_List_Insert(list, index, ptr);                             \
     } while (0)
 
-
 #define CS_LIST_FOREACHN(list, i, n, body)                                     \
     do {                                                                       \
         cs_LNode *n = list->head;                                              \
@@ -70,6 +69,8 @@ typedef struct cs_List {
 cs_List *cs_List_New(cs_Type *type);
 cs_List *cs_List_NewD(size_t size);
 
+void *cs_List_Copy(void *dest, const void *src, size_t count);
+
 void cs_List_PushBack(cs_List *list, void *value);
 void cs_List_PushFront(cs_List *list, void *value);
 
@@ -79,7 +80,7 @@ cs_Status cs_List_Pop(cs_List *list, u64 index, void **out);
 cs_Status cs_List_Remove(cs_List *list, u64 index);
 
 void cs_List_Clear(cs_List *list);
-void cs_List_Free(cs_List *list);
+void cs_List_Free(void *ptr);
 
 extern inline bool cs_List_IsInRange(cs_List *list, u64 index);
 extern inline bool cs_List_IsEmpty(cs_List *list);

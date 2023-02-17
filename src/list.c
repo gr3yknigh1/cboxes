@@ -21,10 +21,11 @@ cs_List *cs_List_New(cs_Type *type) {
 }
 
 cs_List *cs_List_NewD(size_t size) {
-    return cs_List_New(cs_Type_New(
-        size, false, cs_ShallowCopy, cs_ShallowFree
-    ));
+    return cs_List_New(
+        cs_Type_New(size, false, cs_ShallowCopy, cs_ShallowFree));
 }
+
+void *cs_List_Copy(void *dest, const void *src, size_t count) { return NULL; }
 
 static void *cs_List_StoreValue(cs_List *list, void *value) {
     // NOTE: Still thing this not good idea
@@ -211,7 +212,8 @@ void cs_List_Clear(cs_List *list) {
     list->tail = NULL;
 }
 
-void cs_List_Free(cs_List *list) {
+void cs_List_Free(void *ptr) {
+    cs_List *list = ptr;
     cs_List_Clear(list);
     free(list->type);
     free(list);
