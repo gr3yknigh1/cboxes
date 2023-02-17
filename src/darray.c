@@ -4,7 +4,7 @@
 
 cs_DArray *cs_DArray_New(cs_Type type) {
     cs_DArray *arr = malloc(sizeof(cs_DArray));
-    *arr = (cs_DArray) {
+    *arr = (cs_DArray){
         .begin = NULL,
         .space = 0,
         .count = 0,
@@ -14,7 +14,7 @@ cs_DArray *cs_DArray_New(cs_Type type) {
 }
 
 cs_DArray *cs_DArray_NewD(size_t size) {
-    return cs_DArray_New((cs_Type) {
+    return cs_DArray_New((cs_Type){
         .size = size,
         .isReference = false,
         .copy = cs_ShallowCopy,
@@ -27,4 +27,3 @@ void *cs_DArray_Reallocate(cs_DArray *arr, u64 count) {
 
     return newBegin;
 }
-
