@@ -58,7 +58,7 @@ $(TESTS_BIN_DIR)/%: $(TESTS_DIR)/%.c
 	$(CC) $(CFLAGS) $< $(OBJS) -o $@ -lcriterion -I$(INCLUDE_DIR)
 
 tests: $(LIBRARY) $(TESTS_BIN_DIR) $(TESTS_BINS)
-	@for test in $(TESTS_BINS); do $$test --debug=gdb --verbose=5 ; done
+	@for test in $(TESTS_BINS); do $$test --verbose=5 ; done
 
 $(TESTS_BIN_DIR):
 	$(MKDIR) $@
