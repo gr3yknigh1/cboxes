@@ -3,8 +3,8 @@
 
 #include <stdlib.h>
 
-#include "cboxes/type.h"
 #include "cboxes/numtypes.h"
+#include "cboxes/type.h"
 
 typedef struct cs_DArray {
     void *begin;

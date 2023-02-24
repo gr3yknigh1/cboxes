@@ -5,9 +5,9 @@
 #include <stddef.h>
 
 #include "cboxes/lnode.h"
+#include "cboxes/numtypes.h"
 #include "cboxes/status.h"
 #include "cboxes/type.h"
-#include "cboxes/numtypes.h"
 
 #define CS_LIST_GET(list, index, out) cs_List_Get(list, index, ((void **)out))
 #define CS_LIST_INSERT(list, index, in, status)                                \
