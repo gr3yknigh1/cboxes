@@ -15,9 +15,11 @@ typedef struct cs_String {
 } cs_String;
 
 u64 cs_cstr_Length(cstr string);
-cs_String cs_String_New(cstr source);
-cs_String cs_String_NewC(cs_String source);
-void cs_String_Set(cs_String str, cstr new);
-void cs_String_SetC(cs_String str, cs_String new);
+cs_String *cs_String_New(cstr source);
+cs_String *cs_String_NewC(cs_String *source);
+void cs_String_Set(cs_String *str, cstr new);
+void cs_String_SetC(cs_String *str, cs_String *new);
+
+void cs_String_Free(void *ptr);
 
 #endif // STR_H_
