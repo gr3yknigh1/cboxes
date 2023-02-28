@@ -17,4 +17,19 @@ cs_Type *cs_Type_NewC(cs_Type *other) {
                        other->free);
 }
 
+void *cs_Type_StoreValue(cs_Type *type, void *value) {
+    // NOTE: Still thing this not good idea
+    if (value == NULL) {
+        return NULL;
+    }
+
+    if (type->isReference) {
+        return value;
+    } else {
+        void *stored = malloc(sizeof(type->size));
+        type->copy(stored, value, type->size);
+        return stored;
+    }
+}
+
 void cs_Type_Free(void *ptr) { free(ptr); }
