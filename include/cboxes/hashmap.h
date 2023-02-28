@@ -18,7 +18,6 @@ typedef struct cs_Hashmap {
 cs_Hashmap *cs_Hashmap_New(cs_Type *type, u64 capacity);
 cs_Hashmap *cs_Hashmap_NewD(size_t size, u64 capacity);
 
-void cs_Hashmap_Push(cs_Hashmap *hashmap, cstr key, void *value);
 cs_Status cs_Hashmap_Set(cs_Hashmap *hashmap, cstr key, void *value);
 cs_Status cs_Hashmap_Get(cs_Hashmap *hashmap, cstr key, void **out);
 cs_Status cs_Hashmap_Pop(cs_Hashmap *hashmap, cstr key, void **out);
