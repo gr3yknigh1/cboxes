@@ -16,3 +16,5 @@ cs_Type *cs_Type_NewC(cs_Type *other) {
     return cs_Type_New(other->size, other->isReference, other->copy,
                        other->free);
 }
+
+void cs_Type_Free(void *ptr) { free(ptr); }
