@@ -9,6 +9,8 @@
 
 typedef struct cs_Hashmap {
     cs_List *buckets;
+    cs_Type *bucket_type;
+
     cs_Type *type;
 
     u64 count;
@@ -17,6 +19,8 @@ typedef struct cs_Hashmap {
 
 cs_Hashmap *cs_Hashmap_New(cs_Type *type, u64 capacity);
 cs_Hashmap *cs_Hashmap_NewD(size_t size, u64 capacity);
+
+u64 cs_Hashmap_Hash(cs_Hashmap *hashmap, cstr key);
 
 cs_Status cs_Hashmap_Set(cs_Hashmap *hashmap, cstr key, void *value);
 cs_Status cs_Hashmap_Get(cs_Hashmap *hashmap, cstr key, void **out);
