@@ -45,3 +45,9 @@ void cs_String_SetC(cs_String *str, cs_String *new) {
     str->data[new->length + 1] = '\0';
     str->length = new->length;
 }
+
+void cs_String_Free(void *ptr) {
+    cs_String *string = (cs_String *)ptr;
+    free(string->data);
+    free(ptr);
+}
