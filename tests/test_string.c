@@ -28,6 +28,8 @@ Test(test_string, String_New) {
     for (size_t i = 0; i < source_length; i++) {
         cr_assert(source[i] == string->data[i]);
     }
+
+    cs_String_Free(string);
 }
 
 Test(test_string, String_NewC) {
@@ -40,4 +42,6 @@ Test(test_string, String_NewC) {
     for (size_t i = 0; i < string1->length; i++) {
         cr_assert(string->data[i] == string->data[i]);
     }
+
+    cs_String_Free(string);
 }
