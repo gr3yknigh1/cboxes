@@ -27,25 +27,8 @@ cs_List *cs_List_NewD(size_t size) {
 
 void *cs_List_Copy(void *dest, const void *src, size_t count) { return NULL; }
 
-static void *cs_List_StoreValue(cs_List *list, void *value) {
-    // NOTE: Still thing this not good idea
-    if (value == NULL) {
-        return NULL;
-    }
-
-    cs_Type *type = list->type;
-    if (type->isReference) {
-        return value;
-    } else {
-        // TODO(gr3yknigh1): Replace with Copy function
-        void *stored = malloc(sizeof(type->size));
-        type->copy(stored, value, type->size);
-        return stored;
-    }
-}
-
 void cs_List_PushBack(cs_List *list, void *value) {
-    cs_LNode *node = cs_LNode_NewD(cs_List_StoreValue(list, value));
+    cs_LNode *node = cs_LNode_NewD(cs_Type_StoreValue(list->type, value));
 
     if (cs_List_IsEmpty(list)) {
         list->head = node;
@@ -58,7 +41,7 @@ void cs_List_PushBack(cs_List *list, void *value) {
 }
 
 void cs_List_PushFront(cs_List *list, void *value) {
-    cs_LNode *node = cs_LNode_NewD(cs_List_StoreValue(list, value));
+    cs_LNode *node = cs_LNode_NewD(cs_Type_StoreValue(list->type, value));
 
     if (cs_List_IsEmpty(list)) {
         list->tail = node;
@@ -123,7 +106,7 @@ cs_Status cs_List_Insert(cs_List *list, u64 index, void *value) {
         }
 
         cs_LNode *prevNode = targetNode->prev;
-        cs_LNode *node = cs_LNode_NewD(cs_List_StoreValue(list, value));
+        cs_LNode *node = cs_LNode_NewD(cs_Type_StoreValue(list->type, value));
 
         cs_LNode_Chain(prevNode, node);
         cs_LNode_Chain(node, targetNode);
