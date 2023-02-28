@@ -11,3 +11,8 @@ cs_Type *cs_Type_New(size_t size, bool isReference, cs_CopyFunc copy,
     };
     return type;
 }
+
+cs_Type *cs_Type_NewC(cs_Type *other) {
+    return cs_Type_New(other->size, other->isReference, other->copy,
+                       other->free);
+}
