@@ -219,11 +219,11 @@ void cs_List_Free(void *ptr) {
     free(list);
 }
 
-extern inline bool cs_List_IsInRange(cs_List *list, u64 index) {
+bool cs_List_IsInRange(cs_List *list, u64 index) {
     return index >= 0 && index < list->length;
 }
 
-extern inline bool cs_List_IsEmpty(cs_List *list) { return list->length == 0; }
+bool cs_List_IsEmpty(cs_List *list) { return list->length == 0; }
 
 void cs_List_Print(const cs_List *list, void (*printValue)(cs_LNode *)) {
     CS_LIST_FOREACHN(list, i, n, {
