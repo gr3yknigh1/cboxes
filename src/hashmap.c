@@ -54,3 +54,12 @@ cs_Status cs_Hashmap_Set(cs_Hashmap *hashmap, cstr key, void *value) {
 
     return cs_OK;
 }
+
+void cs_Hashmap_Free(void *ptr) {
+    cs_Hashmap *hashmap = (cs_Hashmap *)ptr;
+
+    cs_List_Free(hashmap->slots);
+    cs_Type_Free((void *)hashmap->type);
+
+    free(ptr);
+}
