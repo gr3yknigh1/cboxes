@@ -9,8 +9,6 @@
 
 typedef struct cs_Hashmap {
     cs_List *buckets;
-    cs_Type *bucket_type;
-
     const cs_Type *type;
     u64 count;
     u64 capacity;

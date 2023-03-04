@@ -13,8 +13,6 @@ cs_Hashmap *cs_Hashmap_New(const cs_Type *type, u64 capacity) {
     *hashmap = (cs_Hashmap){
         .buckets = cs_List_New(
             cs_Type_New(sizeof(cs_List), true, cs_List_Copy, cs_List_Free)),
-        .bucket_type =
-            cs_Type_New(sizeof(cs_Type), true, cs_Pair_Copy, cs_Pair_Free),
         .type = type,
         .capacity = capacity,
         .count = 0,
