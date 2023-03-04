@@ -3,6 +3,7 @@
 
 #include "cboxes/list.h"
 #include "cboxes/numtypes.h"
+#include "cboxes/pair.h"
 #include "cboxes/status.h"
 #include "cboxes/string.h"
 #include "cboxes/type.h"
