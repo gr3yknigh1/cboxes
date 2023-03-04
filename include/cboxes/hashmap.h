@@ -9,7 +9,7 @@
 #include "cboxes/type.h"
 
 typedef struct cs_Hashmap {
-    cs_List *buckets;
+    cs_List *slots;
     const cs_Type *type;
     u64 count;
     u64 capacity;

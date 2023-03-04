@@ -21,12 +21,12 @@ Test(test_hashmap, cs_Hashmap_New) {
     cr_assert(map->capacity == cap);
     cr_assert(map->count == 0);
 
-    cr_assert_not_null(map->buckets);
-    cr_assert(map->buckets->type == CS_LIST_TYPE);
+    cr_assert_not_null(map->slots);
+    cr_assert(map->slots->type == CS_LIST_TYPE);
 
     for (uint64_t i = 0; i < cap; i++) {
         cs_List *slot = NULL;
-        CS_LIST_GET(map->buckets, i, slot);
+        CS_LIST_GET(map->slots, i, slot);
         cr_assert_not_null(slot);
         cr_assert(cs_List_IsEmpty(slot));
     }
