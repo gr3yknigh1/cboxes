@@ -16,8 +16,8 @@ typedef struct cs_Type {
 
 cs_Type *cs_Type_New(size_t size, bool isReference, cs_CopyFunc copy,
                      cs_FreeFunc free);
-cs_Type *cs_Type_NewC(cs_Type *other);
-void *cs_Type_StoreValue(cs_Type *type, void *value);
+cs_Type *cs_Type_NewC(const cs_Type *other);
+void *cs_Type_StoreValue(const cs_Type *type, void *value);
 
 void cs_Type_Free(void *ptr);
 

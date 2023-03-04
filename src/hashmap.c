@@ -7,7 +7,7 @@
 #include "cboxes/shallow.h"
 #include "cboxes/type.h"
 
-cs_Hashmap *cs_Hashmap_New(cs_Type *type, u64 capacity) {
+cs_Hashmap *cs_Hashmap_New(const cs_Type *type, u64 capacity) {
     cs_Hashmap *hashmap = malloc(sizeof(cs_Hashmap));
 
     *hashmap = (cs_Hashmap){

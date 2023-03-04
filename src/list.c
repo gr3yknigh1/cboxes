@@ -7,7 +7,7 @@
 #include "cboxes/shallow.h"
 #include "cboxes/status.h"
 
-cs_List *cs_List_New(cs_Type *type) {
+cs_List *cs_List_New(const cs_Type *type) {
     assert(type->size > 0);
 
     cs_List *list = malloc(sizeof(cs_List));
@@ -177,7 +177,7 @@ void cs_List_Clear(cs_List *list) {
     if (cs_List_IsEmpty(list))
         return;
 
-    cs_Type *type = list->type;
+    const cs_Type *type = list->type;
     cs_LNode *cur = list->head;
     cs_LNode *nxt;
     while (cur != NULL) {

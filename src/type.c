@@ -1,4 +1,5 @@
 #include "cboxes/type.h"
+#include <assert.h>
 
 cs_Type *cs_Type_New(size_t size, bool isReference, cs_CopyFunc copy,
                      cs_FreeFunc free) {
@@ -12,13 +13,14 @@ cs_Type *cs_Type_New(size_t size, bool isReference, cs_CopyFunc copy,
     return type;
 }
 
-cs_Type *cs_Type_NewC(cs_Type *other) {
+cs_Type *cs_Type_NewC(const cs_Type *other) {
     return cs_Type_New(other->size, other->isReference, other->copy,
                        other->free);
 }
 
-void *cs_Type_StoreValue(cs_Type *type, void *value) {
-    // NOTE: Still thing this not good idea
+void *cs_Type_StoreValue(const cs_Type *type, void *value) {
+    assert(type != NULL);
+
     if (value == NULL) {
         return NULL;
     }
