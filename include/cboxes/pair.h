@@ -15,4 +15,6 @@ cs_Pair *cs_Pair_New(cstr key, void *value, const cs_Type *type);
 void *cs_Pair_Copy(void *dest, const void *src, size_t count);
 void cs_Pair_Free(void *ptr);
 
+DEFINE_CS_TYPE(CS_PAIR_TYPE);
+
 #endif // PAIR_H_

@@ -2,6 +2,8 @@
 #include "cboxes/string.h"
 #include "cboxes/type.h"
 
+INIT_COMPLEX_CS_TYPE(CS_PAIR_TYPE, cs_Pair *, cs_Pair_Copy, cs_Pair_Free);
+
 cs_Pair *cs_Pair_New(cstr key, void *value, const cs_Type *type) {
     cs_Pair *pair = malloc(sizeof(cs_Pair));
     *pair = (cs_Pair){
