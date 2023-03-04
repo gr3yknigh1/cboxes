@@ -7,7 +7,7 @@ cs_Pair *cs_Pair_New(cstr key, void *value, const cs_Type *type) {
     *pair = (cs_Pair){
         .key = key,
         .value = cs_Type_StoreValue(type, value),
-        .type = cs_Type_NewC(type),
+        .type = type,
     };
     return pair;
 }
