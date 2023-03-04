@@ -89,4 +89,6 @@ bool cs_List_IsEmpty(cs_List *list);
 
 void cs_List_Print(const cs_List *list, void (*printNode)(cs_LNode *));
 
+DEFINE_CS_TYPE(CS_LIST_TYPE);
+
 #endif // LIST_H_
