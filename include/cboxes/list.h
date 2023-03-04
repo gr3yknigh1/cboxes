@@ -9,7 +9,9 @@
 #include "cboxes/status.h"
 #include "cboxes/type.h"
 
-#define CS_LIST_GET(list, index, out) cs_List_Get(list, index, ((void **)out))
+#define CS_LIST_GET(list, index, out)                                          \
+    cs_List_Get(list, index, ((void **)(&out)))
+
 #define CS_LIST_INSERT(list, index, in, status)                                \
     do {                                                                       \
         void *ptr = &in;                                                       \

@@ -126,7 +126,7 @@ Test(test_list, List_DataAccess) {
 
     for (int i = 0; i < 3; i++) {
         x = NULL;
-        status = CS_LIST_GET(list, indexes[i], &x);
+        status = CS_LIST_GET(list, indexes[i], x);
         cr_assert(status == cs_INDEX_ERROR, "Tryed access '%d' index\n",
                   indexes[i]);
         cr_assert(x == NULL, "Tryed access '%d' index\n", indexes[i]);
@@ -143,7 +143,7 @@ void testing_CheckListInsertingAtIndex(cs_List *list, unsigned long index) {
     cr_assert(status == cs_OK);
 
     int *storedNum = NULL;
-    testing_IS_OK(CS_LIST_GET(list, index, &storedNum));
+    testing_IS_OK(CS_LIST_GET(list, index, storedNum));
 
     cr_assert(*storedNum == randNum, "%lu %d %d", index, *storedNum, randNum);
 }
@@ -171,7 +171,7 @@ void testing_CheckListPopAtIndex(cs_List *list, unsigned long index) {
     unsigned long lengthBefore = list->length;
 
     int *valueFromGet = NULL;
-    CS_LIST_GET(list, index, &valueFromGet);
+    CS_LIST_GET(list, index, valueFromGet);
 
     int *valueFromPop = NULL;
     cr_assert(cs_List_Pop(list, index, (void **)(&valueFromPop)) == cs_OK);
@@ -206,16 +206,16 @@ void testing_CheckListRemoveAtIndex(cs_List *list, unsigned long index) {
     int *itemBefore = NULL;
     int *itemNext = NULL;
 
-    testing_IS_OK(CS_LIST_GET(list, index, &itemBefore));
+    testing_IS_OK(CS_LIST_GET(list, index, itemBefore));
 
     testing_IS_OK(CS_LIST_GET(
         list, index == list->length - 1 ? list->length - 2 : index + 1,
-        &itemNext));
+        itemNext));
     testing_IS_OK(cs_List_Remove(list, index));
 
     int *itemAfter = NULL;
     testing_IS_OK(CS_LIST_GET(
-        list, index == list->length ? list->length - 1 : index, &itemAfter));
+        list, index == list->length ? list->length - 1 : index, itemAfter));
 
     cr_assert(list->length == lengthBefore - 1);
     cr_assert(*itemAfter != *itemBefore);
