@@ -18,6 +18,9 @@ cs_Hashmap *cs_Hashmap_New(const cs_Type *type, u64 capacity) {
         .count = 0,
     };
 
+    for (u64 i = 0; i < capacity; i++) {
+        cs_List_PushBack(hashmap->buckets, cs_List_New(CS_PAIR_TYPE));
+    }
     return hashmap;
 }
 
