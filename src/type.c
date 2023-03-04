@@ -34,4 +34,13 @@ void *cs_Type_StoreValue(const cs_Type *type, void *value) {
     }
 }
 
+INIT_PRIMITIVE_CS_TYPE(CS_INT16_TYPE, short);
+INIT_PRIMITIVE_CS_TYPE(CS_INT32_TYPE, int);
+INIT_PRIMITIVE_CS_TYPE(CS_INT64_TYPE, long);
+INIT_PRIMITIVE_CS_TYPE(CS_UINT16_TYPE, unsigned short);
+INIT_PRIMITIVE_CS_TYPE(CS_UINT32_TYPE, unsigned int);
+INIT_PRIMITIVE_CS_TYPE(CS_UINT64_TYPE, unsigned long);
+INIT_PRIMITIVE_CS_TYPE(CS_FLOAT32_TYPE, float);
+INIT_PRIMITIVE_CS_TYPE(CS_FLOAT64_TYPE, double);
+
 void cs_Type_Free(void *ptr) { free(ptr); }
