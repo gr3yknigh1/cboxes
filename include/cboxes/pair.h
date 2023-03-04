@@ -5,7 +5,7 @@
 #include "cboxes/type.h"
 
 typedef struct cs_Pair {
-    cs_String *key;
+    cstr key;
     void *value;
     const cs_Type *type;
 } cs_Pair;
