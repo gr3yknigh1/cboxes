@@ -11,8 +11,7 @@ cs_Hashmap *cs_Hashmap_New(const cs_Type *type, u64 capacity) {
     cs_Hashmap *hashmap = malloc(sizeof(cs_Hashmap));
 
     *hashmap = (cs_Hashmap){
-        .buckets = cs_List_New(
-            cs_Type_New(sizeof(cs_List), true, cs_List_Copy, cs_List_Free)),
+        .buckets = cs_List_New(CS_LIST_TYPE),
         .type = type,
         .capacity = capacity,
         .count = 0,
