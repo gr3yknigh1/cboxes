@@ -36,7 +36,7 @@ cs_Status cs_Hashmap_Set(cs_Hashmap *hashmap, cstr key, void *value) {
     u64 hash = cs_Hashmap_Hash(hashmap, key);
 
     cs_List *bucket = NULL;
-    cs_Status g_status = CS_LIST_GET(hashmap->buckets, hash, &bucket);
+    cs_Status g_status = CS_LIST_GET(hashmap->slots, hash, bucket);
     assert(g_status == cs_OK);
 
     if (cs_List_IsEmpty(bucket)) {
@@ -44,7 +44,7 @@ cs_Status cs_Hashmap_Set(cs_Hashmap *hashmap, cstr key, void *value) {
     } else {
         CS_LIST_FOREACH(bucket, cs_Pair, i, v, {
             (void)i;
-            if (v->key->data == key) {
+            if (v->key == key) {
                 hashmap->type->free(v->value);
                 v->value = cs_Type_StoreValue(hashmap->type, value);
                 break;
