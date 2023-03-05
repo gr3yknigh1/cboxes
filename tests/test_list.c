@@ -17,7 +17,7 @@
     } while (0)
 
 cs_List *generateList(size_t length, int min, int max) {
-    cs_List *list = cs_List_NewD(sizeof(int));
+    cs_List *list = cs_List_New(CS_INT32_TYPE);
     for (size_t i = 0; i < length; i++) {
         int randNum = randInt(min, max);
         cs_List_PushBack(list, &randNum);
@@ -39,8 +39,7 @@ void teardown(void) { cs_List_Free(sdata.intList); }
 TestSuite(test_list, .init = setup, .fini = teardown);
 
 Test(test_list, List_Creation_Full) {
-    cs_List *list = cs_List_New(
-        cs_Type_New(sizeof(int), false, cs_ShallowCopy, cs_ShallowFree));
+    cs_List *list = cs_List_New(CS_INT32_TYPE);
 
     cr_assert(list != NULL);
     cr_assert(list->head == NULL);
@@ -52,7 +51,7 @@ Test(test_list, List_Creation_Full) {
 }
 
 Test(test_list, List_Creation_Default) {
-    cs_List *list = cs_List_NewD(sizeof(int));
+    cs_List *list = cs_List_New(CS_INT32_TYPE);
 
     cr_assert(list != NULL);
     cr_assert(list->head == NULL);
@@ -64,7 +63,7 @@ Test(test_list, List_Creation_Default) {
 }
 
 Test(test_list, List_Operations_PushBack) {
-    cs_List *list = cs_List_NewD(sizeof(int));
+    cs_List *list = cs_List_New(CS_INT32_TYPE);
 
     size_t sourceArrayLength = 10;
     int *sourceArray = generateArray(sourceArrayLength, 0, 20);
