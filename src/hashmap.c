@@ -64,7 +64,6 @@ void cs_Hashmap_Free(void *ptr) {
         cs_List_Free(slot);
     }
     cs_List_Free(hashmap->slots);
-    cs_Type_Free((void *)hashmap->type);
 
     free(ptr);
 }
