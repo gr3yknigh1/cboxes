@@ -29,6 +29,17 @@
         }                                                                      \
     } while (0)
 
+#define CS_LIST_FOREACHV(__list, __t, __v, __code)                             \
+    do {                                                                       \
+        cs_LNode *__n = __list->head;                                          \
+        __t *__v = NULL;                                                       \
+        while (__n != NULL) {                                                  \
+            __v = __n->value;                                                  \
+            __code;                                                            \
+            __n = __n->next;                                                   \
+        }                                                                      \
+    } while (0)
+
 #define CS_LIST_FOREACH(list, type, i, v, body)                                \
     do {                                                                       \
         cs_LNode *__n = list->head;                                            \
