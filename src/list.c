@@ -201,7 +201,6 @@ void cs_List_Clear(cs_List *list) {
 void cs_List_Free(void *ptr) {
     cs_List *list = ptr;
     cs_List_Clear(list);
-    cs_Type_Free((cs_Type *)list->type);
     free(list);
 }
 
