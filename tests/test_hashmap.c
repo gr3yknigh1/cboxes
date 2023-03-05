@@ -2,19 +2,27 @@
 #include <criterion/internal/assert.h>
 #include <criterion/internal/test.h>
 #include <stdint.h>
+#include <stdio.h>
+
+#include "tools/common.h"
 
 #include "cboxes/hashmap.h"
 #include "cboxes/list.h"
 
-void init() {}
-void fini() {}
+struct {
+    cs_Hashmap *map;
+} data;
+
+void init(void) { data.map = cs_Hashmap_New(CS_INT32_TYPE, 20); }
+
+void fini(void) { cs_Hashmap_Free(data.map); }
 
 TestSuite(test_hashmap, .init = init, .fini = fini);
 
 Test(test_hashmap, cs_Hashmap_New) {
     const uint8_t cap = 20;
 
-    const cs_Hashmap *map = cs_Hashmap_New(CS_INT32_TYPE, cap);
+    cs_Hashmap *map = cs_Hashmap_New(CS_INT32_TYPE, cap);
 
     cr_assert_not_null(map);
     cr_assert(map->type == CS_INT32_TYPE);
@@ -29,5 +37,47 @@ Test(test_hashmap, cs_Hashmap_New) {
         CS_LIST_GET(map->slots, i, slot);
         cr_assert_not_null(slot);
         cr_assert(cs_List_IsEmpty(slot));
+    }
+
+    cs_Hashmap_Free(map);
+}
+
+Test(test_hashmap, cs_Hashmap_Hash_Range) {
+    const uint64_t hashCheckCount = 100000;
+    for (uint64_t i = 0; i < hashCheckCount; i++) {
+        const char *str = randStr(5, 20);
+        uint64_t hash = cs_Hashmap_Hash(data.map, str);
+        cr_expect(hash < data.map->capacity);
+        free((void *)str);
+    }
+}
+
+Test(test_hashmap, cs_Hashmap_Hash_SameValue) {
+    const uint64_t hashCheckCount = 100000;
+    for (uint64_t i = 0; i < hashCheckCount; i++) {
+        const char *str = randStr(5, 20);
+        uint64_t hashA = cs_Hashmap_Hash(data.map, str);
+        uint64_t hashB = cs_Hashmap_Hash(data.map, str);
+        cr_expect(hashA == hashB);
+        free((void *)str);
+    }
+
+}
+
+void printIntNode(cs_LNode *n) { printf("%d", *(int *)n->value); }
+
+Test(test_hashmap, cs_Hashmap_Set) {
+    cs_Hashmap *map = data.map;
+
+    int x = 22;
+    cr_expect(cs_Hashmap_Set(map, "x", &x) == cs_OK);
+
+    cs_List *slot = NULL;
+    cr_expect(CS_LIST_GET(map->slots, cs_Hashmap_Hash(map, "x"), slot) == cs_OK);
+    cr_expect(*((int *)slot->tail->value) == x);
+
+    for (uint64_t i = 0; i < map->capacity; i++) {
+        CS_LIST_GET(map->slots, i, slot);
+        cs_List_Print(slot, printIntNode);
     }
 }
