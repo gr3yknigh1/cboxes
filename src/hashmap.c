@@ -58,6 +58,11 @@ cs_Status cs_Hashmap_Set(cs_Hashmap *hashmap, cstr key, void *value) {
 void cs_Hashmap_Free(void *ptr) {
     cs_Hashmap *hashmap = (cs_Hashmap *)ptr;
 
+    for (u64 i = 0; i < hashmap->capacity; i++) {
+        cs_List *slot = NULL;
+        assert(CS_LIST_GET(hashmap->slots, i, slot) == cs_OK);
+        cs_List_Free(slot);
+    }
     cs_List_Free(hashmap->slots);
     cs_Type_Free((void *)hashmap->type);
 
