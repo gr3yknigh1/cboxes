@@ -93,3 +93,19 @@ Test(test_hashmap, cs_Hashmap_Get) {
 
     cr_expect(CS_HASHMAP_GET(map, "unexpected_key", stored) == cs_KEY_ERROR);
 }
+
+Test(test_hashmap, cs_Hashmap_Pop) {
+    cs_Hashmap *map = data.map;
+
+    cstr key = "key_to_some_value";
+    int value = 22;
+    cr_expect(cs_Hashmap_Set(map, key, &value) == cs_OK);
+
+    int *popedValue = malloc(sizeof(int));
+    cr_expect(cs_Hashmap_Pop(map, key, (void **)(&popedValue)) == cs_OK);
+
+    // cr_expect(popedValue != NULL);
+    // cr_expect(*popedValue == value);
+    //
+    // cr_expect(CS_HASHMAP_GET(map, key, popedValue) == cs_INDEX_ERROR);
+}
