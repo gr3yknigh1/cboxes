@@ -82,12 +82,40 @@ cs_Status cs_Hashmap_Get(cs_Hashmap *hashmap, cstr key, void **out) {
     return cs_KEY_ERROR;
 }
 
+static cs_List *cs_Hashmap_GetSlot(cs_Hashmap *map, cstr key) {
+    u64 index = cs_Hashmap_Hash(map, key);
+    cs_List *slot = NULL;
+    CS_LIST_GET(map->slots, index, slot);
+    return slot;
+}
+
+cs_Status cs_Hashmap_Pop(cs_Hashmap *hashmap, cstr key, void **out) {
+    cs_List *slot = cs_Hashmap_GetSlot(hashmap, key);
+    if (slot == NULL) return cs_NULL_REFERENCE_ERROR;
+
+    cs_Pair *pair = NULL;
+    u64 popIndex = 0;
+    CS_LIST_FOREACHN(slot, index, node, {
+        pair = (cs_Pair *)(node->value);
+        if (pair->key == key) {
+            pair->type->copy(*out, pair->value, pair->type->size);
+            popIndex = index;
+            break;
+        }
+    });
+
+    if (pair == NULL) return cs_KEY_ERROR;
+    if (cs_List_Remove(slot, popIndex) != cs_OK) return cs_ERROR;
+
+    return cs_OK;
+}
+
 void cs_Hashmap_Free(void *ptr) {
     cs_Hashmap *hashmap = (cs_Hashmap *)ptr;
 
     for (u64 i = 0; i < hashmap->capacity; i++) {
         cs_List *slot = NULL;
-        assert(CS_LIST_GET(hashmap->slots, i, slot) == cs_OK);
+        CS_LIST_GET(hashmap->slots, i, slot);
         cs_List_Free(slot);
     }
     cs_List_Free(hashmap->slots);
