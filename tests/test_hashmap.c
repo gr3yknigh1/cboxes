@@ -61,7 +61,6 @@ Test(test_hashmap, cs_Hashmap_Hash_SameValue) {
         cr_expect(hashA == hashB);
         free((void *)str);
     }
-
 }
 
 void printIntNode(cs_LNode *n) { printf("%d", *(int *)n->value); }
@@ -69,15 +68,28 @@ void printIntNode(cs_LNode *n) { printf("%d", *(int *)n->value); }
 Test(test_hashmap, cs_Hashmap_Set) {
     cs_Hashmap *map = data.map;
 
-    int x = 22;
-    cr_expect(cs_Hashmap_Set(map, "x", &x) == cs_OK);
+    cstr key = randStr(10, 20);
+    int value = 22;
+    cr_expect(cs_Hashmap_Set(map, key, &value) == cs_OK);
 
     cs_List *slot = NULL;
-    cr_expect(CS_LIST_GET(map->slots, cs_Hashmap_Hash(map, "x"), slot) == cs_OK);
-    cr_expect(*((int *)slot->tail->value) == x);
+    cr_expect(CS_LIST_GET(map->slots, cs_Hashmap_Hash(map, key), slot) ==
+              cs_OK);
+    cr_expect(*((int *)((cs_Pair *)slot->tail->value)->value) == value);
+}
 
-    for (uint64_t i = 0; i < map->capacity; i++) {
-        CS_LIST_GET(map->slots, i, slot);
-        cs_List_Print(slot, printIntNode);
-    }
+Test(test_hashmap, cs_Hashmap_Get) {
+    cs_Hashmap *map = data.map;
+
+    cstr key = "expected_key";
+    int value = 22;
+
+    cr_expect(cs_Hashmap_Set(map, key, &value) == cs_OK);
+
+    int *stored = NULL;
+
+    cr_expect(CS_HASHMAP_GET(map, key, stored) == cs_OK);
+    cr_expect(*stored == value);
+
+    cr_expect(CS_HASHMAP_GET(map, "unexpected_key", stored) == cs_KEY_ERROR);
 }
