@@ -5,6 +5,7 @@
 #include "cboxes/list.h"
 #include "cboxes/pair.h"
 #include "cboxes/shallow.h"
+#include "cboxes/status.h"
 #include "cboxes/type.h"
 
 cs_Hashmap *cs_Hashmap_New(const cs_Type *type, u64 capacity) {
@@ -63,6 +64,22 @@ cs_Status cs_Hashmap_Set(cs_Hashmap *hashmap, cstr key, void *value) {
     }
 
     return cs_OK;
+}
+
+cs_Status cs_Hashmap_Get(cs_Hashmap *hashmap, cstr key, void **out) {
+    u64 index = cs_Hashmap_Hash(hashmap, key);
+
+    cs_List *slot = NULL;
+    CS_EXIT_ON_ERR(CS_LIST_GET(hashmap->slots, index, slot));
+
+    CS_LIST_FOREACHV(slot, cs_Pair, pair, {
+        if (pair->key == key) {
+            *out = pair->value;
+            return cs_OK;
+        }
+    });
+
+    return cs_KEY_ERROR;
 }
 
 void cs_Hashmap_Free(void *ptr) {
