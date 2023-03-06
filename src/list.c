@@ -211,6 +211,7 @@ bool cs_List_IsInRange(cs_List *list, u64 index) {
 bool cs_List_IsEmpty(cs_List *list) { return list->length == 0; }
 
 void cs_List_Print(const cs_List *list, void (*printValue)(cs_LNode *)) {
+    printf("<List length:%ld>\n", list->length);
     CS_LIST_FOREACHN(list, i, n, {
         printf("<LNode [%lu]>\n", i);
 
