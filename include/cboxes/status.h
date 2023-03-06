@@ -3,6 +3,7 @@
 
 typedef enum cs_Status {
     cs_OK,
+    cs_ERROR,
     cs_INDEX_ERROR,
     cs_OUT_OF_RANGE,
     cs_COLLECTION_IS_EMPTY,
