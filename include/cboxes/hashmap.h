@@ -8,6 +8,8 @@
 #include "cboxes/string.h"
 #include "cboxes/type.h"
 
+#define CS_HASHMAP_GET(map, key, out) cs_Hashmap_Get(map, key, (void **)(&out))
+
 typedef struct cs_Hashmap {
     cs_List *slots;
     const cs_Type *type;
