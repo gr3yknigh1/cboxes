@@ -8,7 +8,7 @@
 #include "cboxes/status.h"
 #include "cboxes/type.h"
 
-INIT_COMPLEX_CS_TYPE(CS_LIST_TYPE, cs_List *, cs_List_Copy, cs_List_Free);
+INIT_COMPLEX_CS_TYPE(CS_TYPE_LIST, cs_List *, cs_List_Copy, cs_List_Free);
 
 cs_List *cs_List_New(const cs_Type *type) {
     assert(type->size > 0);

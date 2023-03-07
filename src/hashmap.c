@@ -12,14 +12,14 @@ cs_Hashmap *cs_Hashmap_New(const cs_Type *type, u64 capacity) {
     cs_Hashmap *hashmap = malloc(sizeof(cs_Hashmap));
 
     *hashmap = (cs_Hashmap){
-        .slots = cs_List_New(CS_LIST_TYPE),
+        .slots = cs_List_New(CS_TYPE_LIST),
         .type = type,
         .capacity = capacity,
         .count = 0,
     };
 
     for (u64 i = 0; i < capacity; i++) {
-        cs_List_PushBack(hashmap->slots, cs_List_New(CS_PAIR_TYPE));
+        cs_List_PushBack(hashmap->slots, cs_List_New(CS_TYPE_PAIR));
     }
     return hashmap;
 }
@@ -91,7 +91,8 @@ static cs_List *cs_Hashmap_GetSlot(cs_Hashmap *map, cstr key) {
 
 cs_Status cs_Hashmap_Pop(cs_Hashmap *hashmap, cstr key, void **out) {
     cs_List *slot = cs_Hashmap_GetSlot(hashmap, key);
-    if (slot == NULL) return cs_NULL_REFERENCE_ERROR;
+    if (slot == NULL)
+        return cs_NULL_REFERENCE_ERROR;
 
     cs_Pair *pair = NULL;
     u64 popIndex = 0;
@@ -104,8 +105,10 @@ cs_Status cs_Hashmap_Pop(cs_Hashmap *hashmap, cstr key, void **out) {
         }
     });
 
-    if (pair == NULL) return cs_KEY_ERROR;
-    if (cs_List_Remove(slot, popIndex) != cs_OK) return cs_ERROR;
+    if (pair == NULL)
+        return cs_KEY_ERROR;
+    if (cs_List_Remove(slot, popIndex) != cs_OK)
+        return cs_ERROR;
 
     return cs_OK;
 }

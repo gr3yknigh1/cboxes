@@ -13,7 +13,7 @@ struct {
     cs_Hashmap *map;
 } data;
 
-void init(void) { data.map = cs_Hashmap_New(CS_INT32_TYPE, 20); }
+void init(void) { data.map = cs_Hashmap_New(CS_TYPE_I32, 20); }
 
 void fini(void) { cs_Hashmap_Free(data.map); }
 
@@ -22,15 +22,15 @@ TestSuite(test_hashmap, .init = init, .fini = fini);
 Test(test_hashmap, cs_Hashmap_New) {
     const uint8_t cap = 20;
 
-    cs_Hashmap *map = cs_Hashmap_New(CS_INT32_TYPE, cap);
+    cs_Hashmap *map = cs_Hashmap_New(CS_TYPE_I32, cap);
 
     cr_assert_not_null(map);
-    cr_assert(map->type == CS_INT32_TYPE);
+    cr_assert(map->type == CS_TYPE_I32);
     cr_assert(map->capacity == cap);
     cr_assert(map->count == 0);
 
     cr_assert_not_null(map->slots);
-    cr_assert(map->slots->type == CS_LIST_TYPE);
+    cr_assert(map->slots->type == CS_TYPE_LIST);
 
     for (uint64_t i = 0; i < cap; i++) {
         cs_List *slot = NULL;

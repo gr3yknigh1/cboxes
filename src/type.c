@@ -1,4 +1,5 @@
 #include "cboxes/type.h"
+#include "cboxes/numtypes.h"
 #include <assert.h>
 
 cs_Type *cs_Type_New(size_t size, bool isReference, cs_CopyFunc copy,
@@ -34,13 +35,17 @@ void *cs_Type_StoreValue(const cs_Type *type, void *value) {
     }
 }
 
-INIT_PRIMITIVE_CS_TYPE(CS_INT16_TYPE, short);
-INIT_PRIMITIVE_CS_TYPE(CS_INT32_TYPE, int);
-INIT_PRIMITIVE_CS_TYPE(CS_INT64_TYPE, long);
-INIT_PRIMITIVE_CS_TYPE(CS_UINT16_TYPE, unsigned short);
-INIT_PRIMITIVE_CS_TYPE(CS_UINT32_TYPE, unsigned int);
-INIT_PRIMITIVE_CS_TYPE(CS_UINT64_TYPE, unsigned long);
-INIT_PRIMITIVE_CS_TYPE(CS_FLOAT32_TYPE, float);
-INIT_PRIMITIVE_CS_TYPE(CS_FLOAT64_TYPE, double);
+INIT_PRIMITIVE_CS_TYPE(CS_TYPE_I8, i8);
+INIT_PRIMITIVE_CS_TYPE(CS_TYPE_I16, i16);
+INIT_PRIMITIVE_CS_TYPE(CS_TYPE_I32, i32);
+INIT_PRIMITIVE_CS_TYPE(CS_TYPE_I64, i64);
+
+INIT_PRIMITIVE_CS_TYPE(CS_TYPE_U8, u8);
+INIT_PRIMITIVE_CS_TYPE(CS_TYPE_U16, u16);
+INIT_PRIMITIVE_CS_TYPE(CS_TYPE_U32, u32);
+INIT_PRIMITIVE_CS_TYPE(CS_TYPE_U64, u64);
+
+INIT_PRIMITIVE_CS_TYPE(CS_TYPE_F32, f32);
+INIT_PRIMITIVE_CS_TYPE(CS_TYPE_F64, f64);
 
 void cs_Type_Free(void *ptr) { free(ptr); }

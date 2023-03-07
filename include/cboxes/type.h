@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
+#include "cboxes/numtypes.h"
 #include "cboxes/shallow.h"
 
 typedef void *(*cs_CopyFunc)(void *dest, const void *src, size_t count);
@@ -23,27 +24,31 @@ void *cs_Type_StoreValue(const cs_Type *type, void *value);
 
 void cs_Type_Free(void *ptr);
 
-#define DEFINE_CS_TYPE(name) extern const cs_Type *name
+#define DEFINE_CS_TYPE(__name) extern const cs_Type *__name
 
-#define INIT_PRIMITIVE_CS_TYPE(name, type)                                     \
-    const cs_Type *name = &(cs_Type) {                                         \
-        .size = sizeof(type), .isReference = false, .copy = cs_ShallowCopy,    \
+#define INIT_PRIMITIVE_CS_TYPE(__name, __type)                                 \
+    const cs_Type *__name = &(cs_Type) {                                       \
+        .size = sizeof(__type), .isReference = false, .copy = cs_ShallowCopy,  \
         .free = cs_ShallowFree,                                                \
     }
 
-#define INIT_COMPLEX_CS_TYPE(name, type, _copy, _free)                         \
-    const cs_Type *name = &(cs_Type) {                                         \
-        .size = sizeof(type), .isReference = true, .copy = _copy,              \
-        .free = _free,                                                         \
+#define INIT_COMPLEX_CS_TYPE(__name, __type, __copy, __free)                   \
+    const cs_Type *__name = &(cs_Type) {                                       \
+        .size = sizeof(__type), .isReference = true, .copy = __copy,           \
+        .free = __free,                                                        \
     }
 
-DEFINE_CS_TYPE(CS_INT16_TYPE);
-DEFINE_CS_TYPE(CS_INT32_TYPE);
-DEFINE_CS_TYPE(CS_INT64_TYPE);
-DEFINE_CS_TYPE(CS_UINT16_TYPE);
-DEFINE_CS_TYPE(CS_UINT32_TYPE);
-DEFINE_CS_TYPE(CS_UINT64_TYPE);
-DEFINE_CS_TYPE(CS_FLOAT32_TYPE);
-DEFINE_CS_TYPE(CS_FLOAT64_TYPE);
+DEFINE_CS_TYPE(CS_TYPE_I8);
+DEFINE_CS_TYPE(CS_TYPE_I16);
+DEFINE_CS_TYPE(CS_TYPE_I32);
+DEFINE_CS_TYPE(CS_TYPE_I64);
+
+DEFINE_CS_TYPE(CS_TYPE_U8);
+DEFINE_CS_TYPE(CS_TYPE_U16);
+DEFINE_CS_TYPE(CS_TYPE_U32);
+DEFINE_CS_TYPE(CS_TYPE_U64);
+
+DEFINE_CS_TYPE(CS_TYPE_F32);
+DEFINE_CS_TYPE(CS_TYPE_F64);
 
 #endif // TYPE_H_
