@@ -35,6 +35,8 @@ void *cs_Type_StoreValue(const cs_Type *type, void *value) {
     }
 }
 
+void cs_Type_Free(void *ptr) { free(ptr); }
+
 INIT_PRIMITIVE_CS_TYPE(CS_TYPE_I8, i8);
 INIT_PRIMITIVE_CS_TYPE(CS_TYPE_I16, i16);
 INIT_PRIMITIVE_CS_TYPE(CS_TYPE_I32, i32);
@@ -47,5 +49,3 @@ INIT_PRIMITIVE_CS_TYPE(CS_TYPE_U64, u64);
 
 INIT_PRIMITIVE_CS_TYPE(CS_TYPE_F32, f32);
 INIT_PRIMITIVE_CS_TYPE(CS_TYPE_F64, f64);
-
-void cs_Type_Free(void *ptr) { free(ptr); }
