@@ -80,7 +80,6 @@ typedef struct cs_List {
 } cs_List;
 
 cs_List *cs_List_New(const cs_Type *type);
-cs_List *cs_List_NewD(size_t size);
 
 void *cs_List_Copy(void *dest, const void *src, size_t count);
 

@@ -23,10 +23,6 @@ cs_List *cs_List_New(const cs_Type *type) {
     return list;
 }
 
-cs_List *cs_List_NewD(size_t size) {
-    return cs_List_New(
-        cs_Type_New(size, false, cs_ShallowCopy, cs_ShallowFree));
-}
 void *cs_List_Copy(void *dest, const void *src, size_t count) {
     (void)count;
 
