@@ -4,7 +4,7 @@ REMOVE = rm -rf
 GIT-CLEAN = git clean
 
 CC     = clang
-CFLAGS = -g -Wall -std=c17
+CFLAGS = -std=c2x -g -Wall -Wextra -Wpedantic -Wfloat-equal -Wformat
 
 AR      = ar
 ARFLAGS = -cvrs
@@ -30,7 +30,6 @@ SOURCES = $(wildcard $(SOURCES_DIR)/*.c)
 HEADERS = $(wildcard $(INCLUDE_DIR)/**/*.h)
 OBJS    = $(patsubst $(SOURCES_DIR)/%.c, $(OBJ_DIR)/%.o, $(SOURCES))
 
-
 FORMATTER = clang-format
 FORMATTER_FLAGS = -i
 
@@ -38,7 +37,7 @@ FORMATTER_FLAGS = -i
 default: all
 all: $(LIBRARY)
 
-release: CFLAGS=-Wall -O3 -DNDEBUG
+release: CFLAGS=-Wall -Werror -O3 -DNDEBUG
 release: clean
 release: $(LIBRARY)
 
@@ -59,11 +58,12 @@ $(OBJ_DIR)/%.o: $(SOURCES_DIR)/%.c $(INCLUDE_DIR)/$(PROJECT_NAME)/%.h
 $(OBJ_DIR)/%.o: $(SOURCES_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@ -I$(INCLUDE_DIR)
 
-$(TESTS_BIN_DIR)/%: $(TESTS_DIR)/%.c
-	$(CC) $(CFLAGS) $< $(OBJS) -o $@ -lcriterion -I$(INCLUDE_DIR)
 
 tests: $(LIBRARY) $(TESTS_BIN_DIR) $(TESTS_BINS)
 	@for test in $(TESTS_BINS); do $$test ; done
+
+$(TESTS_BIN_DIR)/%: $(TESTS_DIR)/%.c
+	$(CC) $(CFLAGS) $< $(OBJS) -o $@ -lcriterion -I$(INCLUDE_DIR)
 
 $(TESTS_BIN_DIR):
 	$(MKDIR) $@
@@ -84,6 +84,7 @@ format-tests:
 	$(FORMATTER) $(FORMATTER_FLAGS) $(TESTS_SOURCES)
 
 format: format-source format-tests
+
 
 .PHONY: default, all, main, clean, veryclean, format, format-source, format-tests
 
