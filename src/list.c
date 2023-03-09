@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "cboxes/defs.h"
 #include "cboxes/list.h"
 #include "cboxes/numtypes.h"
 #include "cboxes/shallow.h"
@@ -11,8 +12,6 @@
 INIT_COMPLEX_CS_TYPE(CS_TYPE_LIST, cs_List *, cs_List_Copy, cs_List_Free);
 
 cs_List *cs_List_New(const cs_Type *type) {
-    assert(type->size > 0);
-
     cs_List *list = malloc(sizeof(cs_List));
     *list = (cs_List){
         .head = NULL,
