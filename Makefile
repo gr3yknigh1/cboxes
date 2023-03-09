@@ -4,6 +4,9 @@ REMOVE = rm -rf
 CC     = clang
 CFLAGS = -g -Wall -std=c17
 
+AR      = ar
+ARFLAGS = -cvrs
+
 PROJECT_NAME = cboxes
 
 PROJECT_DIR = $(CURDIR)
@@ -40,7 +43,7 @@ release: $(LIBRARY)
 
 $(LIBRARY): $(BUILD_DIR) $(OBJ_DIR) $(OBJS)
 	$(RM) $(LIBRARY)
-	ar -cvrs $(LIBRARY) $(OBJS)
+	$(AR) $(ARFLAGS) $(LIBRARY) $(OBJS)
 
 $(BUILD_DIR):
 	$(MKDIR) $@
