@@ -1,6 +1,8 @@
 MKDIR  = mkdir -p
 REMOVE = rm -rf
 
+GIT-CLEAN = git clean
+
 CC     = clang
 CFLAGS = -g -Wall -std=c17
 
@@ -67,8 +69,12 @@ $(TESTS_BIN_DIR):
 	$(MKDIR) $@
 
 
-clean veryclean:
+clean:
 	$(REMOVE) $(BUILD_DIR)
+
+veryclean: clean
+	$(GIT-CLEAN) -fxdx
+
 
 format-source:
 	$(FORMATTER) $(FORMATTER_FLAGS) $(SOURCES)
@@ -79,5 +85,5 @@ format-tests:
 
 format: format-source format-tests
 
-.PHONY: default, all, main, clean
+.PHONY: default, all, main, clean, veryclean, format, format-source, format-tests
 
