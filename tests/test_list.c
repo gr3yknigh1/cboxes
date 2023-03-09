@@ -5,15 +5,16 @@
 #include "cboxes/list.h"
 #include "cboxes/shallow.h"
 
+#include "cboxes/type.h"
 #include "tools/common.h"
 
 // TODO(gr3yknigh1): Add tests for deep refed structs
 
-#define testing_IS_OK(expr, ...)                                               \
+#define testing_IS_OK(expr)                                                    \
     do {                                                                       \
         cs_Status status = expr;                                               \
         cr_assert(status == cs_OK, "CS call != cs_OK; status == %d\n",         \
-                  status __VA_OPT__(, ) __VA_ARGS__);                          \
+                  status);                                                     \
     } while (0)
 
 cs_List *generateList(size_t length, int min, int max) {
@@ -87,7 +88,7 @@ Test(test_list, List_Operations_PushBack) {
 }
 
 Test(test_list, List_Operations_PushFront) {
-    cs_List *list = cs_List_NewD(sizeof(int));
+    cs_List *list = cs_List_New(CS_TYPE_I32);
 
     size_t sourceArrayLength = 10;
     int *sourceArray = generateArray(sourceArrayLength, 0, 20);
@@ -254,7 +255,7 @@ Test(test_list, List_Deletion_Clear) {
 }
 
 Test(test_list, List_Free) {
-    cs_List *list = cs_List_NewD(sizeof(int));
+    cs_List *list = cs_List_New(CS_TYPE_I32);
     cs_List_Free(list);
 }
 
