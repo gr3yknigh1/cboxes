@@ -75,6 +75,17 @@ clean:
 veryclean: clean
 	$(GIT-CLEAN) -fxdx
 
+TESTING_DIR = $(PROJECT_DIR)/testing
+TESTING_SRC = $(TESTING_DIR)/testing.c
+TESTING_OUT = $(BUILD_DIR)/testing
+
+$(TESTING_SRC): $(LIBRARY)
+	$(CC) $(CFLAGS) $(TESTING_SRC) $< -o $(BUILD_DIR)/testing -I$(INCLUDE_DIR)
+
+testing: $(TESTING_SRC)
+
+run: testing
+	@$(TESTING_OUT)
 
 format-source:
 	$(FORMATTER) $(FORMATTER_FLAGS) $(SOURCES)
