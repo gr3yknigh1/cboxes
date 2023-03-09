@@ -27,8 +27,20 @@ cs_List *cs_List_NewD(size_t size) {
     return cs_List_New(
         cs_Type_New(size, false, cs_ShallowCopy, cs_ShallowFree));
 }
+void *cs_List_Copy(void *dest, const void *src, size_t count) {
+    (void)count;
 
-void *cs_List_Copy(void *dest, const void *src, size_t count) { return NULL; }
+    const cs_List *orig = (const cs_List *)src;
+    cs_List *copy = cs_List_New(orig->type);
+
+    CS_LIST_FOREACHN(orig, i, n, {
+        (void)i;
+        cs_List_PushBack(copy, n->value);
+    });
+
+    *(cs_List *)dest = *copy;
+    return copy;
+}
 
 void cs_List_PushBack(cs_List *list, void *value) {
     cs_LNode *node = cs_LNode_NewD(cs_Type_StoreValue(list->type, value));
