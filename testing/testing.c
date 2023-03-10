@@ -7,15 +7,9 @@
 
 #define LOG(X, ...) printf(">>> " X __VA_OPT__(, __VA_ARGS__))
 
-#define CS_LIST_PUSHBACK_RVALUE(list, value)                                   \
+#define CS_LIST_PUSHBACK_LVALUE(__list, value)                                 \
     do {                                                                       \
-        typeof(value) __value = value;                                         \
-        cs_List_PushBack(list, &__value);                                      \
-    } while (0)
-
-#define CS_LIST_PUSHBACK_LVALUE(list, value)                                   \
-    do {                                                                       \
-        cs_List_PushBack(list, &value);                                        \
+        cs_List_PushBack(__list, &value);                                      \
     } while (0)
 
 #define BENCHMARK_FUNC(__name, __func, __expr, __times, __fini)                \
@@ -29,8 +23,8 @@
             totalTime += endTime - startTime;                                  \
             __fini                                                             \
         }                                                                      \
-        LOG("%s() \t [%s\t]\t time: %f seconds %ld times\n", #__func, __name,  \
-            totalTime, times);                                                 \
+        LOG("%s() [%s] :: seconds: %f  times: %ld  aver: %.10lf\n", #__func,   \
+            __name, totalTime, times, totalTime / times);                      \
     } while (0)
 
 uint64_t randU64(uint64_t min, uint64_t max) {
@@ -58,7 +52,7 @@ size_t cs_List_GetSize(const cs_List *list) {
     return totalSize;
 }
 
-#define TIMES 100000
+#define TIMES 10000
 
 void benchmark_cs_List_New(void) {
     cs_List *list = NULL;
@@ -96,7 +90,7 @@ void benchmark_cs_List_Remove(void) {
     list = randListI32(0, TIMES, TIMES);
     index = randU64(1, list->length - 1);
     BENCHMARK_FUNC("I32 AT IDX MID", cs_List_Remove,
-                   CS_ASSERT_IS_OK(cs_List_Remove(list, index)), 1000, {
+                   CS_ASSERT_IS_OK(cs_List_Remove(list, index)), TIMES, {
                        index =
                            list->length <= 2 ? 0 : randU64(1, list->length - 1);
                    });
