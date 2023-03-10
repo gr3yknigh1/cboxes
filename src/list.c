@@ -126,14 +126,18 @@ cs_Status cs_List_Insert(cs_List *list, u64 index, void *value) {
 }
 
 static cs_Status cs_List_PopNode(cs_List *list, u64 index, cs_LNode **out) {
+    CS_ASSERT(list!= NULL, "<List [addr: %p]>", (void *)list);
+
     if (list == NULL)
         return cs_NULL_REFERENCE_ERROR;
-    if (cs_List_IsEmpty(list))
-        return cs_OK;
-    if (!cs_List_IsInRange(list, index))
+    if (!cs_List_IsInRange(list, index) || cs_List_IsEmpty(list))
         return cs_INDEX_ERROR;
 
-    if (index == 0) {
+    if (list->length == 1) {
+        *out = list->head;
+        list->head = NULL;
+        list->tail = NULL;
+    } else if (index == 0) {
         *out = list->head;
         list->head = (*out)->next;
         list->head->prev = NULL;
