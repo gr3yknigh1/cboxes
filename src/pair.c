@@ -16,6 +16,7 @@ cs_Pair *cs_Pair_New(cstr key, void *value, const cs_Type *type) {
 }
 
 void *cs_Pair_Copy(void *dest, const void *src, size_t count) {
+    (void)count;
     const cs_Pair *sourcePair = (const cs_Pair *)src;
     cs_Pair *copiedPair =
         cs_Pair_New(sourcePair->key, sourcePair->value, sourcePair->type);
