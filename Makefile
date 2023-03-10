@@ -79,13 +79,14 @@ TESTING_DIR = $(PROJECT_DIR)/testing
 TESTING_SRC = $(TESTING_DIR)/testing.c
 TESTING_OUT = $(BUILD_DIR)/testing
 
-$(TESTING_SRC): $(LIBRARY)
-	$(CC) $(CFLAGS) $(TESTING_SRC) $< -o $(BUILD_DIR)/testing -I$(INCLUDE_DIR)
+$(TESTING_OUT): $(LIBRARY)
+	$(RM) $(TESTING_OUT)
+	$(CC) $(CFLAGS) $(TESTING_SRC) $< -o $@ -I$(INCLUDE_DIR)
 
-testing: $(TESTING_SRC)
+testing: $(TESTING_OUT)
 
 run: testing
-	@$(TESTING_OUT)
+	$(TESTING_OUT)
 
 format-source:
 	$(FORMATTER) $(FORMATTER_FLAGS) $(SOURCES)
