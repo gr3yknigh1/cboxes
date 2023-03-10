@@ -4,8 +4,11 @@
 #include <stdio.h>
 
 #define CS_ASSERT(X, ...)                                                      \
-    if (!(X))                                                                  \
-        fprintf(stderr, "Error: " #X "!= true");                               \
-    exit(1)
+    do {                                                                       \
+        if (!(X)) {                                                            \
+            fprintf(stderr, "Error: " #X "!= true");                           \
+            exit(1);                                                           \
+        }                                                                      \
+    } while (0)
 
 #endif // DEFS_H_
