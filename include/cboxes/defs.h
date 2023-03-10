@@ -6,7 +6,7 @@
 #define CS_ASSERT(X, ...)                                                      \
     do {                                                                       \
         if (!(X)) {                                                            \
-            fprintf(stderr, "Error: " #X "!= true");                           \
+            fprintf(stderr, "Error: " #X "!= true." __VA_OPT__(__VA_ARGS__));  \
             exit(1);                                                           \
         }                                                                      \
     } while (0)
