@@ -104,8 +104,9 @@ Test(test_hashmap, cs_Hashmap_Pop) {
     int *popedValue = malloc(sizeof(int));
     cr_expect(cs_Hashmap_Pop(map, key, (void **)(&popedValue)) == cs_OK);
 
-    // cr_expect(popedValue != NULL);
-    // cr_expect(*popedValue == value);
-    //
-    // cr_expect(CS_HASHMAP_GET(map, key, popedValue) == cs_INDEX_ERROR);
+    cr_expect(popedValue != NULL);
+    cr_expect(*popedValue == value);
+
+    cs_Status status = CS_HASHMAP_GET(map, key, popedValue);
+    cr_expect(status == cs_KEY_ERROR, "Status: %u", status);
 }
