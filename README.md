@@ -26,7 +26,7 @@ make clean all tests
 
 - [X] Linked List
 - [ ] Dynamic Array
-- [ ] Hash Map
+- [X] Hash Map
 - [ ] 2D Dynamic Array
 - [ ] BST
 
