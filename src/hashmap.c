@@ -113,6 +113,30 @@ cs_Status cs_Hashmap_Pop(cs_Hashmap *hashmap, cstr key, void **out) {
     return cs_OK;
 }
 
+cs_Status cs_Hashmap_Remove(cs_Hashmap *hashmap, cstr key) {
+    cs_List *slot = cs_Hashmap_GetSlot(hashmap, key);
+    if (slot == NULL)
+        return cs_NULL_REFERENCE_ERROR;
+
+    cs_Pair *pair = NULL;
+    u64 popIndex = 0;
+    CS_LIST_FOREACHN(slot, index, node, {
+        pair = (cs_Pair *)(node->value);
+        if (pair->key == key) {
+            pair->type->free(pair->value);
+            popIndex = index;
+            break;
+        }
+    });
+
+    if (pair == NULL)
+        return cs_KEY_ERROR;
+    if (cs_List_Remove(slot, popIndex) != cs_OK)
+        return cs_ERROR;
+
+    return cs_OK;
+}
+
 void cs_Hashmap_Free(void *ptr) {
     cs_Hashmap *hashmap = (cs_Hashmap *)ptr;
 

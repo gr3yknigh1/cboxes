@@ -110,3 +110,18 @@ Test(test_hashmap, cs_Hashmap_Pop) {
     cs_Status status = CS_HASHMAP_GET(map, key, popedValue);
     cr_expect(status == cs_KEY_ERROR, "Status: %u", status);
 }
+
+
+Test(test_hashmap, cs_Hashmap_Remove) {
+    cs_Hashmap *map = data.map;
+
+    cstr key = "key_to_some_value";
+    int value = 22;
+    cr_expect(cs_Hashmap_Set(map, key, &value) == cs_OK);
+
+    cr_expect(cs_Hashmap_Remove(map, key) == cs_OK);
+
+    int *valuePtr = malloc(sizeof(int));
+    cs_Status status = CS_HASHMAP_GET(map, key, valuePtr);
+    cr_expect(status == cs_KEY_ERROR, "Status: %u", status);
+}
