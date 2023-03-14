@@ -59,6 +59,7 @@ cs_Hashmap *cs_Hashmap_New(const cs_Type *type, u64 capacity) {
         .pairCount = 0,
     };
 
+    // TODO: Add func for capacity change
     for (u64 i = 0; i < capacity; i++) {
         cs_List_PushBack(map->bucketList, cs_List_New(CS_TYPE_PAIR));
     }
