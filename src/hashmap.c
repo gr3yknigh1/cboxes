@@ -1,5 +1,6 @@
 #include <assert.h>
 
+#include "cboxes/assert.h"
 #include "cboxes/hash.h"
 #include "cboxes/hashmap.h"
 #include "cboxes/list.h"
@@ -8,144 +9,145 @@
 #include "cboxes/status.h"
 #include "cboxes/type.h"
 
-cs_Hashmap *cs_Hashmap_New(const cs_Type *type, u64 capacity) {
-    cs_Hashmap *hashmap = malloc(sizeof(cs_Hashmap));
+static void cs_Hashmap_PushBackPair(cs_List *bucket, cstr key, void *data,
+                                    const cs_Type *type) {
+    cs_List_PushBack(bucket, cs_Pair_New(key, data, type));
+}
 
-    *hashmap = (cs_Hashmap){
-        .slots = cs_List_New(CS_TYPE_LIST),
+static void cs_Hashmap_ReplacePairValue(cs_Pair *pair, void *data) {
+    pair->type->free(pair->value);
+    pair->value = cs_Type_StoreValue(pair->type, data);
+}
+
+static cs_Pair *cs_Hashmap_FindPair(const cs_List *bucket, cstr key,
+                                    u64 *pairIndexOut) {
+    cs_Pair *pair = NULL;
+    CS_LIST_FOREACHN(bucket, index, node, {
+        pair = (cs_Pair *)(node->value);
+        if (pair->key == key) {
+            if (pairIndexOut != NULL) {
+                *pairIndexOut = index;
+            }
+            break;
+        }
+    });
+    return pair;
+}
+
+static cs_List *cs_Hashmap_GetBucket(cs_List *bucketList, u64 capacity,
+                                     cstr key) {
+    u64 index = cs_Hashmap_Hash(capacity, key);
+    cs_List *bucket = NULL;
+    cs_Status status = CS_LIST_GET(bucketList, index, bucket);
+    CS_ASSERT(
+        status == cs_OK,
+        "HASHMAP: missmatch with hash's index and bucket array length. Index = "
+        "'%lu', array length = '%lu'. cs_List_Get status code = %d\n",
+        index, bucketList->length, status);
+    CS_ASSERT(bucket != NULL, "HASHMAP: founded bucket is NULL\n");
+
+    return bucket;
+}
+
+cs_Hashmap *cs_Hashmap_New(const cs_Type *type, u64 capacity) {
+    cs_Hashmap *map = malloc(sizeof(cs_Hashmap));
+
+    *map = (cs_Hashmap){
+        .bucketList = cs_List_New(CS_TYPE_LIST),
         .type = type,
         .capacity = capacity,
-        .count = 0,
+        .pairCount = 0,
     };
 
     for (u64 i = 0; i < capacity; i++) {
-        cs_List_PushBack(hashmap->slots, cs_List_New(CS_TYPE_PAIR));
+        cs_List_PushBack(map->bucketList, cs_List_New(CS_TYPE_PAIR));
     }
-    return hashmap;
+    return map;
 }
 
-cs_Hashmap *cs_Hashmap_NewD(size_t size, u64 capacity) {
-    return cs_Hashmap_New(
-        cs_Type_New(size, false, cs_ShallowCopy, cs_ShallowFree), capacity);
+u64 cs_Hashmap_Hash(u64 capacity, cstr key) {
+    return cs_LoseLoseHash((const unsigned char *)key) % capacity;
 }
 
-u64 cs_Hashmap_Hash(cs_Hashmap *hashmap, cstr key) {
-    return cs_lose_lose_hash((const unsigned char *)key) % hashmap->capacity;
-}
+cs_Status cs_Hashmap_Set(cs_Hashmap *map, cstr key, void *data) {
+    cs_List *bucket = cs_Hashmap_GetBucket(map->bucketList, map->capacity, key);
 
-#define CS_EXIT_ON_ERR(C)                                                      \
-    do {                                                                       \
-        cs_Status __s;                                                         \
-        if ((__s = C) != cs_OK)                                                \
-            return __s;                                                        \
-    } while (0)
-
-cs_Status cs_Hashmap_Set(cs_Hashmap *hashmap, cstr key, void *value) {
-    u64 index = cs_Hashmap_Hash(hashmap, key);
-
-    cs_List *slot = NULL;
-    CS_EXIT_ON_ERR(CS_LIST_GET(hashmap->slots, index, slot));
-
-    if (cs_List_IsEmpty(slot)) {
-        cs_List_PushBack(slot, cs_Pair_New(key, value, hashmap->type));
-    } else {
-        cs_Pair *targetPair = NULL;
-        CS_LIST_FOREACHV(slot, cs_Pair, pair, {
-            if (pair->key == key) {
-                targetPair = pair;
-            }
-        });
-        if (targetPair == NULL) {
-            cs_List_PushBack(slot, cs_Pair_New(key, value, hashmap->type));
-        } else {
-            targetPair->type->free(targetPair->value);
-            targetPair->value = cs_Type_StoreValue(targetPair->type, value);
-        }
+    if (cs_List_IsEmpty(bucket)) {
+        cs_Hashmap_PushBackPair(bucket, key, data, map->type);
+        return cs_OK;
     }
+
+    cs_Pair *targetPair = cs_Hashmap_FindPair(bucket, key, NULL);
+
+    if (targetPair == NULL) {
+        cs_Hashmap_PushBackPair(bucket, key, data, map->type);
+        return cs_OK;
+    }
+
+    cs_Hashmap_ReplacePairValue(targetPair, data);
 
     return cs_OK;
 }
 
-cs_Status cs_Hashmap_Get(cs_Hashmap *hashmap, cstr key, void **out) {
-    u64 index = cs_Hashmap_Hash(hashmap, key);
+cs_Status cs_Hashmap_Get(const cs_Hashmap *map, cstr key, void **outWritePtr) {
+    cs_List *bucket = cs_Hashmap_GetBucket(map->bucketList, map->capacity, key);
 
-    cs_List *slot = NULL;
-    CS_EXIT_ON_ERR(CS_LIST_GET(hashmap->slots, index, slot));
-
-    CS_LIST_FOREACHV(slot, cs_Pair, pair, {
-        if (pair->key == key) {
-            *out = pair->value;
-            return cs_OK;
-        }
-    });
-
-    return cs_KEY_ERROR;
-}
-
-static cs_List *cs_Hashmap_GetSlot(cs_Hashmap *map, cstr key) {
-    u64 index = cs_Hashmap_Hash(map, key);
-    cs_List *slot = NULL;
-    CS_LIST_GET(map->slots, index, slot);
-    return slot;
-}
-
-cs_Status cs_Hashmap_Pop(cs_Hashmap *hashmap, cstr key, void **out) {
-    cs_List *slot = cs_Hashmap_GetSlot(hashmap, key);
-    if (slot == NULL)
-        return cs_NULL_REFERENCE_ERROR;
-
-    cs_Pair *pair = NULL;
-    u64 popIndex = 0;
-    CS_LIST_FOREACHN(slot, index, node, {
-        pair = (cs_Pair *)(node->value);
-        if (pair->key == key) {
-            pair->type->copy(*out, pair->value, pair->type->size);
-            popIndex = index;
-            break;
-        }
-    });
-
-    if (pair == NULL)
+    cs_Pair *pair = cs_Hashmap_FindPair(bucket, key, NULL);
+    if (pair == NULL) {
         return cs_KEY_ERROR;
-    if (cs_List_Remove(slot, popIndex) != cs_OK)
-        return cs_ERROR;
+    }
+
+    *outWritePtr = pair->value;
 
     return cs_OK;
 }
 
-cs_Status cs_Hashmap_Remove(cs_Hashmap *hashmap, cstr key) {
-    cs_List *slot = cs_Hashmap_GetSlot(hashmap, key);
-    if (slot == NULL)
-        return cs_NULL_REFERENCE_ERROR;
+cs_Status cs_Hashmap_Pop(cs_Hashmap *map, cstr key, void **outWritePtr) {
+    cs_List *bucket = cs_Hashmap_GetBucket(map->bucketList, map->capacity, key);
 
-    cs_Pair *pair = NULL;
-    u64 popIndex = 0;
-    CS_LIST_FOREACHN(slot, index, node, {
-        pair = (cs_Pair *)(node->value);
-        if (pair->key == key) {
-            pair->type->free(pair->value);
-            popIndex = index;
-            break;
-        }
-    });
+    u64 index;
+    cs_Pair *pair = cs_Hashmap_FindPair(bucket, key, &index);
 
-    if (pair == NULL)
+    if (pair == NULL) {
         return cs_KEY_ERROR;
-    if (cs_List_Remove(slot, popIndex) != cs_OK)
-        return cs_ERROR;
+    }
+
+    // TODO: Add difference when using references
+    pair->type->copy(*outWritePtr, pair->value, pair->type->size);
+
+    CS_ASSERT(cs_List_Remove(bucket, index) == cs_OK,
+              "HASHMAP: can't remove pair from bucket list on index = '%lu'",
+              index);
+
+    return cs_OK;
+}
+
+cs_Status cs_Hashmap_Remove(cs_Hashmap *map, cstr key) {
+    cs_List *bucket = cs_Hashmap_GetBucket(map->bucketList, map->capacity, key);
+
+    u64 index = 0;
+    cs_Pair *pair = cs_Hashmap_FindPair(bucket, key, &index);
+
+    if (pair == NULL) {
+        return cs_KEY_ERROR;
+    }
+
+    CS_ASSERT(cs_List_Remove(bucket, index) == cs_OK,
+              "HASHMAP: can't remove pair from bucket list on index = '%lu'",
+              index);
 
     return cs_OK;
 }
 
 void cs_Hashmap_Free(void *ptr) {
-    cs_Hashmap *hashmap = (cs_Hashmap *)ptr;
+    cs_Hashmap *map = (cs_Hashmap *)ptr;
 
-    for (u64 i = 0; i < hashmap->capacity; i++) {
-        cs_List *slot = NULL;
-        CS_LIST_GET(hashmap->slots, i, slot);
-        cs_List_Free(slot);
+    for (u64 i = 0; i < map->capacity; i++) {
+        cs_List *bucket = NULL;
+        CS_LIST_GET(map->bucketList, i, bucket);
+        cs_List_Free(bucket);
     }
-    cs_List_Free(hashmap->slots);
+    cs_List_Free(map->bucketList);
 
     free(ptr);
 }

@@ -27,14 +27,14 @@ Test(test_hashmap, cs_Hashmap_New) {
     cr_assert_not_null(map);
     cr_assert(map->type == CS_TYPE_I32);
     cr_assert(map->capacity == cap);
-    cr_assert(map->count == 0);
+    cr_assert(map->pairCount == 0);
 
-    cr_assert_not_null(map->slots);
-    cr_assert(map->slots->type == CS_TYPE_LIST);
+    cr_assert_not_null(map->bucketList);
+    cr_assert(map->bucketList->type == CS_TYPE_LIST);
 
     for (uint64_t i = 0; i < cap; i++) {
         cs_List *slot = NULL;
-        CS_LIST_GET(map->slots, i, slot);
+        CS_LIST_GET(map->bucketList, i, slot);
         cr_assert_not_null(slot);
         cr_assert(cs_List_IsEmpty(slot));
     }
@@ -46,7 +46,7 @@ Test(test_hashmap, cs_Hashmap_Hash_Range) {
     const uint64_t hashCheckCount = 100000;
     for (uint64_t i = 0; i < hashCheckCount; i++) {
         const char *str = randStr(5, 20);
-        uint64_t hash = cs_Hashmap_Hash(data.map, str);
+        uint64_t hash = cs_Hashmap_Hash(data.map->capacity, str);
         cr_expect(hash < data.map->capacity);
         free((void *)str);
     }
@@ -56,8 +56,8 @@ Test(test_hashmap, cs_Hashmap_Hash_SameValue) {
     const uint64_t hashCheckCount = 100000;
     for (uint64_t i = 0; i < hashCheckCount; i++) {
         const char *str = randStr(5, 20);
-        uint64_t hashA = cs_Hashmap_Hash(data.map, str);
-        uint64_t hashB = cs_Hashmap_Hash(data.map, str);
+        uint64_t hashA = cs_Hashmap_Hash(data.map->capacity, str);
+        uint64_t hashB = cs_Hashmap_Hash(data.map->capacity, str);
         cr_expect(hashA == hashB);
         free((void *)str);
     }
@@ -73,8 +73,8 @@ Test(test_hashmap, cs_Hashmap_Set) {
     cr_expect(cs_Hashmap_Set(map, key, &value) == cs_OK);
 
     cs_List *slot = NULL;
-    cr_expect(CS_LIST_GET(map->slots, cs_Hashmap_Hash(map, key), slot) ==
-              cs_OK);
+    cr_expect(CS_LIST_GET(map->bucketList, cs_Hashmap_Hash(map->capacity, key),
+                          slot) == cs_OK);
     cr_expect(*((int *)((cs_Pair *)slot->tail->value)->value) == value);
 }
 

@@ -94,8 +94,9 @@ cs_Status cs_List_Remove(cs_List *list, u64 index);
 void cs_List_Clear(cs_List *list);
 void cs_List_Free(void *ptr);
 
-bool cs_List_IsInRange(cs_List *list, u64 index);
-bool cs_List_IsEmpty(cs_List *list);
+#define cs_List_IsInRange(__list, __index)                                     \
+    (__index >= 0 && __index < __list->length)
+#define cs_List_IsEmpty(__list) (__list->length == 0)
 
 void cs_List_Print(const cs_List *list, void (*printNode)(cs_LNode *));
 

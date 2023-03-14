@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "cboxes/defs.h"
+#include "cboxes/assert.h"
 #include "cboxes/list.h"
 #include "cboxes/numtypes.h"
 #include "cboxes/shallow.h"
@@ -65,7 +65,7 @@ void cs_List_PushFront(cs_List *list, void *value) {
 
 static cs_Status cs_List_GetNode(cs_List *list, u64 index, cs_LNode **outNode) {
     if (cs_List_IsEmpty(list)) {
-        return cs_COLLECTION_IS_EMPTY;
+        return cs_INDEX_ERROR;
     }
 
     if (index == 0) {
@@ -214,12 +214,6 @@ void cs_List_Free(void *ptr) {
     cs_List_Clear(list);
     free(list);
 }
-
-bool cs_List_IsInRange(cs_List *list, u64 index) {
-    return index >= 0 && index < list->length;
-}
-
-bool cs_List_IsEmpty(cs_List *list) { return list->length == 0; }
 
 void cs_List_Print(const cs_List *list, void (*printValue)(cs_LNode *)) {
     printf("<List length:%ld>\n", list->length);
