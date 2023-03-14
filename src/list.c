@@ -126,7 +126,7 @@ cs_Status cs_List_Insert(cs_List *list, u64 index, void *value) {
 }
 
 static cs_Status cs_List_PopNode(cs_List *list, u64 index, cs_LNode **out) {
-    CS_ASSERT(list!= NULL, "<List [addr: %p]>", (void *)list);
+    CS_ASSERT(list != NULL, "<List [addr: %p]>", (void *)list);
 
     if (list == NULL)
         return cs_NULL_REFERENCE_ERROR;

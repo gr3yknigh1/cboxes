@@ -111,7 +111,6 @@ Test(test_hashmap, cs_Hashmap_Pop) {
     cr_expect(status == cs_KEY_ERROR, "Status: %u", status);
 }
 
-
 Test(test_hashmap, cs_Hashmap_Remove) {
     cs_Hashmap *map = data.map;
 
