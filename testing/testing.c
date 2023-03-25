@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <time.h>
 
-#include "cboxes/defs.h"
+#include "cboxes/assert.h"
 #include "cboxes/list.h"
 
 #define LOG(X, ...) printf(">>> " X __VA_OPT__(, __VA_ARGS__))
