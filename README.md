@@ -1,6 +1,6 @@
 # cboxes
 
-Simple collections library for C
+Simple collections library written in C
 
 ## Build
 
