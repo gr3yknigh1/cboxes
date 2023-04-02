@@ -80,11 +80,13 @@ typedef struct cs_List {
 } cs_List;
 
 cs_List *cs_List_New(const cs_Type *type);
-
-void *cs_List_Copy(void *dest, const void *src, size_t count);
+cs_List *cs_List_New_0(const cs_Type *type, const cs_List *other);
+cs_List *cs_List_New_1(const cs_Type *type, void *data, u64 length);
 
 void cs_List_PushBack(cs_List *list, void *value);
 void cs_List_PushFront(cs_List *list, void *value);
+
+void *cs_List_Copy(void *dest, const void *src, size_t count);
 
 cs_Status cs_List_Get(cs_List *list, u64 index, void **out);
 cs_Status cs_List_Insert(cs_List *list, u64 index, void *value);
