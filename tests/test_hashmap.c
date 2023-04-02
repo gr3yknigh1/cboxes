@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include "tools/common.h"
+#include "test_common.h"
 
 #include "cboxes/hashmap.h"
 #include "cboxes/list.h"
