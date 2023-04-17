@@ -1,4 +1,6 @@
 #include "cboxes/string.h"
+#include "cboxes/assert.h"
+#include "cboxes/memory.h"
 #include <string.h>
 
 u64 cs_cstr_Length(cstr string) {
@@ -25,25 +27,33 @@ cs_String *cs_String_NewC(cs_String *source) {
 
 void cs_String_Set(cs_String *str, cstr new) {
     u64 newLength = strlen(new);
+
     if (newLength != str->length) {
-        if (str->length != 0)
+        if (str->length != 0) {
             free(str->data);
+        }
         str->data = malloc(newLength + 1);
     }
-    memcpy(str->data, new, newLength);
-    str->data[newLength + 1] = '\0';
     str->length = newLength;
+
+    CS_ASSERT(str->data != NULL, "");
+    cs_CopyMemory(str->data, new, newLength + 1, newLength);
+
+    str->data[newLength] = '\0';
 }
 
-void cs_String_SetC(cs_String *str, cs_String *new) {
-    if (new->length != str->length) {
-        if (str->length != 0)
+void cs_String_SetC(cs_String *str, cs_String *otherStr) {
+    if (otherStr->length != str->length) {
+        if (str->length != 0) {
             free(str->data);
-        str->data = malloc(new->length + 1);
+        }
+        str->data = malloc(otherStr->length + 1);
     }
-    memcpy(str->data, new->data, new->length);
-    str->data[new->length + 1] = '\0';
-    str->length = new->length;
+    str->length = otherStr->length;
+
+    CS_ASSERT(str->data != NULL, "");
+    cs_CopyMemory(str->data, otherStr->data, str->length, otherStr->length);
+    str->data[otherStr->length] = '\0';
 }
 
 void cs_String_Free(void *ptr) {

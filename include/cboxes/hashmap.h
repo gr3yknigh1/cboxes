@@ -1,5 +1,5 @@
-#ifndef HASHMAP_H_
-#define HASHMAP_H_
+#ifndef CBOXES_HASHMAP_H_
+#define CBOXES_HASHMAP_H_
 
 #include "cboxes/list.h"
 #include "cboxes/numtypes.h"
@@ -9,7 +9,7 @@
 #include "cboxes/type.h"
 
 #define CS_HASHMAP_GET(__map, __key, __outWritePtr)                            \
-    cs_Hashmap_Get(__map, __key, (void **)(&__outWritePtr))
+    cs_Hashmap_Get((__map), (__key), (void **)(&(__outWritePtr)))
 
 typedef struct cs_Hashmap {
     cs_List *bucketList;
@@ -29,4 +29,4 @@ cs_Status cs_Hashmap_Remove(cs_Hashmap *map, cstr key);
 
 void cs_Hashmap_Free(void *ptr);
 
-#endif // HASHMAP_H_
+#endif // CBOXES_HASHMAP_H_

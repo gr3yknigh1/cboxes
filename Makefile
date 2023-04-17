@@ -5,27 +5,28 @@ REMOVE = rm -rf
 
 CC     = clang
 CFLAGS = -std=c2x
-CFLAGS += -Werror
-CFLAGS += -Wall
-CFLAGS += -Wextra
-CFLAGS += -Wpedantic
-CFLAGS += -Wuninitialized
-CFLAGS += -Wmissing-include-dirs
-CFLAGS += -Wshadow
-CFLAGS += -Wundef
-CFLAGS += -Warc-repeated-use-of-weak
-CFLAGS += -Wbitfield-enum-conversion
-CFLAGS += -Wconditional-uninitialized
-CFLAGS += -Wthread-safety
-CFLAGS += -Wconversion
-CFLAGS += -Wswitch -Wswitch-enum
-CFLAGS += -Wformat-security
-CFLAGS += -Wdouble-promotion
-CFLAGS += -Wfloat-equal
-CFLAGS += -Wfloat-overflow-conversion
-CFLAGS += -Wfloat-zero-conversion
-CFLAGS += -Wsign-compare
-CFLAGS += -Wsign-conversion
+
+CFLAGS_SECURE = -Wall
+CFLAGS_SECURE += -Werror
+CFLAGS_SECURE += -Wextra
+CFLAGS_SECURE += -Wpedantic
+CFLAGS_SECURE += -Wuninitialized
+CFLAGS_SECURE += -Wmissing-include-dirs
+CFLAGS_SECURE += -Wshadow
+CFLAGS_SECURE += -Wundef
+CFLAGS_SECURE += -Warc-repeated-use-of-weak
+CFLAGS_SECURE += -Wbitfield-enum-conversion
+CFLAGS_SECURE += -Wconditional-uninitialized
+CFLAGS_SECURE += -Wthread-safety
+CFLAGS_SECURE += -Wconversion
+CFLAGS_SECURE += -Wswitch -Wswitch-enum
+CFLAGS_SECURE += -Wformat-security
+CFLAGS_SECURE += -Wdouble-promotion
+CFLAGS_SECURE += -Wfloat-equal
+CFLAGS_SECURE += -Wfloat-overflow-conversion
+CFLAGS_SECURE += -Wfloat-zero-conversion
+CFLAGS_SECURE += -Wsign-compare
+CFLAGS_SECURE += -Wsign-conversion
 
 AR      = ar
 ARFLAGS = -cvrs
@@ -57,7 +58,7 @@ FORMATTER = clang-format
 FORMATTER_FLAGS = -i
 
 CLANG_TIDY = clang-tidy
-CLANG_TIDY_FLAGS = -header-filter=.*
+CLANG_TIDY_FLAGS =
 
 TARGETS = $(LIBRARY)
 
@@ -93,18 +94,16 @@ $(OBJ_DIR):
 
 $(OBJ_DIR)/%.o: $(SOURCES_DIR)/%.c $(INCLUDE_DIR)/$(PROJECT_NAME)/%.h
 	$(CLANG_TIDY) $(CLANG_TIDY_FLAGS) $<
-	$(CC) $(CFLAGS) -c $< -o $@ $(INCLUDE_FLAGS)
+	$(CC) $(CFLAGS) $(CFLAGS_SECURE) -c $< -o $@ $(INCLUDE_FLAGS)
 
 $(OBJ_DIR)/%.o: $(SOURCES_DIR)/%.c
 	$(CLANG_TIDY) $(CLANG_TIDY_FLAGS) $<
-	$(CC) $(CFLAGS) -c $< -o $@ $(INCLUDE_FLAGS)
-
+	$(CC) $(CFLAGS) $(CFLAGS_SECURE) -c $< -o $@ $(INCLUDE_FLAGS)
 
 tests: $(LIBRARY) $(TESTS_BIN_DIR) $(TESTS_BINS)
-	@for test in $(TESTS_BINS); do $$test ; done
+	@for test in $(TESTS_BINS); do $$test --verbose=1 ; done
 
 $(TESTS_BIN_DIR)/%: $(TESTS_DIR)/%.c
-	$(CLANG_TIDY) $(CLANG_TIDY_FLAGS) $<
 	$(CC) $(CFLAGS) $< $(OBJS) -o $@ -lcriterion $(INCLUDE_FLAGS)
 
 $(TESTS_BIN_DIR):

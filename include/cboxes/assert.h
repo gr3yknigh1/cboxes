@@ -1,7 +1,8 @@
-#ifndef ASSERT_H_
-#define ASSERT_H_
+#ifndef CBOXES_ASSERT_H_
+#define CBOXES_ASSERT_H_
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #define CS_ASSERT(__X, ...)                                                    \
     do {                                                                       \
@@ -11,4 +12,4 @@
         }                                                                      \
     } while (0)
 
-#endif // ASSERT_H_
+#endif // CBOXES_ASSERT_H_

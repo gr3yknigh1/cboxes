@@ -1,5 +1,5 @@
-#ifndef LIST_H_
-#define LIST_H_
+#ifndef CBOXES_LIST_H_
+#define CBOXES_LIST_H_
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -9,67 +9,51 @@
 #include "cboxes/status.h"
 #include "cboxes/type.h"
 
-#define CS_LIST_GET(list, index, out)                                          \
-    cs_List_Get(list, index, ((void **)(&out)))
+#define CS_LIST_GET(__list, __index, __outPtr)                                 \
+    cs_List_Get((__list), (__index), ((void **)(&(__outPtr))))
 
-#define CS_LIST_INSERT(list, index, in, status)                                \
+#define CS_LIST_INSERT(__list, __index, __in, __statusPtr)                     \
     do {                                                                       \
-        void *ptr = &in;                                                       \
-        status = cs_List_Insert(list, index, ptr);                             \
+        void *ptr = &(__in);                                                   \
+        *(__statusPtr) = cs_List_Insert((__list), (__index), ptr);             \
     } while (0)
 
-#define CS_LIST_FOREACHN(list, i, n, body)                                     \
+#define CS_LIST_FOREACHN(__list, __index, __node, __body)                      \
     do {                                                                       \
-        cs_LNode *n = list->head;                                              \
-        u64 i = 0;                                                             \
-        while (n != NULL) {                                                    \
-            body;                                                              \
-            n = n->next;                                                       \
-            i++;                                                               \
+        cs_LNode *(__node) = (__list)->head;                                   \
+        u64 __index = 0;                                                       \
+        while ((__node) != NULL) {                                             \
+            __body;                                                            \
+            (__node) = (__node)->next;                                         \
+            (__index)++;                                                       \
         }                                                                      \
     } while (0)
 
-#define CS_LIST_FOREACHV(__list, __t, __v, __code)                             \
+#define CS_LIST_FOREACHV(__list, __type, __value, __body)                      \
     do {                                                                       \
-        cs_LNode *__n = __list->head;                                          \
-        __t *__v = NULL;                                                       \
-        while (__n != NULL) {                                                  \
-            __v = __n->value;                                                  \
-            __code;                                                            \
-            __n = __n->next;                                                   \
+        cs_LNode *node = (__list)->head;                                       \
+        (__type) * (__value) = NULL;                                           \
+        while (node != NULL) {                                                 \
+            (__value) = node->value;                                           \
+            __body;                                                            \
+            node = node->next;                                                 \
         }                                                                      \
     } while (0)
 
-#define CS_LIST_FOREACH(list, type, i, v, body)                                \
+#define CS_LIST_FOREACH(__list, __type, __index, __value, __body)              \
     do {                                                                       \
-        cs_LNode *__n = list->head;                                            \
-        u64 i = 0;                                                             \
-        while (__n != NULL) {                                                  \
-            type *v = NULL;                                                    \
-            v = (type *)(__n->value);                                          \
-            body;                                                              \
-            __n = __n->next;                                                   \
-            i++;                                                               \
+        cs_LNode *node = (__list)->head;                                       \
+        u64(__index) = 0;                                                      \
+        while (node != NULL) {                                                 \
+            (__type) * (__value) = NULL;                                       \
+            (__value) = ((__type) *)(node->value);                             \
+            __body;                                                            \
+            node = node->next;                                                 \
+            (__index)++;                                                       \
         }                                                                      \
     } while (0)
 
-// TODO: Add out-of-range handling
-#define CS_LIST_FOREACHO(list, type, v, i, s, e, body)                         \
-    do {                                                                       \
-        cs_LNode *__n = list->head;                                            \
-        u64 i = 0;                                                             \
-        while (__n != NULL) {                                                  \
-            if (i > e)                                                         \
-                break;                                                         \
-            if (i >= s && i <= e) {                                            \
-                type *v = NULL;                                                \
-                v = (type *)(__n->value);                                      \
-                body;                                                          \
-            }                                                                  \
-            __n = __n->next;                                                   \
-            i++;                                                               \
-        }                                                                      \
-    } while (0)
+// TODO: Ranged macro
 
 typedef struct cs_List {
     cs_LNode *head;
@@ -97,11 +81,11 @@ void cs_List_Clear(cs_List *list);
 void cs_List_Free(void *ptr);
 
 #define cs_List_IsInRange(__list, __index)                                     \
-    (__index >= 0 && __index < __list->length)
-#define cs_List_IsEmpty(__list) (__list->length == 0)
+    ((__index) >= 0 && (__index) < (__list)->length)
+#define cs_List_IsEmpty(__list) ((__list)->length == 0)
 
 void cs_List_Print(const cs_List *list, void (*printNode)(cs_LNode *));
 
 DEFINE_CS_TYPE(CS_TYPE_LIST);
 
-#endif // LIST_H_
+#endif // CBOXES_LIST_H_

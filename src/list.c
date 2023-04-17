@@ -22,15 +22,15 @@ cs_List *cs_List_New(const cs_Type *type) {
     return list;
 }
 
-void *cs_List_Copy(void *dest, const void *src, size_t count) {
+void *cs_List_Copy(void *restrict dest, const void *src, size_t count) {
     (void)count;
 
     const cs_List *orig = (const cs_List *)src;
     cs_List *copy = cs_List_New(orig->type);
 
-    CS_LIST_FOREACHN(orig, i, n, {
-        (void)i;
-        cs_List_PushBack(copy, n->value);
+    CS_LIST_FOREACHN(orig, index, node, {
+        (void)index;
+        cs_List_PushBack(copy, node->value);
     });
 
     *(cs_List *)dest = *copy;
@@ -71,7 +71,9 @@ static cs_Status cs_List_GetNode(cs_List *list, u64 index, cs_LNode **outNode) {
     if (index == 0) {
         *outNode = list->head;
         return cs_OK;
-    } else if (index == list->length - 1) {
+    }
+
+    if (index == list->length - 1) {
         *outNode = list->tail;
         return cs_OK;
     }
@@ -80,9 +82,9 @@ static cs_Status cs_List_GetNode(cs_List *list, u64 index, cs_LNode **outNode) {
         return cs_INDEX_ERROR;
     }
 
-    CS_LIST_FOREACHN(list, i, n, {
-        if (i == index) {
-            *outNode = n;
+    CS_LIST_FOREACHN(list, iterIndex, node, {
+        if (iterIndex == index) {
+            *outNode = node;
             return cs_OK;
         }
     });
@@ -128,10 +130,13 @@ cs_Status cs_List_Insert(cs_List *list, u64 index, void *value) {
 static cs_Status cs_List_PopNode(cs_List *list, u64 index, cs_LNode **out) {
     CS_ASSERT(list != NULL, "<List [addr: %p]>", (void *)list);
 
-    if (list == NULL)
+    if (list == NULL) {
         return cs_NULL_REFERENCE_ERROR;
-    if (!cs_List_IsInRange(list, index) || cs_List_IsEmpty(list))
+    }
+
+    if (!cs_List_IsInRange(list, index) || cs_List_IsEmpty(list)) {
         return cs_INDEX_ERROR;
+    }
 
     if (list->length == 1) {
         *out = list->head;
@@ -146,15 +151,16 @@ static cs_Status cs_List_PopNode(cs_List *list, u64 index, cs_LNode **out) {
         list->tail = (*out)->prev;
         list->tail->next = NULL;
     } else {
-        CS_LIST_FOREACHN(list, i, n, {
-            if (i == index) {
-                *out = n;
+        CS_LIST_FOREACHN(list, iterIndex, iterNode, {
+            if (iterIndex == index) {
+                *out = iterNode;
                 break;
             }
         });
 
-        if (*out == NULL)
+        if (*out == NULL) {
             return cs_OUT_OF_RANGE;
+        }
 
         cs_LNode_Chain((*out)->prev, (*out)->next);
     }
@@ -188,8 +194,9 @@ cs_Status cs_List_Remove(cs_List *list, u64 index) {
 }
 
 void cs_List_Clear(cs_List *list) {
-    if (cs_List_IsEmpty(list))
+    if (cs_List_IsEmpty(list)) {
         return;
+    }
 
     const cs_Type *type = list->type;
     cs_LNode *cur = list->head;
@@ -197,8 +204,9 @@ void cs_List_Clear(cs_List *list) {
     while (cur != NULL) {
         nxt = cur->next;
 
-        if (!type->isReference)
+        if (!type->isReference) {
             type->free(cur->value);
+        }
 
         free(cur);
         cur = nxt;
@@ -215,27 +223,27 @@ void cs_List_Free(void *ptr) {
     free(list);
 }
 
-void cs_List_Print(const cs_List *list, void (*printValue)(cs_LNode *)) {
+void cs_List_Print(const cs_List *list, void (*printNode)(cs_LNode *)) {
     printf("<List length:%ld>\n", list->length);
-    CS_LIST_FOREACHN(list, i, n, {
-        printf("<LNode [%lu]>\n", i);
+    CS_LIST_FOREACHN(list, index, node, {
+        printf("<LNode [%lu]>\n", index);
 
         printf("prev: ");
-        if (n->prev != NULL) {
-            printf("[%lu]\n", i - 1);
+        if (node->prev != NULL) {
+            printf("[%lu]\n", index - 1);
         } else {
             printf("NULL\n");
         }
 
         printf("next: ");
-        if (n->next != NULL) {
-            printf("[%lu]\n", i + 1);
+        if (node->next != NULL) {
+            printf("[%lu]\n", index + 1);
         } else {
             printf("NULL\n");
         }
 
         printf("Value: ");
-        printValue(n);
+        printNode(node);
         printf("\n\n");
     });
 }

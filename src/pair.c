@@ -5,7 +5,7 @@
 
 INIT_COMPLEX_CS_TYPE(CS_TYPE_PAIR, cs_Pair *, cs_Pair_Copy, cs_Pair_Free);
 
-cs_Pair *cs_Pair_New(cstr key, void *value, const cs_Type *type) {
+cs_Pair *cs_Pair_New(cstr key, void *restrict value, const cs_Type *type) {
     cs_Pair *pair = malloc(sizeof(cs_Pair));
     *pair = (cs_Pair){
         .key = key,
@@ -15,7 +15,7 @@ cs_Pair *cs_Pair_New(cstr key, void *value, const cs_Type *type) {
     return pair;
 }
 
-void *cs_Pair_Copy(void *dest, const void *src, size_t count) {
+void *cs_Pair_Copy(void *restrict dest, const void *src, size_t count) {
     (void)count;
     const cs_Pair *sourcePair = (const cs_Pair *)src;
     cs_Pair *copiedPair =

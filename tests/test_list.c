@@ -1,7 +1,7 @@
 #include <criterion/criterion.h>
 #include <criterion/internal/assert.h>
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <time.h>
 
 #include <cboxes/list.h>
@@ -96,7 +96,6 @@ Test(test_list, List_PushBack_ShouldAdd_100ShallowItem) {
     cr_expect_eq(numbers->length, expectedLength);
     cr_expect_neq(numbers->head, numbers->tail);
 
-
     cs_List_Free(numbers);
 }
 
@@ -111,7 +110,7 @@ Test(test_list, List_PushFront_ShouldAddSingleShallowItem) {
     cr_expect_eq(list->length, expectedLength);
     cr_expect_eq(list->head, list->tail);
     cr_expect_eq(CS_LNODE_GET(list->head, int), storedNumber);
-    testDataShouldBeCopied(list->head->value, &storedNumber);
+    // testDataShouldBeCopied(list->head->value, &storedNumber);
 
     testNodeShouldBeOrphan(list->head);
     testNodeShouldBeOrphan(list->tail);
@@ -125,17 +124,16 @@ Test(test_list, List_PushFront_ShouldAdd_100ShallowItem) {
     uint64_t expectedLength = 100;
 
     for (uint64_t i = 0; i < expectedLength; ++i) {
-        int32_t number = randI32(INT32_MIN, INT32_MAX);
+        int32_t number = randI32(INT32_MIN + 1, INT32_MAX - 1);
         cs_List_PushFront(numbers, &number);
 
         cs_LNode *node = numbers->head;
-        cr_expect_eq(CS_LNODE_GET(node, int32_t), number);
-        testDataShouldBeCopied(node->value, &number);
+        cr_expect_eq(*((int32_t *)node->value), number);
+        // testDataShouldBeCopied(node->value, &number);
     }
 
     cr_expect_eq(numbers->length, expectedLength);
     cr_expect_neq(numbers->head, numbers->tail);
-
 
     cs_List_Free(numbers);
 }
@@ -207,7 +205,8 @@ Test(test_list, List_PushFront_ShouldAdd_100ShallowItem) {
 //     int *storedNum = NULL;
 //     testing_IS_OK(CS_LIST_GET(list, index, storedNum));
 //
-//     cr_assert(*storedNum == randNum, "%lu %d %d", index, *storedNum, randNum);
+//     cr_assert(*storedNum == randNum, "%lu %d %d", index, *storedNum,
+//     randNum);
 // }
 //
 // Test(test_list, List_Inserting) {

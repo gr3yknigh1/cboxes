@@ -1,5 +1,5 @@
-#ifndef TYPE_H_
-#define TYPE_H_
+#ifndef CBOXES_TYPE_H_
+#define CBOXES_TYPE_H_
 
 #include <stdbool.h>
 #include <stdlib.h>
@@ -34,8 +34,8 @@ void cs_Type_Free(void *ptr);
 
 #define INIT_COMPLEX_CS_TYPE(__name, __type, __copy, __free)                   \
     const cs_Type *__name = &(cs_Type) {                                       \
-        .size = sizeof(__type), .isReference = true, .copy = __copy,           \
-        .free = __free,                                                        \
+        .size = sizeof(__type), .isReference = true, .copy = (__copy),         \
+        .free = (__free),                                                      \
     }
 
 DEFINE_CS_TYPE(CS_TYPE_I8);
@@ -51,4 +51,4 @@ DEFINE_CS_TYPE(CS_TYPE_U64);
 DEFINE_CS_TYPE(CS_TYPE_F32);
 DEFINE_CS_TYPE(CS_TYPE_F64);
 
-#endif // TYPE_H_
+#endif // CBOXES_TYPE_H_

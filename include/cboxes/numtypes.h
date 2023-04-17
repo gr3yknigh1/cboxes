@@ -1,5 +1,5 @@
-#ifndef TYPES_H_
-#define TYPES_H_
+#ifndef CBOXES_NUMTYPES_H_
+#define CBOXES_NUMTYPES_H_
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -21,4 +21,4 @@ typedef float f32;
 typedef size_t usize;
 typedef ssize_t isize;
 
-#endif // TYPES_H_
+#endif // CBOXES_NUMTYPES_H_

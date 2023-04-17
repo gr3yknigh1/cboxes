@@ -1,5 +1,5 @@
-#ifndef STATUS_H_
-#define STATUS_H_
+#ifndef CBOXES_STATUS_H
+#define CBOXES_STATUS_H
 
 typedef enum cs_Status {
     cs_OK,
@@ -11,4 +11,4 @@ typedef enum cs_Status {
     cs_KEY_ERROR,
 } cs_Status;
 
-#endif // STATUS_H_
+#endif // CBOXES_STATUS_H

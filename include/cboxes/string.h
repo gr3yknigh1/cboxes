@@ -1,5 +1,5 @@
-#ifndef STR_H_
-#define STR_H_
+#ifndef CBOXES_STRING_H_
+#define CBOXES_STRING_H_
 
 #include "cboxes/numtypes.h"
 #include <memory.h>
@@ -18,8 +18,8 @@ u64 cs_cstr_Length(cstr string);
 cs_String *cs_String_New(cstr source);
 cs_String *cs_String_NewC(cs_String *source);
 void cs_String_Set(cs_String *str, cstr new);
-void cs_String_SetC(cs_String *str, cs_String *new);
+void cs_String_SetC(cs_String *str, cs_String *otherStr);
 
 void cs_String_Free(void *ptr);
 
-#endif // STR_H_
+#endif // CBOXES_STRING_H_

@@ -1,5 +1,5 @@
-#ifndef PAIR_H_
-#define PAIR_H_
+#ifndef CBOXES_PAIR_H
+#define CBOXES_PAIR_H
 
 #include "cboxes/string.h"
 #include "cboxes/type.h"
@@ -17,4 +17,4 @@ void cs_Pair_Free(void *ptr);
 
 DEFINE_CS_TYPE(CS_TYPE_PAIR);
 
-#endif // PAIR_H_
+#endif // CBOXES_PAIR_H

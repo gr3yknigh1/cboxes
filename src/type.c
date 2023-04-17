@@ -1,6 +1,6 @@
 #include "cboxes/type.h"
+#include "cboxes/assert.h"
 #include "cboxes/numtypes.h"
-#include <assert.h>
 
 cs_Type *cs_Type_New(size_t size, bool isReference, cs_CopyFunc copy,
                      cs_FreeFunc free) {
@@ -20,7 +20,7 @@ cs_Type *cs_Type_NewC(const cs_Type *other) {
 }
 
 void *cs_Type_StoreValue(const cs_Type *type, void *value) {
-    assert(type != NULL);
+    CS_ASSERT(type != NULL, "");
 
     if (value == NULL) {
         return NULL;
@@ -28,11 +28,11 @@ void *cs_Type_StoreValue(const cs_Type *type, void *value) {
 
     if (type->isReference) {
         return value;
-    } else {
-        void *stored = malloc(sizeof(type->size));
-        type->copy(stored, value, type->size);
-        return stored;
     }
+
+    void *stored = malloc(sizeof(type->size));
+    type->copy(stored, value, type->size);
+    return stored;
 }
 
 void cs_Type_Free(void *ptr) { free(ptr); }

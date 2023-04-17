@@ -3,10 +3,10 @@
 // Stoled from http://www.cse.yorku.ca/~oz/hash.html
 u64 cs_LoseLoseHash(const byte *str) {
     u64 hash = 0;
-    i32 c;
+    u64 ccc;
 
-    while ((c = *str++)) {
-        hash += c;
+    while ((ccc = *str++)) {
+        hash += ccc;
     }
 
     return hash;
