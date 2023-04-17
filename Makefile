@@ -1,10 +1,31 @@
+.PHONY: default all main clean veryclean format format-source format-tests
+
 MKDIR  = mkdir -p
 REMOVE = rm -rf
 
-GIT-CLEAN = git clean
-
 CC     = clang
-CFLAGS = -std=c2x -g -Wall -Wextra -Wpedantic -Wfloat-equal -Wformat
+CFLAGS = -std=c2x
+CFLAGS += -Werror
+CFLAGS += -Wall
+CFLAGS += -Wextra
+CFLAGS += -Wpedantic
+CFLAGS += -Wuninitialized
+CFLAGS += -Wmissing-include-dirs
+CFLAGS += -Wshadow
+CFLAGS += -Wundef
+CFLAGS += -Warc-repeated-use-of-weak
+CFLAGS += -Wbitfield-enum-conversion
+CFLAGS += -Wconditional-uninitialized
+CFLAGS += -Wthread-safety
+CFLAGS += -Wconversion
+CFLAGS += -Wswitch -Wswitch-enum
+CFLAGS += -Wformat-security
+CFLAGS += -Wdouble-promotion
+CFLAGS += -Wfloat-equal
+CFLAGS += -Wfloat-overflow-conversion
+CFLAGS += -Wfloat-zero-conversion
+CFLAGS += -Wsign-compare
+CFLAGS += -Wsign-conversion
 
 AR      = ar
 ARFLAGS = -cvrs
@@ -30,17 +51,35 @@ SOURCES = $(wildcard $(SOURCES_DIR)/*.c)
 HEADERS = $(wildcard $(INCLUDE_DIR)/**/*.h)
 OBJS    = $(patsubst $(SOURCES_DIR)/%.c, $(OBJ_DIR)/%.o, $(SOURCES))
 
+INCLUDE_FLAGS = -I$(INCLUDE_DIR)
+
 FORMATTER = clang-format
 FORMATTER_FLAGS = -i
 
+CLANG_TIDY = clang-tidy
+CLANG_TIDY_FLAGS = -header-filter=.*
 
-default: all
-all: $(LIBRARY)
+TARGETS = $(LIBRARY)
 
-release: CFLAGS=-Wall -Werror -O3 -DNDEBUG
+all: debug
+
+debug: CFLAGS += -g -O0 -D__DEBUG_MODE__
+debug: $(TARGETS)
+
+release: CFLAGS += -O3 -D__RELEASE__MODE__
 release: clean
-release: $(LIBRARY)
+release: $(TARGETS)
 
+asan: CFLAGS += -fsanitize=address -fno-optimize-sibling-calls -fno-omit-frame-pointer
+
+lsan: CFLAGS += -fsanitize=leak
+
+msan: CFLAGS += -fsanitize=memory -fno-optimize-sibling-calls -fno-omit-frame-pointer
+
+ubsan: CFLAGS += -fsanitize=undefined
+
+clean:
+	$(REMOVE) $(BUILD_DIR)
 
 $(LIBRARY): $(BUILD_DIR) $(OBJ_DIR) $(OBJS)
 	$(RM) $(LIBRARY)
@@ -53,28 +92,41 @@ $(OBJ_DIR):
 	$(MKDIR) $@
 
 $(OBJ_DIR)/%.o: $(SOURCES_DIR)/%.c $(INCLUDE_DIR)/$(PROJECT_NAME)/%.h
-	$(CC) $(CFLAGS) -c $< -o $@ -I$(INCLUDE_DIR)
+	$(CLANG_TIDY) $(CLANG_TIDY_FLAGS) $<
+	$(CC) $(CFLAGS) -c $< -o $@ $(INCLUDE_FLAGS)
 
 $(OBJ_DIR)/%.o: $(SOURCES_DIR)/%.c
-	$(CC) $(CFLAGS) -c $< -o $@ -I$(INCLUDE_DIR)
+	$(CLANG_TIDY) $(CLANG_TIDY_FLAGS) $<
+	$(CC) $(CFLAGS) -c $< -o $@ $(INCLUDE_FLAGS)
 
 
 tests: $(LIBRARY) $(TESTS_BIN_DIR) $(TESTS_BINS)
 	@for test in $(TESTS_BINS); do $$test ; done
 
 $(TESTS_BIN_DIR)/%: $(TESTS_DIR)/%.c
-	$(CC) $(CFLAGS) $< $(OBJS) -o $@ -lcriterion -I$(INCLUDE_DIR)
+	$(CLANG_TIDY) $(CLANG_TIDY_FLAGS) $<
+	$(CC) $(CFLAGS) $< $(OBJS) -o $@ -lcriterion $(INCLUDE_FLAGS)
 
 $(TESTS_BIN_DIR):
 	$(MKDIR) $@
 
+checks:
+	sh ./scripts/run_sanitazers.sh
 
-clean:
-	$(REMOVE) $(BUILD_DIR)
+install:
+	@echo todo
 
-veryclean: clean
-	$(GIT-CLEAN) -fxdx
+# Formatting
+format-source:
+	$(FORMATTER) $(FORMATTER_FLAGS) $(SOURCES)
+	$(FORMATTER) $(FORMATTER_FLAGS) $(HEADERS)
 
+format-tests:
+	$(FORMATTER) $(FORMATTER_FLAGS) $(TESTS_SOURCES)
+
+format: format-source format-tests
+
+# Testing executable
 TESTING_DIR = $(PROJECT_DIR)/testing
 TESTING_SRC = $(TESTING_DIR)/testing.c
 TESTING_OUT = $(BUILD_DIR)/testing
@@ -87,16 +139,4 @@ testing: $(TESTING_OUT)
 
 run: testing
 	$(TESTING_OUT)
-
-format-source:
-	$(FORMATTER) $(FORMATTER_FLAGS) $(SOURCES)
-	$(FORMATTER) $(FORMATTER_FLAGS) $(HEADERS)
-
-format-tests:
-	$(FORMATTER) $(FORMATTER_FLAGS) $(TESTS_SOURCES)
-
-format: format-source format-tests
-
-
-.PHONY: default, all, main, clean, veryclean, format, format-source, format-tests
 
