@@ -72,12 +72,16 @@ release: clean
 release: $(TARGETS)
 
 asan: CFLAGS += -fsanitize=address -fno-optimize-sibling-calls -fno-omit-frame-pointer
+asan: debug
 
 lsan: CFLAGS += -fsanitize=leak
+lsan: debug
 
 msan: CFLAGS += -fsanitize=memory -fno-optimize-sibling-calls -fno-omit-frame-pointer
+msan: debug
 
 ubsan: CFLAGS += -fsanitize=undefined
+ubsan: debug
 
 clean:
 	$(REMOVE) $(BUILD_DIR)
@@ -110,7 +114,7 @@ $(TESTS_BIN_DIR):
 	$(MKDIR) $@
 
 checks:
-	sh ./scripts/run_sanitazers.sh
+	sh ./scripts/run_checks.sh
 
 install:
 	@echo todo
