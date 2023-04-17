@@ -4,12 +4,12 @@ echo "======================="
 echo " Running in debug mode"
 echo "======================="
 
-echo "ASan: "
-make -s clean asan debug || exit
-echo "LSan: "
-make -s clean lsan debug || exit
-echo "MSan: "
-make -s clean msan debug || exit
-echo "UBSan: "
-make -s clean ubsan debug || exit
+echo "==> ASan: "
+make -s clean asan || exit
+echo "==> LSan: "
+make -s clean lsan || exit
+echo "==> MSan: "
+make -s clean msan || exit
+echo "==> UBSan: "
+make -s clean ubsan || exit
 
