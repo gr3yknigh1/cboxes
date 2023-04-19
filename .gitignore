@@ -2,3 +2,4 @@
 build/
 *.o
 compile_commands.json
+.env/

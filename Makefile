@@ -95,7 +95,10 @@ configure: $(COMPILE_COMMANDS)
 
 clean:
 	$(REMOVE) $(BUILD_DIR)
+
+veryclean: clean
 	$(REMOVE) $(PY_ENV)
+	$(REMOVE) $(COMPILE_COMMANDS)
 
 $(LIBRARY): $(BUILD_DIR) $(OBJ_DIR) $(OBJS)
 	$(RM) $(LIBRARY)
@@ -108,11 +111,11 @@ $(OBJ_DIR):
 	$(MKDIR) $@
 
 $(OBJ_DIR)/%.o: $(SOURCES_DIR)/%.c $(INCLUDE_DIR)/$(PROJECT_NAME)/%.h
-	[[ -f $(COMPILE_COMMANDS) ]] && $(CLANG_TIDY) $(CLANG_TIDY_FLAGS) $<
+	[ -f $(COMPILE_COMMANDS) ] && $(CLANG_TIDY) $(CLANG_TIDY_FLAGS) $< || true
 	$(CC) $(CFLAGS) $(CFLAGS_SECURE) -c $< -o $@ $(INCLUDE_FLAGS)
 
 $(OBJ_DIR)/%.o: $(SOURCES_DIR)/%.c
-	[[ -f $(COMPILE_COMMANDS) ]] && $(CLANG_TIDY) $(CLANG_TIDY_FLAGS) $<
+	[ -f $(COMPILE_COMMANDS) ] && $(CLANG_TIDY) $(CLANG_TIDY_FLAGS) $< || true
 	$(CC) $(CFLAGS) $(CFLAGS_SECURE) -c $< -o $@ $(INCLUDE_FLAGS)
 
 tests: $(LIBRARY) $(TESTS_BIN_DIR) $(TESTS_BINS)
