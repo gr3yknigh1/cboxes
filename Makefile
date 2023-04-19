@@ -57,8 +57,16 @@ INCLUDE_FLAGS = -I$(INCLUDE_DIR)
 FORMATTER = clang-format
 FORMATTER_FLAGS = -i
 
+PY_COMP_DB      = compiledb
+PY_ENV          = $(PROJECT_DIR)/.env
+PY_ENV_BIN      = $(PY_ENV)/bin
+PY_PIP_EXEC     = $(PY_ENV_BIN)/pip
+PY_COMP_DB_EXEC = $(PY_ENV_BIN)/compiledb
+
+COMPILE_COMMANDS = $(PROJECT_DIR)/compile_commands.json
+
 CLANG_TIDY = clang-tidy
-CLANG_TIDY_FLAGS =
+CLANG_TIDY_FLAGS = -p $(COMPILE_COMMANDS)
 
 TARGETS = $(LIBRARY)
 
@@ -83,8 +91,11 @@ msan: debug
 ubsan: CFLAGS += -fsanitize=undefined
 ubsan: debug
 
+configure: $(COMPILE_COMMANDS)
+
 clean:
 	$(REMOVE) $(BUILD_DIR)
+	$(REMOVE) $(PY_ENV)
 
 $(LIBRARY): $(BUILD_DIR) $(OBJ_DIR) $(OBJS)
 	$(RM) $(LIBRARY)
@@ -97,11 +108,11 @@ $(OBJ_DIR):
 	$(MKDIR) $@
 
 $(OBJ_DIR)/%.o: $(SOURCES_DIR)/%.c $(INCLUDE_DIR)/$(PROJECT_NAME)/%.h
-	$(CLANG_TIDY) $(CLANG_TIDY_FLAGS) $<
+	[[ -f $(COMPILE_COMMANDS) ]] && $(CLANG_TIDY) $(CLANG_TIDY_FLAGS) $<
 	$(CC) $(CFLAGS) $(CFLAGS_SECURE) -c $< -o $@ $(INCLUDE_FLAGS)
 
 $(OBJ_DIR)/%.o: $(SOURCES_DIR)/%.c
-	$(CLANG_TIDY) $(CLANG_TIDY_FLAGS) $<
+	[[ -f $(COMPILE_COMMANDS) ]] && $(CLANG_TIDY) $(CLANG_TIDY_FLAGS) $<
 	$(CC) $(CFLAGS) $(CFLAGS_SECURE) -c $< -o $@ $(INCLUDE_FLAGS)
 
 tests: $(LIBRARY) $(TESTS_BIN_DIR) $(TESTS_BINS)
@@ -112,6 +123,13 @@ $(TESTS_BIN_DIR)/%: $(TESTS_DIR)/%.c
 
 $(TESTS_BIN_DIR):
 	$(MKDIR) $@
+
+$(COMPILE_COMMANDS): $(PY_COMP_DB_EXEC)
+	$< make all tests -o $@
+
+$(PY_COMP_DB_EXEC):
+	python -m venv $(PY_ENV)
+	$(PY_PIP_EXEC) install $(PY_COMP_DB)
 
 checks:
 	sh ./scripts/run_checks.sh
