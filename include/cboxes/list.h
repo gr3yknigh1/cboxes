@@ -64,8 +64,6 @@ typedef struct cs_List {
 } cs_List;
 
 cs_List *cs_List_New(const cs_Type *type);
-cs_List *cs_List_New_0(const cs_Type *type, const cs_List *other);
-cs_List *cs_List_New_1(const cs_Type *type, void *data, u64 length);
 
 void cs_List_PushBack(cs_List *list, void *value);
 void cs_List_PushFront(cs_List *list, void *value);
