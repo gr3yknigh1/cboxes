@@ -4,16 +4,16 @@
 #include "cboxes/string.h"
 #include "cboxes/type.h"
 
-typedef struct cs_Pair {
-    cstr key;
+typedef struct cs_pair {
+    const char *key;
     void *value;
-    const cs_Type *type;
-} cs_Pair;
+    const cs_type_t *type;
+} cs_pair_t;
 
-cs_Pair *cs_Pair_New(cstr key, void *value, const cs_Type *type);
+cs_pair_t *cs_pair_init(const char *key, void *value, const cs_type_t *type);
 
-void *cs_Pair_Copy(void *dest, const void *src, size_t count);
-void cs_Pair_Free(void *ptr);
+void *cs_pair_copy(void *dest, const void *src, size_t count);
+void cs_pair_free(void *ptr);
 
 DEFINE_CS_TYPE(CS_TYPE_PAIR);
 

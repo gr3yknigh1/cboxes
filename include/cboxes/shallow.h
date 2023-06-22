@@ -3,7 +3,7 @@
 
 #include <stdlib.h>
 
-void *cs_ShallowCopy(void *dest, const void *src, size_t count);
-void cs_ShallowFree(void *ptr);
+void *cs_shallow_copy(void *dest, const void *src, size_t count);
+void cs_shallow_free(void *ptr);
 
 #endif // CBOXES_SHALLOW_H_

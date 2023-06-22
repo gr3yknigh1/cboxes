@@ -1,7 +1,7 @@
 #ifndef CBOXES_STATUS_H_
 #define CBOXES_STATUS_H_
 
-typedef enum cs_Status {
+typedef enum cs_status {
     cs_OK,
     cs_ERROR,
     cs_INDEX_ERROR,
@@ -9,6 +9,6 @@ typedef enum cs_Status {
     cs_COLLECTION_IS_EMPTY,
     cs_NULL_REFERENCE_ERROR,
     cs_KEY_ERROR,
-} cs_Status;
+} cs_status_t;
 
 #endif // CBOXES_STATUS_H_

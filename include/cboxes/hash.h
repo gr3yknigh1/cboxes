@@ -1,12 +1,13 @@
 #ifndef CBOXES_HASH_H_
 #define CBOXES_HASH_H_
 
-#include "cboxes/numtypes.h"
+#include <stdint.h>
+
 #include "cboxes/string.h"
 
-typedef u64 (*cs_HashFunc)(const byte *);
+typedef uint64_t (*cs_hash_func_t)(const uint8_t *);
 
 // Stoled from http://www.cse.yorku.ca/~oz/hash.html
-u64 cs_LoseLoseHash(const byte *str);
+uint64_t cs_hash_lose_lose(const uint8_t *str);
 
 #endif // CBOXES_HASH_H_

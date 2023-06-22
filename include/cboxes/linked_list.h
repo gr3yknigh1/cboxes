@@ -3,25 +3,25 @@
 
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdint.h>
 
-#include "cboxes/lnode.h"
-#include "cboxes/numtypes.h"
+#include "cboxes/link_node.h"
 #include "cboxes/status.h"
 #include "cboxes/type.h"
 
 #define CS_LIST_GET(__list, __index, __outPtr)                                 \
-    cs_List_Get((__list), (__index), ((void **)(&(__outPtr))))
+    cs_list_get((__list), (__index), ((void **)(&(__outPtr))))
 
 #define CS_LIST_INSERT(__list, __index, __in, __statusPtr)                     \
     do {                                                                       \
         void *ptr = &(__in);                                                   \
-        *(__statusPtr) = cs_List_Insert((__list), (__index), ptr);             \
+        *(__statusPtr) = cs_list_insert((__list), (__index), ptr);             \
     } while (0)
 
 #define CS_LIST_FOREACHN(__list, __index, __node, __body)                      \
     do {                                                                       \
-        cs_LNode *(__node) = (__list)->head;                                   \
-        u64 __index = 0;                                                       \
+        cs_link_node_t *(__node) = (__list)->head;                             \
+        uint64_t __index = 0;                                                  \
         while ((__node) != NULL) {                                             \
             __body;                                                            \
             (__node) = (__node)->next;                                         \
@@ -31,7 +31,7 @@
 
 #define CS_LIST_FOREACHV(__list, __type, __value, __body)                      \
     do {                                                                       \
-        cs_LNode *node = (__list)->head;                                       \
+        cs_link_node_t *node = (__list)->head;                                 \
         (__type) * (__value) = NULL;                                           \
         while (node != NULL) {                                                 \
             (__value) = node->value;                                           \
@@ -42,8 +42,8 @@
 
 #define CS_LIST_FOREACH(__list, __type, __index, __value, __body)              \
     do {                                                                       \
-        cs_LNode *node = (__list)->head;                                       \
-        u64(__index) = 0;                                                      \
+        cs_link_node_t *node = (__list)->head;                                 \
+        uint64_t(__index) = 0;                                                 \
         while (node != NULL) {                                                 \
             (__type) * (__value) = NULL;                                       \
             (__value) = ((__type) *)(node->value);                             \
@@ -55,34 +55,35 @@
 
 // TODO: Ranged macro
 
-typedef struct cs_List {
-    cs_LNode *head;
-    cs_LNode *tail;
+typedef struct cs_list {
+    cs_link_node_t *head;
+    cs_link_node_t *tail;
 
-    u64 length;
-    const cs_Type *type;
-} cs_List;
+    uint64_t length;
+    const cs_type_t *type;
+} cs_list_t;
 
-cs_List *cs_List_New(const cs_Type *type);
+cs_list_t *cs_list_init(const cs_type_t *type);
 
-void cs_List_PushBack(cs_List *list, void *value);
-void cs_List_PushFront(cs_List *list, void *value);
+void cs_list_push_back(cs_list_t *list, void *value);
+void cs_list_push_front(cs_list_t *list, void *value);
 
-void *cs_List_Copy(void *dest, const void *src, size_t count);
+void *cs_list_copy(void *dest, const void *src, size_t count);
 
-cs_Status cs_List_Get(cs_List *list, u64 index, void **out);
-cs_Status cs_List_Insert(cs_List *list, u64 index, void *value);
-cs_Status cs_List_Pop(cs_List *list, u64 index, void **out);
-cs_Status cs_List_Remove(cs_List *list, u64 index);
+cs_status_t cs_list_get(const cs_list_t *list, uint64_t index, void **out);
+cs_status_t cs_list_insert(cs_list_t *list, uint64_t index, void *value);
+cs_status_t cs_list_pop(cs_list_t *list, uint64_t index, void **out);
+cs_status_t cs_list_remove(cs_list_t *list, uint64_t index);
 
-void cs_List_Clear(cs_List *list);
-void cs_List_Free(void *ptr);
+void cs_list_clear(cs_list_t *list);
+void cs_list_free(void *ptr);
 
-#define cs_List_IsInRange(__list, __index)                                     \
+#define CS_LIST_INRANGE(__list, __index)                                       \
     ((__index) >= 0 && (__index) < (__list)->length)
-#define cs_List_IsEmpty(__list) ((__list)->length == 0)
+#define CS_LIST_ISEMPTY(__list) ((__list)->length == 0)
 
-void cs_List_Print(const cs_List *list, void (*printNode)(cs_LNode *));
+// TODO: Replace with Interator
+void cs_list_print(const cs_list_t *list, void (*print_node)(cs_link_node_t *));
 
 DEFINE_CS_TYPE(CS_TYPE_LIST);
 

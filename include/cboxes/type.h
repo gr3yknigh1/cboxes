@@ -4,37 +4,37 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-#include "cboxes/numtypes.h"
 #include "cboxes/shallow.h"
 
-typedef void *(*cs_CopyFunc)(void *dest, const void *src, size_t count);
-typedef void (*cs_FreeFunc)(void *ptr);
+typedef void *(*cs_copy_func_t)(void *dest, const void *src, size_t count);
+typedef void (*cs_free_func_t)(void *ptr);
 
-typedef struct cs_Type {
+typedef struct cs_type {
     size_t size;
-    bool isReference;
-    cs_CopyFunc copy;
-    cs_FreeFunc free;
-} cs_Type;
+    bool is_ref;
+    cs_copy_func_t copy;
+    cs_free_func_t free;
+} cs_type_t;
 
-cs_Type *cs_Type_New(size_t size, bool isReference, cs_CopyFunc copy,
-                     cs_FreeFunc free);
-cs_Type *cs_Type_NewC(const cs_Type *other);
-void *cs_Type_StoreValue(const cs_Type *type, void *value);
+cs_type_t *cs_type_init(size_t size, bool is_ref, cs_copy_func_t copy,
+                        cs_free_func_t free);
+cs_type_t *cs_type_init_0(const cs_type_t *other);
 
-void cs_Type_Free(void *ptr);
+void *cs_type_store_value(const cs_type_t *type, void *value);
 
-#define DEFINE_CS_TYPE(__name) extern const cs_Type *__name
+void cs_type_free(void *ptr);
+
+#define DEFINE_CS_TYPE(__name) extern const cs_type_t *__name
 
 #define INIT_PRIMITIVE_CS_TYPE(__name, __type)                                 \
-    const cs_Type *__name = &(cs_Type) {                                       \
-        .size = sizeof(__type), .isReference = false, .copy = cs_ShallowCopy,  \
-        .free = cs_ShallowFree,                                                \
+    const cs_type_t *__name = &(cs_type_t) {                                   \
+        .size = sizeof(__type), .is_ref = false, .copy = cs_shallow_copy,      \
+        .free = cs_shallow_free,                                               \
     }
 
 #define INIT_COMPLEX_CS_TYPE(__name, __type, __copy, __free)                   \
-    const cs_Type *__name = &(cs_Type) {                                       \
-        .size = sizeof(__type), .isReference = true, .copy = (__copy),         \
+    const cs_type_t *__name = &(cs_type_t) {                                   \
+        .size = sizeof(__type), .is_ref = true, .copy = (__copy),              \
         .free = (__free),                                                      \
     }
 

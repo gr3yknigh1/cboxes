@@ -1,11 +1,15 @@
 #include "cboxes/shallow.h"
 #include "cboxes/string.h"
 
-void *cs_ShallowCopy(void *dest, const void *src, size_t count) {
+void *
+cs_shallow_copy(void *restrict dest, const void *src, size_t count) {
     for (size_t i = 0; i < count; i++) {
-        ((byte *)dest)[i] = ((byte *)src)[i];
+        ((uint8_t *)dest)[i] = ((uint8_t *)src)[i];
     }
     return dest;
 }
 
-void cs_ShallowFree(void *ptr) { free(ptr); }
+void
+cs_shallow_free(void *ptr) {
+    free(ptr);
+}

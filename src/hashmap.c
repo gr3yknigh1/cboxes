@@ -3,30 +3,33 @@
 #include "cboxes/assert.h"
 #include "cboxes/hash.h"
 #include "cboxes/hashmap.h"
-#include "cboxes/list.h"
+#include "cboxes/linked_list.h"
 #include "cboxes/pair.h"
 #include "cboxes/shallow.h"
 #include "cboxes/status.h"
 #include "cboxes/type.h"
 
-static void cs_Hashmap_PushBackPair(cs_List *bucket, cstr key, void *data,
-                                    const cs_Type *type) {
-    cs_List_PushBack(bucket, cs_Pair_New(key, data, type));
+static void
+_cs_hashmap_push_back_pair(cs_list_t *bucket, const char *key, void *data,
+                           const cs_type_t *type) {
+    cs_list_push_back(bucket, cs_pair_init(key, data, type));
 }
 
-static void cs_Hashmap_ReplacePairValue(cs_Pair *pair, void *data) {
+static void
+_cs_hashmap_replace_pair_value(cs_pair_t *pair, void *data) {
     pair->type->free(pair->value);
-    pair->value = cs_Type_StoreValue(pair->type, data);
+    pair->value = cs_type_store_value(pair->type, data);
 }
 
-static cs_Pair *cs_Hashmap_FindPair(const cs_List *bucket, cstr key,
-                                    u64 *pairIndexOut) {
-    cs_Pair *pair = NULL;
+static cs_pair_t *
+_cs_hashmap_find_pair(const cs_list_t *bucket, const char *key,
+                      uint64_t *out_pair) {
+    cs_pair_t *pair = NULL;
     CS_LIST_FOREACHN(bucket, index, node, {
-        pair = (cs_Pair *)(node->value);
+        pair = (cs_pair_t *)(node->value);
         if (pair->key == key) {
-            if (pairIndexOut != NULL) {
-                *pairIndexOut = index;
+            if (out_pair != NULL) {
+                *out_pair = index;
             }
             break;
         }
@@ -34,121 +37,133 @@ static cs_Pair *cs_Hashmap_FindPair(const cs_List *bucket, cstr key,
     return pair;
 }
 
-static cs_List *cs_Hashmap_GetBucket(cs_List *bucketList, u64 capacity,
-                                     cstr key) {
-    u64 index = cs_Hashmap_Hash(capacity, key);
-    cs_List *bucket = NULL;
-    cs_Status status = CS_LIST_GET(bucketList, index, bucket);
+static cs_list_t *
+_cs_hashmap_get_bucket(const cs_list_t *bucket_list, uint64_t capacity,
+                       const char *key) {
+    uint64_t index = cs_hashmap_hash(capacity, key);
+    cs_list_t *bucket = NULL;
+    cs_status_t status = CS_LIST_GET(bucket_list, index, bucket);
     CS_ASSERT(
         status == cs_OK,
         "HASHMAP: missmatch with hash's index and bucket array length. Index = "
         "'%lu', array length = '%lu'. cs_List_Get status code = %d\n",
-        index, bucketList->length, status);
+        index, bucket_list->length, status);
     CS_ASSERT(bucket != NULL, "HASHMAP: founded bucket is NULL\n");
 
     return bucket;
 }
 
-cs_Hashmap *cs_Hashmap_New(const cs_Type *type, u64 capacity) {
-    cs_Hashmap *map = malloc(sizeof(cs_Hashmap));
+cs_hashmap_t *
+cs_hashmap_init(const cs_type_t *type, uint64_t capacity) {
+    cs_hashmap_t *map = malloc(sizeof(cs_hashmap_t));
 
-    *map = (cs_Hashmap){
-        .bucketList = cs_List_New(CS_TYPE_LIST),
+    *map = (cs_hashmap_t){
+        .bucket_list = cs_list_init(CS_TYPE_LIST),
         .type = type,
         .capacity = capacity,
-        .pairCount = 0,
+        .pair_count = 0,
     };
 
     // TODO: Add func for capacity change
-    for (u64 i = 0; i < capacity; i++) {
-        cs_List_PushBack(map->bucketList, cs_List_New(CS_TYPE_PAIR));
+    for (uint64_t i = 0; i < capacity; i++) {
+        cs_list_push_back(map->bucket_list, cs_list_init(CS_TYPE_PAIR));
     }
     return map;
 }
 
-u64 cs_Hashmap_Hash(u64 capacity, cstr key) {
-    return cs_LoseLoseHash((const unsigned char *)key) % capacity;
+uint64_t
+cs_hashmap_hash(uint64_t capacity, const char *key) {
+    return cs_hash_lose_lose((const unsigned char *)key) % capacity;
 }
 
-cs_Status cs_Hashmap_Set(cs_Hashmap *map, cstr key, void *data) {
-    cs_List *bucket = cs_Hashmap_GetBucket(map->bucketList, map->capacity, key);
+cs_status_t
+cs_hashmap_set(cs_hashmap_t *map, const char *key, void *data) {
+    cs_list_t *bucket =
+        _cs_hashmap_get_bucket(map->bucket_list, map->capacity, key);
 
-    if (cs_List_IsEmpty(bucket)) {
-        cs_Hashmap_PushBackPair(bucket, key, data, map->type);
+    if (CS_LIST_ISEMPTY(bucket)) {
+        _cs_hashmap_push_back_pair(bucket, key, data, map->type);
         return cs_OK;
     }
 
-    cs_Pair *targetPair = cs_Hashmap_FindPair(bucket, key, NULL);
+    cs_pair_t *target_pair = _cs_hashmap_find_pair(bucket, key, NULL);
 
-    if (targetPair == NULL) {
-        cs_Hashmap_PushBackPair(bucket, key, data, map->type);
+    if (target_pair == NULL) {
+        _cs_hashmap_push_back_pair(bucket, key, data, map->type);
         return cs_OK;
     }
 
-    cs_Hashmap_ReplacePairValue(targetPair, data);
+    _cs_hashmap_replace_pair_value(target_pair, data);
 
     return cs_OK;
 }
 
-cs_Status cs_Hashmap_Get(const cs_Hashmap *map, cstr key, void **outWritePtr) {
-    cs_List *bucket = cs_Hashmap_GetBucket(map->bucketList, map->capacity, key);
+cs_status_t
+cs_hashmap_get(const cs_hashmap_t *map, const char *key, void **out_ptr) {
+    cs_list_t *bucket =
+        _cs_hashmap_get_bucket(map->bucket_list, map->capacity, key);
 
-    cs_Pair *pair = cs_Hashmap_FindPair(bucket, key, NULL);
+    cs_pair_t *pair = _cs_hashmap_find_pair(bucket, key, NULL);
     if (pair == NULL) {
         return cs_KEY_ERROR;
     }
 
-    *outWritePtr = pair->value;
+    *out_ptr = pair->value;
 
     return cs_OK;
 }
 
-cs_Status cs_Hashmap_Pop(cs_Hashmap *map, cstr key, void **outWritePtr) {
-    cs_List *bucket = cs_Hashmap_GetBucket(map->bucketList, map->capacity, key);
+cs_status_t
+cs_hashmap_pop(cs_hashmap_t *map, const char *key, void **out_ptr) {
+    cs_list_t *bucket =
+        _cs_hashmap_get_bucket(map->bucket_list, map->capacity, key);
 
-    u64 index;
-    cs_Pair *pair = cs_Hashmap_FindPair(bucket, key, &index);
+    uint64_t index = 0;
+    cs_pair_t *pair = _cs_hashmap_find_pair(bucket, key, &index);
 
     if (pair == NULL) {
         return cs_KEY_ERROR;
     }
 
     // TODO: Add difference when using references
-    pair->type->copy(*outWritePtr, pair->value, pair->type->size);
+    pair->type->copy(*out_ptr, pair->value, pair->type->size);
 
-    CS_ASSERT(cs_List_Remove(bucket, index) == cs_OK,
+    CS_ASSERT(cs_list_remove(bucket, index) == cs_OK,
               "HASHMAP: can't remove pair from bucket list on index = '%lu'",
               index);
 
     return cs_OK;
 }
 
-cs_Status cs_Hashmap_Remove(cs_Hashmap *map, cstr key) {
-    cs_List *bucket = cs_Hashmap_GetBucket(map->bucketList, map->capacity, key);
+cs_status_t
+cs_hashmap_remove(cs_hashmap_t *map, const char *key) {
+    cs_list_t *bucket =
+        _cs_hashmap_get_bucket(map->bucket_list, map->capacity, key);
 
-    u64 index = 0;
-    cs_Pair *pair = cs_Hashmap_FindPair(bucket, key, &index);
+    uint64_t index = 0;
+    cs_pair_t *pair = _cs_hashmap_find_pair(bucket, key, &index);
 
     if (pair == NULL) {
         return cs_KEY_ERROR;
     }
 
-    CS_ASSERT(cs_List_Remove(bucket, index) == cs_OK,
+    CS_ASSERT(cs_list_remove(bucket, index) == cs_OK,
               "HASHMAP: can't remove pair from bucket list on index = '%lu'",
               index);
 
     return cs_OK;
 }
 
-void cs_Hashmap_Free(void *ptr) {
-    cs_Hashmap *map = (cs_Hashmap *)ptr;
+void
+cs_hashmap_free(void *ptr) {
+    cs_hashmap_t *map = (cs_hashmap_t *)ptr;
 
-    for (u64 i = 0; i < map->capacity; i++) {
-        cs_List *bucket = NULL;
-        CS_LIST_GET(map->bucketList, i, bucket);
-        cs_List_Free(bucket);
+    for (uint64_t i = 0; i < map->capacity; i++) {
+        cs_list_t *bucket = NULL;
+        CS_LIST_GET(map->bucket_list, i, bucket);
+        cs_list_free(bucket);
     }
-    cs_List_Free(map->bucketList);
+    cs_list_free(map->bucket_list);
 
     free(ptr);
 }

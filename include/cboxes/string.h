@@ -1,25 +1,20 @@
 #ifndef CBOXES_STRING_H_
 #define CBOXES_STRING_H_
 
-#include "cboxes/numtypes.h"
-#include <memory.h>
+#include <stdint.h>
 #include <stdlib.h>
 
-typedef const char *cstr;
-typedef unsigned char byte;
-typedef unsigned char *bytes;
-
-typedef struct cs_String {
+typedef struct cs_string {
     char *data;
-    u64 length;
-} cs_String;
+    uint64_t length;
+} cs_string_t;
 
-u64 cs_cstr_Length(cstr string);
-cs_String *cs_String_New(cstr source);
-cs_String *cs_String_NewC(cs_String *source);
-void cs_String_Set(cs_String *str, cstr new);
-void cs_String_SetC(cs_String *str, cs_String *otherStr);
+cs_string_t *cs_string_init(const char *str);
+cs_string_t *cs_string_init_0(const cs_string_t *str);
 
-void cs_String_Free(void *ptr);
+void cs_string_set(cs_string_t *str, const char *new_str);
+void cs_string_set_0(cs_string_t *str, const cs_string_t *other);
+
+void cs_string_free(void *ptr);
 
 #endif // CBOXES_STRING_H_

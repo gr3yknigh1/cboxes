@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 
-void cs_CopyMemory(void *restrict dest, const void *src, size_t destSize,
-                        size_t srcSize);
+void cs_copy_memory(void *restrict dest, const void *src, size_t dest_size,
+                    size_t src_size);
 
 #endif // CBOXES_MEMORY_H_
