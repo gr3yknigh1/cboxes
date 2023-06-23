@@ -6,20 +6,14 @@ Simple collections library written in C
 
 **Requirements**:
 
-- GNU Make
+- CMake
 - LLVM Clang
-- (optional) [Criterion](https://github.com/Snaipe/Criterion) (for unittesting)
+- clang-tidy
+- clang-format
+- valgrind
 
 ```bash
-make all
-```
-
-## Run tests
-
-Be sure to install Criterion unittesting library and run this command:
-
-```bash
-make clean all tests
+make
 ```
 
 ## To Do
