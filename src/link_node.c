@@ -14,7 +14,7 @@ cs_link_node_init(cs_link_node_t *next, cs_link_node_t *prev, void *value) {
 }
 
 cs_link_node_t *
-cs_link_node_NewD(void *value) {
+cs_link_node_init_0(void *value) {
     return cs_link_node_init(NULL, NULL, value);
 }
 
