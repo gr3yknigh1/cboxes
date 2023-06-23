@@ -10,19 +10,19 @@
 #include "cboxes/type.h"
 
 static void
-_cs_hashmap_push_back_pair(cs_list_t *bucket, const char *key, void *data,
+cs_hashmap_push_back_pair(cs_list_t *bucket, const char *key, void *data,
                            const cs_type_t *type) {
     cs_list_push_back(bucket, cs_pair_init(key, data, type));
 }
 
 static void
-_cs_hashmap_replace_pair_value(cs_pair_t *pair, void *data) {
+cs_hashmap_replace_pair_value(cs_pair_t *pair, void *data) {
     pair->type->free(pair->value);
     pair->value = cs_type_store_value(pair->type, data);
 }
 
 static cs_pair_t *
-_cs_hashmap_find_pair(const cs_list_t *bucket, const char *key,
+cs_hashmap_find_pair(const cs_list_t *bucket, const char *key,
                       uint64_t *out_pair) {
     cs_pair_t *pair = NULL;
     CS_LIST_FOREACHN(bucket, index, node, {
@@ -38,7 +38,7 @@ _cs_hashmap_find_pair(const cs_list_t *bucket, const char *key,
 }
 
 static cs_list_t *
-_cs_hashmap_get_bucket(const cs_list_t *bucket_list, uint64_t capacity,
+cs_hashmap_get_bucket(const cs_list_t *bucket_list, uint64_t capacity,
                        const char *key) {
     uint64_t index = cs_hashmap_hash(capacity, key);
     cs_list_t *bucket = NULL;
@@ -79,21 +79,21 @@ cs_hashmap_hash(uint64_t capacity, const char *key) {
 cs_status_t
 cs_hashmap_set(cs_hashmap_t *map, const char *key, void *data) {
     cs_list_t *bucket =
-        _cs_hashmap_get_bucket(map->bucket_list, map->capacity, key);
+        cs_hashmap_get_bucket(map->bucket_list, map->capacity, key);
 
     if (CS_LIST_ISEMPTY(bucket)) {
-        _cs_hashmap_push_back_pair(bucket, key, data, map->type);
+        cs_hashmap_push_back_pair(bucket, key, data, map->type);
         return cs_OK;
     }
 
-    cs_pair_t *target_pair = _cs_hashmap_find_pair(bucket, key, NULL);
+    cs_pair_t *target_pair = cs_hashmap_find_pair(bucket, key, NULL);
 
     if (target_pair == NULL) {
-        _cs_hashmap_push_back_pair(bucket, key, data, map->type);
+        cs_hashmap_push_back_pair(bucket, key, data, map->type);
         return cs_OK;
     }
 
-    _cs_hashmap_replace_pair_value(target_pair, data);
+    cs_hashmap_replace_pair_value(target_pair, data);
 
     return cs_OK;
 }
@@ -101,9 +101,9 @@ cs_hashmap_set(cs_hashmap_t *map, const char *key, void *data) {
 cs_status_t
 cs_hashmap_get(const cs_hashmap_t *map, const char *key, void **out_ptr) {
     cs_list_t *bucket =
-        _cs_hashmap_get_bucket(map->bucket_list, map->capacity, key);
+        cs_hashmap_get_bucket(map->bucket_list, map->capacity, key);
 
-    cs_pair_t *pair = _cs_hashmap_find_pair(bucket, key, NULL);
+    cs_pair_t *pair = cs_hashmap_find_pair(bucket, key, NULL);
     if (pair == NULL) {
         return cs_KEY_ERROR;
     }
@@ -116,10 +116,10 @@ cs_hashmap_get(const cs_hashmap_t *map, const char *key, void **out_ptr) {
 cs_status_t
 cs_hashmap_pop(cs_hashmap_t *map, const char *key, void **out_ptr) {
     cs_list_t *bucket =
-        _cs_hashmap_get_bucket(map->bucket_list, map->capacity, key);
+        cs_hashmap_get_bucket(map->bucket_list, map->capacity, key);
 
     uint64_t index = 0;
-    cs_pair_t *pair = _cs_hashmap_find_pair(bucket, key, &index);
+    cs_pair_t *pair = cs_hashmap_find_pair(bucket, key, &index);
 
     if (pair == NULL) {
         return cs_KEY_ERROR;
@@ -138,10 +138,10 @@ cs_hashmap_pop(cs_hashmap_t *map, const char *key, void **out_ptr) {
 cs_status_t
 cs_hashmap_remove(cs_hashmap_t *map, const char *key) {
     cs_list_t *bucket =
-        _cs_hashmap_get_bucket(map->bucket_list, map->capacity, key);
+        cs_hashmap_get_bucket(map->bucket_list, map->capacity, key);
 
     uint64_t index = 0;
-    cs_pair_t *pair = _cs_hashmap_find_pair(bucket, key, &index);
+    cs_pair_t *pair = cs_hashmap_find_pair(bucket, key, &index);
 
     if (pair == NULL) {
         return cs_KEY_ERROR;
