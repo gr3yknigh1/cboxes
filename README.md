@@ -30,9 +30,3 @@ make clean all tests
 - [ ] 2D Dynamic Array
 - [ ] BST
 
-## Convenction
-
-- PascalCase structs and 'methods'
-- 'method' - functions with struct name prefixes (like: `List_PushBack(...)`)
-- overloads marked with letter in the end of function (like: `List_Get(...); List_GetN(...)`)
-
