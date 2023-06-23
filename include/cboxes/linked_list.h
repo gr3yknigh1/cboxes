@@ -63,7 +63,7 @@ typedef struct cs_list {
     const cs_type_t *type;
 } cs_list_t;
 
-cs_list_t *cs_list_init(const cs_type_t *type);
+void cs_list_init(cs_list_t *out_list, const cs_type_t *type);
 
 void cs_list_push_back(cs_list_t *list, void *value);
 void cs_list_push_front(cs_list_t *list, void *value);

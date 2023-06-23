@@ -11,16 +11,14 @@
 
 INIT_COMPLEX_CS_TYPE(CS_TYPE_LIST, cs_list_t *, cs_list_copy, cs_list_free);
 
-cs_list_t *
-cs_list_init(const cs_type_t *type) {
-    cs_list_t *list = malloc(sizeof(cs_list_t));
-    *list = (cs_list_t){
+void
+cs_list_init(cs_list_t *out_list, const cs_type_t *type) {
+    *out_list = (cs_list_t){
         .head = NULL,
         .tail = NULL,
         .length = 0,
         .type = type,
     };
-    return list;
 }
 
 void *
@@ -28,7 +26,8 @@ cs_list_copy(void *restrict dest, const void *src, size_t count) {
     (void)count;
 
     const cs_list_t *orig = (const cs_list_t *)src;
-    cs_list_t *copy = cs_list_init(orig->type);
+    cs_list_t *copy = (cs_list_t *)dest;
+    cs_list_init(copy, orig->type);
 
     CS_LIST_FOREACHN(orig, index, node, {
         (void)index;

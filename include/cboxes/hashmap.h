@@ -17,7 +17,8 @@ typedef struct cs_hashmap {
     uint64_t capacity;
 } cs_hashmap_t;
 
-cs_hashmap_t *cs_hashmap_init(const cs_type_t *type, uint64_t capacity);
+void cs_hashmap_init(cs_hashmap_t *out_hashmap, const cs_type_t *type,
+                     uint64_t capacity);
 
 uint64_t cs_hashmap_hash(uint64_t capacity, const char *key);
 

@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdlib.h>
 
 #include "cboxes/assert.h"
 #include "cboxes/hash.h"
@@ -11,7 +12,7 @@
 
 static void
 cs_hashmap_push_back_pair(cs_list_t *bucket, const char *key, void *data,
-                           const cs_type_t *type) {
+                          const cs_type_t *type) {
     cs_list_push_back(bucket, cs_pair_init(key, data, type));
 }
 
@@ -23,7 +24,7 @@ cs_hashmap_replace_pair_value(cs_pair_t *pair, void *data) {
 
 static cs_pair_t *
 cs_hashmap_find_pair(const cs_list_t *bucket, const char *key,
-                      uint64_t *out_pair) {
+                     uint64_t *out_pair) {
     cs_pair_t *pair = NULL;
     CS_LIST_FOREACHN(bucket, index, node, {
         pair = (cs_pair_t *)(node->value);
@@ -39,7 +40,7 @@ cs_hashmap_find_pair(const cs_list_t *bucket, const char *key,
 
 static cs_list_t *
 cs_hashmap_get_bucket(const cs_list_t *bucket_list, uint64_t capacity,
-                       const char *key) {
+                      const char *key) {
     uint64_t index = cs_hashmap_hash(capacity, key);
     cs_list_t *bucket = NULL;
     cs_status_t status = CS_LIST_GET(bucket_list, index, bucket);
@@ -53,27 +54,28 @@ cs_hashmap_get_bucket(const cs_list_t *bucket_list, uint64_t capacity,
     return bucket;
 }
 
-cs_hashmap_t *
-cs_hashmap_init(const cs_type_t *type, uint64_t capacity) {
-    cs_hashmap_t *map = malloc(sizeof(cs_hashmap_t));
-
-    *map = (cs_hashmap_t){
-        .bucket_list = cs_list_init(CS_TYPE_LIST),
+void
+cs_hashmap_init(cs_hashmap_t *out_hashmap, const cs_type_t *type,
+                uint64_t capacity) {
+    *out_hashmap = (cs_hashmap_t){
+        .bucket_list = malloc(sizeof(cs_list_t)),
         .type = type,
         .capacity = capacity,
         .pair_count = 0,
     };
+    cs_list_init(out_hashmap->bucket_list, CS_TYPE_LIST);
 
     // TODO: Add func for capacity change
     for (uint64_t i = 0; i < capacity; i++) {
-        cs_list_push_back(map->bucket_list, cs_list_init(CS_TYPE_PAIR));
+        cs_list_t *bucket = malloc(sizeof(cs_list_t));
+        cs_list_init(bucket, CS_TYPE_PAIR);
+        cs_list_push_back(out_hashmap->bucket_list, bucket);
     }
-    return map;
 }
 
 uint64_t
 cs_hashmap_hash(uint64_t capacity, const char *key) {
-    return cs_hash_lose_lose((const unsigned char *)key) % capacity;
+    return cs_hash_lose_lose((const uint8_t *)key) % capacity;
 }
 
 cs_status_t
