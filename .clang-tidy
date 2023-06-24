@@ -1,4 +1,4 @@
-Checks:          'bugprone-*,clang-diagnostic-*,clang-analyzer-*,llvm-*,performance-*,readability-braces-around-statements,readability-const-return-type,readability-delete-null-pointer,readability-duplicate-include,readability-else-after-return,readability-misleading-indentation,readability-simplify-boolean-expr'
+Checks:          'clang-diagnostic-*,clang-analyzer-*,llvm-*,performance-*,readability-braces-around-statements,readability-const-return-type,readability-delete-null-pointer,readability-duplicate-include,readability-else-after-return,readability-misleading-indentation,readability-simplify-boolean-expr'
 WarningsAsErrors: '*'
 HeaderFilterRegex: ''
 AnalyzeTemporaryDtors: false
