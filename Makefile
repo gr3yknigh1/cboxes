@@ -25,6 +25,7 @@ configure:
 		$(CMAKE_CONF_FLAGS)
 
 test:
+	cmake --build build $(CMAKE_BUILD_FLAGS)
 	cd build; ctest -VV
 
 check:
