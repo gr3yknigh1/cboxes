@@ -1,4 +1,4 @@
-.PHONY: default all build configure test clean
+.PHONY: default all build configure test clean debug release run-sanitizers
 
 CMAKE_CONF_FLAGS :=
 CMAKE_BUILD_FLAGS :=
@@ -34,8 +34,35 @@ check:
 format:
 	cmake --build build --target format
 
-rebuild:
-	$(MAKE) clean configure check build test
+run-sanitizers:
+	$(MAKE) clean
+	cmake -B build \
+		-DCMAKE_EXPORT_COMPILE_COMMANDS=true \
+		-DSANITAZER=MSan \
+		-DBUILD_TESTING=true \
+		-DCMAKE_BUILD_TYPE=Debug
+
+	cmake --build build --config Debug
+	$(MAKE) test
+
+	$(MAKE) clean
+	cmake -B build \
+		-DCMAKE_EXPORT_COMPILE_COMMANDS=true \
+		-DSANITAZER=ASan \
+		-DBUILD_TESTING=true \
+		-DCMAKE_BUILD_TYPE=Debug
+	cmake --build build --config Debug
+	$(MAKE) test
+
+	$(MAKE) clean
+	cmake -B build \
+		-DCMAKE_EXPORT_COMPILE_COMMANDS=true \
+		-DSANITAZER=TSan \
+		-DBUILD_TESTING=true \
+		-DCMAKE_BUILD_TYPE=Debug
+	cmake --build build --config Debug
+	$(MAKE) test
+
 
 clean:
 	rm -rf build
