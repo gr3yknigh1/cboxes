@@ -7,11 +7,14 @@ default: all
 
 all: build
 
-debug: CMAKE_CONF_FLAGS += -D BUILD_TESTING=true
+debug: CMAKE_CONF_FLAGS += -DBUILD_TESTING=true
+debug: CMAKE_CONF_FLAGS += -DCMAKE_BUILD_TYPE=Debug
 debug: CMAKE_BUILD_FLAGS += --config Debug
+debug: CMAKE_BUILD_FLAGS += --verbose
 debug: all
 
 release: CMAKE_BUILD_FLAGS += --config Release
+release: CMAKE_CONF_FLAGS += -DCMAKE_BUILD_TYPE=Release
 release: all
 
 build: configure
@@ -20,8 +23,8 @@ build: configure
 configure:
 	cmake -B build \
 		-G "Unix Makefiles" \
-		-D CMAKE_EXPORT_COMPILE_COMMANDS=true \
-		-D CMAKE_C_COMPILER=/bin/clang \
+		-DCMAKE_EXPORT_COMPILE_COMMANDS=true \
+		-DCMAKE_C_COMPILER=/bin/clang \
 		$(CMAKE_CONF_FLAGS)
 
 test:

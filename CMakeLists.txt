@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(cboxes C)
 
 
-set(CMAKE_C_STANDARD 17)
+set(CMAKE_C_STANDARD 23)
 set(CMAKE_C_STANDARD_REQUIRED true)
 
 
@@ -80,7 +80,7 @@ find_program(CLANG_TIDY_EXEC clang-tidy)
 if(CLANG_TIDY_EXEC)
     message(STATUS "Found clang-tidy")
 else()
-    message(ERROR "clang-tidy not found")
+    message(WARNING "clang-tidy not found")
 endif()
 
 
@@ -88,7 +88,7 @@ find_program(CLANG_FORMAT_EXEC clang-format)
 if(CLANG_FORMAT_EXEC)
     message(STATUS "Found clang-format")
 else()
-    message(ERROR "clang-format not found")
+    message(WARNING "clang-format not found")
 endif()
 
 
@@ -96,6 +96,6 @@ find_program(VALGRIND_EXEC valgrind)
 if(VALGRIND_EXEC)
     message(STATUS "Found valgrind")
 else()
-    message(ERROR "Valgrind not found")
+    message(WARNING "Valgrind not found")
 endif()
 
