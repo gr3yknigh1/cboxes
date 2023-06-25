@@ -79,7 +79,7 @@ void cs_list_clear(cs_list_t *list);
 void cs_list_free(void *ptr);
 
 #define CS_LIST_INRANGE(__list, __index)                                       \
-    ((__index) >= 0 && (__index) < (__list)->length)
+    ((__index) < (__list)->length)
 #define CS_LIST_ISEMPTY(__list) ((__list)->length == 0)
 
 // TODO: Replace with Interator
