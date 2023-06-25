@@ -1,5 +1,5 @@
-#ifndef CBOXES_LIST_H_
-#define CBOXES_LIST_H_
+#ifndef CBOXES_LINKED_LIST_H_
+#define CBOXES_LINKED_LIST_H_
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -86,4 +86,4 @@ void cs_list_print(const cs_list_t *list, void (*print_node)(cs_link_node_t *));
 
 DEFINE_CS_TYPE(CS_TYPE_LIST);
 
-#endif // CBOXES_LIST_H_
+#endif // CBOXES_LINKED_LIST_H_
