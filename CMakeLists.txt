@@ -35,9 +35,31 @@ set(
     ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/type.h
     )
 
+set(
+    PROJECT_TEST_SOURCES
+    ${PROJECT_SOURCE_DIR}/tests/test_darray.c
+    )
 
 add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCES})
 
+include(CTest)
+enable_testing()
+
+if(BUILD_TESTING)
+    foreach(TEST_SRC IN LISTS PROJECT_TEST_SOURCES)
+        get_filename_component(TEST_NAME ${TEST_SRC} NAME_WE)
+        add_executable(${TEST_NAME} ${TEST_SRC})
+        target_link_libraries(${TEST_NAME} ${PROJECT_NAME})
+        target_include_directories(
+            ${TEST_NAME}
+            PRIVATE ${PROJECT_SOURCE_DIR}/include
+            )
+        add_test(
+            NAME ${TEST_NAME}
+            COMMAND ${TEST_NAME}
+            )
+    endforeach(TEST_SRC)
+endif()
 
 target_include_directories(
     ${PROJECT_NAME}

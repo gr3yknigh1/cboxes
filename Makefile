@@ -1,17 +1,26 @@
-.PHONY: default all lib-build lib-configure clean
+.PHONY: default all build configure test clean
+
+CMAKE_CONF_FLAGS :=
 
 default: all
 
-all: lib-build
+all: build
 
-lib-build: lib-configure
+debug: CMAKE_CONF_FLAGS += -D BUILD_TESTING=true
+debug: all
+
+build: configure
 	cmake --build build
 
-lib-configure:
+configure:
 	cmake -B build \
-		-G "Ninja Multi-Config" \
+		-G "Unix Makefiles" \
 		-D CMAKE_EXPORT_COMPILE_COMMANDS=true \
-		-D CMAKE_C_COMPILER=/bin/clang
+		-D CMAKE_C_COMPILER=/bin/clang \
+		$(CMAKE_CONF_FLAGS)
+
+test:
+	cd build; ctest -VV
 
 clean:
 	rm -rf build
