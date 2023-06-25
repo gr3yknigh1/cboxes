@@ -34,5 +34,8 @@ check:
 format:
 	cmake --build build --target format
 
+rebuild:
+	$(MAKE) clean configure check build test
+
 clean:
 	rm -rf build
