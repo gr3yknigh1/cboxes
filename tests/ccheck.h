@@ -1,6 +1,13 @@
 #ifndef CCHECK_CCHECK_H_
 #define CCHECK_CCHECK_H_
 
+/*
+ * TODO:
+ *     - [ ] Add quite mode
+ *     - [ ] .init and .fini for suite
+ *     - [ ] .init and .fini for case
+ * */
+
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
