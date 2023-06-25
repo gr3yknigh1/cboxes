@@ -1,10 +1,10 @@
 #include "ccheck.h"
 
-#include "cboxes/darray.h"
+#include <cboxes/darray.h>
 
-CC_TEST_SUITE(DARR);
+CC_TEST_SUITE(darray);
 
-CC_TEST_CASE(DATA_SIZE) {
+CC_TEST_CASE(data_size) {
     cs_darray_t arr = {
         .data = NULL,
         .len = 0,
