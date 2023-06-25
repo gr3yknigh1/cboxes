@@ -44,37 +44,18 @@ set(
 
 add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCES})
 
-include(CTest)
-enable_testing()
-
-if(BUILD_TESTING)
-    foreach(TEST_SRC IN LISTS PROJECT_TEST_SOURCES)
-        get_filename_component(TEST_NAME ${TEST_SRC} NAME_WE)
-        add_executable(${TEST_NAME} ${TEST_SRC})
-        target_link_libraries(${TEST_NAME} ${PROJECT_NAME})
-        target_include_directories(
-            ${TEST_NAME}
-            PRIVATE ${PROJECT_SOURCE_DIR}/include
-            )
-        add_test(
-            NAME ${TEST_NAME}
-            COMMAND ${TEST_NAME}
-            )
-    endforeach(TEST_SRC)
+if(MSVC)
+    target_compile_options(${PROJECT_NAME} PUBLIC /W4)
+elseif(CMAKE_COMPILER_IS_GNUCC)
+    target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wextra -Wpedantic -Werror)
+else()
+    message(ERROR "Unhandled compiler ID")
 endif()
 
 target_include_directories(
     ${PROJECT_NAME}
     PRIVATE ${PROJECT_SOURCE_DIR}/include
     )
-
-
-if (MSVC)
-    target_compile_options(${PROJECT_NAME} PUBLIC /W4)
-else()
-    target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wextra -Wpedantic -Werror)
-endif()
-
 
 find_program(CLANG_TIDY_EXEC clang-tidy)
 if(CLANG_TIDY_EXEC)
@@ -98,4 +79,24 @@ if(VALGRIND_EXEC)
 else()
     message(WARNING "Valgrind not found")
 endif()
+
+include(CTest)
+enable_testing()
+
+if(BUILD_TESTING)
+    foreach(TEST_SRC IN LISTS PROJECT_TEST_SOURCES)
+        get_filename_component(TEST_NAME ${TEST_SRC} NAME_WE)
+        add_executable(${TEST_NAME} ${TEST_SRC})
+        target_link_libraries(${TEST_NAME} ${PROJECT_NAME})
+        target_include_directories(
+            ${TEST_NAME}
+            PRIVATE ${PROJECT_SOURCE_DIR}/include
+            )
+        add_test(
+            NAME ${TEST_NAME}
+            COMMAND ${TEST_NAME}
+            )
+    endforeach(TEST_SRC)
+endif()
+
 
