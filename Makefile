@@ -27,5 +27,12 @@ configure:
 test:
 	cd build; ctest -VV
 
+check:
+	cmake --build build --target lint
+	cmake --build build --target tidy
+
+format:
+	cmake --build build --target format
+
 clean:
 	rm -rf build

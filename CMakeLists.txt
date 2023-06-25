@@ -60,16 +60,52 @@ target_include_directories(
 find_program(CLANG_TIDY_EXEC clang-tidy)
 if(CLANG_TIDY_EXEC)
     message(STATUS "Found clang-tidy")
+    set(CMAKE_EXPORT_COMPILE_COMMANDS true)
+    add_custom_target(
+        tidy
+        COMMAND ${CLANG_TIDY_EXEC}
+            --config-file="${PROJECT_SOURCE_DIR}/.clang-tidy"
+            -p "${PROJECT_BINARY_DIR}/compile_commands.json"
+            ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${PROJECT_TEST_SOURCES}
+        )
 else()
     message(WARNING "clang-tidy not found")
+    add_custom_target(
+        tidy
+        COMMAND echo "clang-tidy not avaiable" && false
+        )
 endif()
 
 
 find_program(CLANG_FORMAT_EXEC clang-format)
 if(CLANG_FORMAT_EXEC)
     message(STATUS "Found clang-format")
+    add_custom_target(
+        lint
+        COMMAND ${CLANG_FORMAT_EXEC}
+            --Werror
+            --dry-run
+            ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${PROJECT_TEST_SOURCES}
+        )
+
+    add_custom_target(
+        format
+        COMMAND ${CLANG_FORMAT_EXEC}
+            --Werror
+            -i
+            ${PROJECT_SOURCES} ${PROJECT_HEADERS} ${PROJECT_TEST_SOURCES}
+        )
 else()
     message(WARNING "clang-format not found")
+    add_custom_target(
+        lint
+        COMMAND echo "clang-format not avaiable" && false
+        )
+
+    add_custom_target(
+        format
+        COMMAND echo "clang-format not avaiable" && false
+        )
 endif()
 
 
