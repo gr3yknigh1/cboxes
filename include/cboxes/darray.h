@@ -1,6 +1,8 @@
 #ifndef CBOXES_DARRAY_H_
 #define CBOXES_DARRAY_H_
 
+#include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 
 #include "cboxes/status.h"
@@ -17,17 +19,13 @@ typedef struct {
     const cs_type_t *type;
 } cs_darray_t;
 
-#define CS_DARRAY_DATA_SIZE(__DARR_PTR)                                        \
-    ((__DARR_PTR)->cap * (__DARR_PTR)->type->size)
+size_t cs_darray_get_buffer_size(const cs_darray_t *darr);
 
-#define CS_DARRAY_IN_RANGE(__DARR_PTR, __IDX) ((__IDX) <= (__DARR_PTR)->len)
+bool cs_darray_is_in_range(const cs_darray_t *darr, uint64_t index);
 
-#define CS_DARRAY_OFFSET(__DARR_PTR)                                           \
-    ((int8_t *)(__DARR_PTR)->data +                                            \
-     ((__DARR_PTR)->len * (__DARR_PTR)->type->size))
+int8_t *cs_darray_get_data_offset(const cs_darray_t *darr);
 
-#define CS_DARRAY_SPACE_LEFT(__DARR_PTR)                                       \
-    (((__DARR_PTR)->cap - (__DARR_PTR)->len) * (__DARR_PTR)->type->size)
+size_t cs_darray_get_space_left(const cs_darray_t *darr);
 
 void cs_darray_init(cs_darray_t *out, const cs_type_t *type);
 

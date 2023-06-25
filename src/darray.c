@@ -1,6 +1,29 @@
 #include "cboxes/darray.h"
 #include "cboxes/memory.h"
 
+size_t
+cs_darray_get_buffer_size(const cs_darray_t *darr) {
+    return darr->cap * darr->type->size;
+}
+
+bool
+cs_darray_is_in_range(const cs_darray_t *darr, uint64_t index) {
+    return index < darr->len;
+}
+
+/*
+ * Returns a pointer were valid data ending
+ * */
+int8_t *
+cs_darray_get_data_offset(const cs_darray_t *darr) {
+    return (int8_t *)darr->data + (darr->len * darr->type->size);
+}
+
+size_t
+cs_darray_get_space_left(const cs_darray_t *darr) {
+    return (darr->cap - darr->len) * darr->type->size;
+}
+
 void
 cs_darray_init(cs_darray_t *out, const cs_type_t *type) {
     *out = (cs_darray_t){
@@ -13,7 +36,7 @@ cs_darray_init(cs_darray_t *out, const cs_type_t *type) {
 
 cs_status_t
 cs_darray_get(const cs_darray_t *darr, uint64_t idx, void const **out) {
-    if (!CS_DARRAY_IN_RANGE(darr, idx)) {
+    if (!cs_darray_is_in_range(darr, idx)) {
         return cs_INDEX_ERROR;
     }
     *out = ((int8_t *)darr->data) + idx * darr->type->size;
@@ -22,7 +45,7 @@ cs_darray_get(const cs_darray_t *darr, uint64_t idx, void const **out) {
 
 cs_status_t
 cs_darray_get_mut(const cs_darray_t *darr, uint64_t idx, void **out) {
-    if (!CS_DARRAY_IN_RANGE(darr, idx)) {
+    if (!cs_darray_is_in_range(darr, idx)) {
         return cs_INDEX_ERROR;
     }
     *out = ((int8_t *)darr->data) + idx * darr->type->size;
@@ -51,7 +74,7 @@ cs_darray_push_back(cs_darray_t *darr, void *data) {
         cs_darray_reallocate(darr, darr->cap * CS_DARRAY_LOAD_MULT);
     }
 
-    cs_copy_memory(CS_DARRAY_OFFSET(darr), data, CS_DARRAY_SPACE_LEFT(darr),
-                   darr->type->size);
+    cs_copy_memory(cs_darray_get_data_offset(darr), data,
+                   cs_darray_get_space_left(darr), darr->type->size);
     darr->len++;
 }
