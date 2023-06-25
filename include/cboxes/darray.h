@@ -21,7 +21,7 @@ typedef struct {
     ((__DARR_PTR)->cap * (__DARR_PTR)->type->size)
 
 #define CS_DARRAY_IN_RANGE(__DARR_PTR, __IDX)                                  \
-    ((__IDX) >= 0 && (__IDX) <= (__DARR_PTR)->len)
+    ((__IDX) <= (__DARR_PTR)->len)
 
 #define CS_DARRAY_OFFSET(__DARR_PTR)                                           \
     ((int8_t *)(__DARR_PTR)->data +                                            \
