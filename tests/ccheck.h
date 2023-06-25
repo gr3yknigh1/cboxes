@@ -61,7 +61,7 @@ static unsigned long CC_TEST_CASE_COUNT = 0;
 
 #define CC_TEST_CASE(TEST_NAME)                                                \
     void TEST_CASE_##TEST_NAME##_RUN(void);                                    \
-    static cc_test_case_t TEST_CASE_##TEST_NAME = (cc_test_case_t){            \
+    static cc_test_case_t TEST_CASE_##TEST_NAME = {                            \
         .init = NULL,                                                          \
         .fini = NULL,                                                          \
         ._name = #TEST_NAME,                                                   \
@@ -99,9 +99,7 @@ static unsigned long CC_TEST_CASE_COUNT = 0;
         }                                                                      \
         return return_code;                                                    \
     }                                                                          \
-    static cc_test_suite_t CC_TEST_SUITE = (cc_test_suite_t) {                 \
-        ._name = #SUITE_NAME                                                   \
-    }
+    static cc_test_suite_t CC_TEST_SUITE = {._name = #SUITE_NAME}
 
 #define ASSERT(EXPR)                                                           \
     do {                                                                       \
