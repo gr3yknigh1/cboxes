@@ -2,9 +2,9 @@
 
 #include <cboxes/darray.h>
 
-CC_TEST_SUITE(darray);
+TEST_PACK(darray);
 
-CC_TEST_CASE(data_size) {
+TEST(data_size) {
     const uint64_t arr_len = 4;
     const uint64_t arr_cap = 10;
     cs_darray_t arr = {
@@ -20,7 +20,7 @@ CC_TEST_CASE(data_size) {
     ASSERT(calc_size == expected_size);
 }
 
-CC_TEST_CASE(in_range) {
+TEST(in_range) {
     const uint64_t arr_len = 4;
     const uint64_t arr_cap = 10;
     cs_darray_t arr = {
