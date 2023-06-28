@@ -1,4 +1,4 @@
-#include "cboxes/darray.h"
+#include "cboxes/dynamic_array.h"
 #include "cboxes/memory.h"
 
 /*
@@ -8,7 +8,6 @@ size_t
 cs_darray_get_buffer_size(const cs_darray_t *darr) {
     return darr->cap * darr->type->size;
 }
-
 
 bool
 cs_darray_is_in_range(const cs_darray_t *darr, uint64_t index) {

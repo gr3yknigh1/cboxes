@@ -1,6 +1,6 @@
 #include "ccheck.h"
 
-#include <cboxes/darray.h>
+#include <cboxes/dynamic_array.h>
 
 TEST_PACK(darray);
 

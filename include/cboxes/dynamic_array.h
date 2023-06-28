@@ -1,5 +1,5 @@
-#ifndef CBOXES_DARRAY_H_
-#define CBOXES_DARRAY_H_
+#ifndef CBOXES_DYNAMIC_ARRAY_H_
+#define CBOXES_DYNAMIC_ARRAY_H_
 
 #include <stdbool.h>
 #include <stddef.h>
@@ -38,4 +38,4 @@ void cs_darray_reallocate(cs_darray_t *darr, uint64_t new_cap);
 
 void cs_darray_push_back(cs_darray_t *darr, void *data);
 
-#endif // CBOXES_DARRAY_H_
+#endif // CBOXES_DYNAMIC_ARRAY_H_
