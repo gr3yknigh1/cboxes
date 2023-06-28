@@ -1,10 +1,14 @@
 #include "cboxes/darray.h"
 #include "cboxes/memory.h"
 
+/*
+ * Returns size of whole allocated buffer in bytes
+ * */
 size_t
 cs_darray_get_buffer_size(const cs_darray_t *darr) {
     return darr->cap * darr->type->size;
 }
+
 
 bool
 cs_darray_is_in_range(const cs_darray_t *darr, uint64_t index) {
@@ -19,6 +23,9 @@ cs_darray_get_data_offset(const cs_darray_t *darr) {
     return (int8_t *)darr->data + (darr->len * darr->type->size);
 }
 
+/*
+ * Returns amount of bytes that left in buffer
+ * */
 size_t
 cs_darray_get_space_left(const cs_darray_t *darr) {
     return (darr->cap - darr->len) * darr->type->size;
