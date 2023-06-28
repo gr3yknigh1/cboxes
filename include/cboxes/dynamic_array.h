@@ -12,30 +12,45 @@
 #define CS_DARRAY_LOAD_MULT 2
 
 typedef struct {
-    void *data;
-    uint64_t len;
-    uint64_t cap;
+    void *buffer;
+    uint64_t length;
+    uint64_t capacity;
 
     const cs_type_t *type;
-} cs_darray_t;
+} cs_dynamic_array_t;
 
-size_t cs_darray_get_buffer_size(const cs_darray_t *darr);
+/*
+ * Returns size of whole allocated buffer in bytes
+ * */
+size_t
+cs_dynamic_array_get_buffer_size(const cs_dynamic_array_t *dynamic_array);
 
-bool cs_darray_is_in_range(const cs_darray_t *darr, uint64_t index);
+bool cs_dynamic_array_is_in_range(const cs_dynamic_array_t *dynamic_array,
+                                  uint64_t index);
 
-int8_t *cs_darray_get_data_offset(const cs_darray_t *darr);
+/*
+ * Returns a pointer were valid data ending
+ * */
+int8_t *
+cs_dynamic_array_get_data_offset(const cs_dynamic_array_t *dynamic_array);
 
-size_t cs_darray_get_space_left(const cs_darray_t *darr);
+/*
+ * Returns amount of bytes that left in buffer
+ * */
+size_t cs_dynamic_array_get_space_left(const cs_dynamic_array_t *dynamic_array);
 
-void cs_darray_init(cs_darray_t *out, const cs_type_t *type);
+void cs_dynamic_array_init(cs_dynamic_array_t *out_dynamic_array,
+                           const cs_type_t *type);
 
-cs_status_t cs_darray_get(const cs_darray_t *darr, uint64_t idx,
-                          void const **out);
-cs_status_t cs_darray_get_mut(const cs_darray_t *darr, uint64_t idx,
-                              void **out);
+cs_status_t cs_dynamic_array_get_item(const cs_dynamic_array_t *dynamic_array,
+                                      uint64_t index, void const **out_item);
+cs_status_t
+cs_dynamic_array_get_mutable_item(const cs_dynamic_array_t *dynamic_array,
+                                  uint64_t index, void **out_item);
 
-void cs_darray_reallocate(cs_darray_t *darr, uint64_t new_cap);
+void cs_dynamic_array_reallocate(cs_dynamic_array_t *dynamic_array,
+                                 uint64_t new_capacity);
 
-void cs_darray_push_back(cs_darray_t *darr, void *data);
+void cs_dynamic_array_push_back(cs_dynamic_array_t *dynamic_array, void *item_ptr);
 
 #endif // CBOXES_DYNAMIC_ARRAY_H_
