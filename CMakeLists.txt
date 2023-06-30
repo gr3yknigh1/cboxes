@@ -83,7 +83,7 @@ else()
     message(WARNING "clang-tidy not found")
     add_custom_target(
         tidy
-        COMMAND echo "clang-tidy not avaiable" && false
+        COMMAND echo "clang-tidy not available" && false
         )
 endif()
 
