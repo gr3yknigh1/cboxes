@@ -14,7 +14,7 @@ cs_dynamic_array_is_in_range(const cs_dynamic_array_t *dynamic_array,
 
 int8_t *
 cs_dynamic_array_get_data_offset(const cs_dynamic_array_t *dynamic_array) {
-    return (int8_t *)dynamic_array->buffer +
+    return (int8_t *)dynamic_array->data +
            (dynamic_array->length * dynamic_array->type->size);
 }
 
@@ -28,7 +28,7 @@ void
 cs_dynamic_array_init(cs_dynamic_array_t *out_dynamic_array,
                       const cs_type_t *type) {
     *out_dynamic_array = (cs_dynamic_array_t){
-        .buffer = NULL,
+        .data = NULL,
         .length = 0,
         .capacity = 0,
         .type = type,
@@ -42,7 +42,7 @@ cs_dynamic_array_get_item(const cs_dynamic_array_t *dynamic_array,
         return cs_INDEX_ERROR;
     }
     *out_item =
-        ((int8_t *)dynamic_array->buffer) + index * dynamic_array->type->size;
+        ((int8_t *)dynamic_array->data) + index * dynamic_array->type->size;
     return cs_OK;
 }
 
@@ -53,7 +53,7 @@ cs_dynamic_array_get_mutable_item(const cs_dynamic_array_t *dynamic_array,
         return cs_INDEX_ERROR;
     }
     *out_item =
-        ((int8_t *)dynamic_array->buffer) + index * dynamic_array->type->size;
+        ((int8_t *)dynamic_array->data) + index * dynamic_array->type->size;
     return cs_OK;
 }
 
@@ -63,15 +63,15 @@ cs_dynamic_array_reallocate(cs_dynamic_array_t *dynamic_array,
     void *new_data = malloc(dynamic_array->type->size * new_capacity);
 
     if (dynamic_array->length != 0) {
-        cs_copy_memory(new_data, dynamic_array->buffer, new_capacity,
+        cs_copy_memory(new_data, dynamic_array->data, new_capacity,
                        dynamic_array->length);
     }
 
-    if (dynamic_array->buffer != NULL) {
-        free(dynamic_array->buffer);
+    if (dynamic_array->data != NULL) {
+        free(dynamic_array->data);
     }
 
-    dynamic_array->buffer = new_data;
+    dynamic_array->data = new_data;
     dynamic_array->capacity = new_capacity;
 }
 

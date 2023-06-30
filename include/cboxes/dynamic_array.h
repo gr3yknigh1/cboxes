@@ -12,7 +12,7 @@
 #define CS_DARRAY_LOAD_MULT 2
 
 typedef struct {
-    void *buffer;
+    void *data;
     uint64_t length;
     uint64_t capacity;
 

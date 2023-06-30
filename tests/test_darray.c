@@ -8,7 +8,7 @@ TEST(data_size) {
     const uint64_t array_length = 4;
     const uint64_t array_capacity = 10;
     const cs_dynamic_array_t array = {
-        .buffer = NULL,
+        .data = NULL,
         .length = array_length,
         .capacity = array_capacity,
         .type = CS_TYPE_I32,
@@ -22,7 +22,7 @@ TEST(in_range) {
     const uint64_t array_length = 4;
     const uint64_t array_capacity = 10;
     const cs_dynamic_array_t arr = {
-        .buffer = NULL,
+        .data = NULL,
         .length = array_length,
         .capacity = array_capacity,
         .type = CS_TYPE_I32,
@@ -34,3 +34,6 @@ TEST(in_range) {
     ASSERT(!cs_dynamic_array_is_in_range(&arr, array_capacity));
     ASSERT(!cs_dynamic_array_is_in_range(&arr, array_capacity + 2));
 }
+
+
+
