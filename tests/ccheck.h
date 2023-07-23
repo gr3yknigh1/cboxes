@@ -31,7 +31,7 @@ typedef struct {
     cc_proc_t fini;
 
     const char *_name;
-    cc_proc_t _case;
+    cc_proc_t _run;
     cc_test_case_status_t _status;
     cc_assert_expr_info_t _last_expr_info;
 } cc_test_case_t;
@@ -46,7 +46,12 @@ typedef struct {
 
 static cc_test_suite_t CC_TEST_SUITE;
 
-#define CC_CALL_PROC_IF_NOT_NULL(PROC)                                         \
+#define _SUITE CC_TEST_SUITE
+#define _CUR_CASE CC_TEST_SUITE._cur_case
+#define _CUR_EXPR_INFO CC_TEST_SUITE._cur_case->_last_expr_info
+#define _CUR_STATUS CC_TEST_SUITE._cur_case->_status
+
+#define _CALL_PROC_IF_NOT_NULL(PROC)                                           \
     if (PROC != NULL) {                                                        \
         PROC();                                                                \
     }
@@ -59,60 +64,70 @@ static unsigned long CC_TEST_CASE_COUNT = 0;
     void NAME(void) __attribute__((constructor));                              \
     void NAME(void)
 
-#define CC_TEST_CASE(TEST_NAME)                                                \
-    void TEST_CASE_##TEST_NAME##_RUN(void);                                    \
-    static cc_test_case_t TEST_CASE_##TEST_NAME = {                            \
+#define _TEST_RUN_NAME(__TEST_NAME) _##__TEST_NAME##_run
+#define _TEST_STRUCT_NAME(__TEST_NAME) _##__TEST_NAME
+
+#define _TEST_STRUCT(__TEST_NAME)                                              \
+    static cc_test_case_t _TEST_STRUCT_NAME(__TEST_NAME) =
+#define _TEST_STRUCT_INIT(__TEST_NAME)                                         \
+    CC_PRE_MAIN_PROC(__TEST_NAME) {                                            \
+        CC_TEST_CASES[CC_TEST_CASE_COUNT] = &_TEST_STRUCT_NAME(__TEST_NAME);   \
+        CC_TEST_CASE_COUNT++;                                                  \
+    }
+
+#define TEST(TEST_NAME)                                                        \
+    void _TEST_RUN_NAME(TEST_NAME)(void);                                      \
+    _TEST_STRUCT(TEST_NAME){                                                   \
         .init = NULL,                                                          \
         .fini = NULL,                                                          \
         ._name = #TEST_NAME,                                                   \
-        ._case = TEST_CASE_##TEST_NAME##_RUN,                                  \
+        ._run = _TEST_RUN_NAME(TEST_NAME),                                     \
         ._status = CC_NONE,                                                    \
     };                                                                         \
-    CC_PRE_MAIN_PROC(TEST_NAME) {                                              \
-        CC_TEST_CASES[CC_TEST_CASE_COUNT] = &TEST_CASE_##TEST_NAME;            \
-        CC_TEST_CASE_COUNT++;                                                  \
-    }                                                                          \
-    void TEST_CASE_##TEST_NAME##_RUN(void)
+    _TEST_STRUCT_INIT(TEST_NAME)                                               \
+    void _TEST_RUN_NAME(TEST_NAME)(void)
 
-#define CC_TEST_SUITE(SUITE_NAME)                                              \
+#define TEST_PACK(PACK_NAME)                                                   \
     int main(void) {                                                           \
         int return_code = EXIT_SUCCESS;                                        \
         for (unsigned long i = 0; i < CC_TEST_CASE_COUNT; ++i) {               \
-            CC_TEST_SUITE._cur_case = CC_TEST_CASES[i];                        \
-            cc_test_case_t *cur_case = CC_TEST_SUITE._cur_case;                \
-            CC_CALL_PROC_IF_NOT_NULL(cur_case->init);                          \
-            cur_case->_case();                                                 \
-            if (cur_case->_status == CC_ERROR) {                               \
-                printf("[%s::%s]: FAILED: '%s' in %s:%lu\n", #SUITE_NAME,      \
-                       cur_case->_name, cur_case->_last_expr_info.expr,        \
-                       cur_case->_last_expr_info.file_path,                    \
-                       cur_case->_last_expr_info.line_number);                 \
+            _CUR_CASE = CC_TEST_CASES[i];                                      \
+            _CALL_PROC_IF_NOT_NULL(_CUR_CASE->init);                           \
+            _CUR_CASE->_run();                                                 \
+            if (_CUR_CASE->_status == CC_ERROR) {                              \
+                printf("[%s::%s]: FAILED: '%s' in %s:%lu\n", #PACK_NAME,       \
+                       _CUR_CASE->_name, _CUR_EXPR_INFO.expr,                  \
+                       _CUR_EXPR_INFO.file_path, _CUR_EXPR_INFO.line_number);  \
                 return_code = EXIT_FAILURE;                                    \
             }                                                                  \
-            if (cur_case->_status == CC_PASS) {                                \
-                printf("[%s::%s]: PASS\n", #SUITE_NAME, cur_case->_name);      \
+            if (_CUR_STATUS == CC_PASS) {                                      \
+                printf("[%s::%s]: PASS\n", #PACK_NAME, _CUR_CASE->_name);      \
             }                                                                  \
-            if (cur_case->_status == CC_NONE) {                                \
-                printf("[%s::%s]: NONE\n", #SUITE_NAME, cur_case->_name);      \
+            if (_CUR_STATUS == CC_NONE) {                                      \
+                printf("[%s::%s]: NONE\n", #PACK_NAME, _CUR_CASE->_name);      \
             }                                                                  \
-            CC_CALL_PROC_IF_NOT_NULL(cur_case->fini);                          \
+            _CALL_PROC_IF_NOT_NULL(_CUR_CASE->fini);                           \
         }                                                                      \
         return return_code;                                                    \
     }                                                                          \
-    static cc_test_suite_t CC_TEST_SUITE = {._name = #SUITE_NAME}
+    static cc_test_suite_t _SUITE = {._name = #PACK_NAME}
 
-#define ASSERT(EXPR)                                                           \
+#define _SET_EXPR_INFO(__OUT_PTR, __EXPR)                                      \
+    *(__OUT_PTR) = (cc_assert_expr_info_t) {                                   \
+        .expr = #__EXPR, .file_path = __FILE__, .line_number = __LINE__,       \
+    }
+
+#define _VALIDATE_EXPR(__OUT_STATUS, __EXPR)                                   \
+    if ((__EXPR) != true) {                                                    \
+        *(__OUT_STATUS) = CC_ERROR;                                            \
+    } else {                                                                   \
+        *(__OUT_STATUS) = CC_PASS;                                             \
+    }
+
+#define ASSERT(__EXPR)                                                         \
     do {                                                                       \
-        CC_TEST_SUITE._cur_case->_last_expr_info = (cc_assert_expr_info_t){    \
-            .expr = #EXPR,                                                     \
-            .file_path = __FILE__,                                             \
-            .line_number = __LINE__,                                           \
-        };                                                                     \
-        if ((EXPR) != true) {                                                  \
-            CC_TEST_SUITE._cur_case->_status = CC_ERROR;                       \
-        } else {                                                               \
-            CC_TEST_SUITE._cur_case->_status = CC_PASS;                        \
-        }                                                                      \
+        _SET_EXPR_INFO(&_CUR_EXPR_INFO, __EXPR);                               \
+        _VALIDATE_EXPR(&_CUR_STATUS, __EXPR);                                  \
     } while (0)
 
 #endif // CCHECK_CCHECK_H_

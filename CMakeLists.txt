@@ -2,14 +2,14 @@ cmake_minimum_required(VERSION 3.10)
 project(cboxes C)
 
 
-set(CMAKE_C_STANDARD 23)
+set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED true)
 
 
 set(
     PROJECT_SOURCES
     ${PROJECT_SOURCE_DIR}/src/algorithm.c
-    ${PROJECT_SOURCE_DIR}/src/darray.c
+    ${PROJECT_SOURCE_DIR}/src/dynamic_array.c
     ${PROJECT_SOURCE_DIR}/src/hash.c
     ${PROJECT_SOURCE_DIR}/src/hashmap.c
     ${PROJECT_SOURCE_DIR}/src/link_node.c
@@ -26,7 +26,7 @@ set(
     PROJECT_HEADERS
     ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/algorithm.h
     ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/assert.h
-    ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/darray.h
+    ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/dynamic_array.h
     ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/hash.h
     ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/hashmap.h
     ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/link_node.h
@@ -58,7 +58,6 @@ if(SANITAZER STREQUAL "MSan")
     target_compile_options(${PROJECT_NAME} PUBLIC -fsanitize=leak)
     target_link_options   (${PROJECT_NAME} PUBLIC -fsanitize=leak)
 elseif(SANITAZER STREQUAL "ASan")
-    message("SANITAZER=${SANITAIZER}")
     target_compile_options(${PROJECT_NAME} PUBLIC -fsanitize=address)
     target_link_options   (${PROJECT_NAME} PUBLIC -fsanitize=address)
 elseif(SANITAZER STREQUAL "TSan")
@@ -86,7 +85,7 @@ else()
     message(WARNING "clang-tidy not found")
     add_custom_target(
         tidy
-        COMMAND echo "clang-tidy not avaiable" && false
+        COMMAND echo "clang-tidy not available" && false
         )
 endif()
 
@@ -149,4 +148,7 @@ if(BUILD_TESTING)
     endforeach(TEST_SRC)
 endif()
 
+add_executable(${PROJECT_NAME}-testing ${PROJECT_SOURCE_DIR}/testing/main.c)
+target_link_libraries(${PROJECT_NAME}-testing ${PROJECT_NAME})
+target_include_directories(${PROJECT_NAME}-testing PUBLIC ${PROJECT_SOURCE_DIR}/include)
 
