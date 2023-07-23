@@ -1,6 +1,13 @@
 #include "cboxes/algorithm.h"
 #include "cboxes/assert.h"
 
+CS_IMPL_NUMERIC_IS_GREATER(int8, int8_t)
+CS_IMPL_NUMERIC_IS_GREATER(int16, int16_t)
+CS_IMPL_NUMERIC_IS_GREATER(int32, int32_t)
+CS_IMPL_NUMERIC_IS_GREATER(int64, int64_t)
+CS_IMPL_NUMERIC_IS_GREATER(float, float)
+CS_IMPL_NUMERIC_IS_GREATER(double, float)
+
 void
 cs_swap(void *restrict a, void *b, size_t size) {
     char t[size];

@@ -12,6 +12,21 @@
 
 typedef bool (*cs_is_greater_t)(void *, void *);
 
+#define CS_DEFINE_NUMERIC_IS_GREATER(POSTFIX, TYPE)                            \
+    bool is_greater_##POSTFIX(void *a, void *b)
+
+#define CS_IMPL_NUMERIC_IS_GREATER(POSTFIX, TYPE)                              \
+    bool is_greater_##POSTFIX(void *a, void *b) {                              \
+        return (*(TYPE *)a) > (*(TYPE *)b);                                    \
+    }
+
+CS_DEFINE_NUMERIC_IS_GREATER(int8, int8_t);
+CS_DEFINE_NUMERIC_IS_GREATER(int16, int16_t);
+CS_DEFINE_NUMERIC_IS_GREATER(int32, int32_t);
+CS_DEFINE_NUMERIC_IS_GREATER(int64, int64_t);
+CS_DEFINE_NUMERIC_IS_GREATER(float, float);
+CS_DEFINE_NUMERIC_IS_GREATER(double, float);
+
 void cs_swap(void *restrict a, void *b, size_t size);
 
 void cs_bubble_sort_a(void *items, uint64_t item_count, size_t item_size,

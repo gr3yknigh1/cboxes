@@ -6,15 +6,10 @@
 #include <cboxes/dynamic_array.h>
 #include <cboxes/type.h>
 
-bool
-int32_is_greater(void *a, void *b) {
-    return (*(int32_t *)a) > (*(int32_t *)b);
-}
-
 int
 main(void) {
 
-    int array[] = {0, 2, 4, 19, 2, 32};
+    int32_t array[] = {0, 2, 4, 19, 2, 32};
 
     for (uint64_t i = 0; i < CS_STATIC_ARRAY_LENGTH(array); ++i) {
         printf("%i ", array[i]);
@@ -23,7 +18,7 @@ main(void) {
     printf("\n");
 
     cs_quick_sort_a(array, CS_STATIC_ARRAY_LENGTH(array),
-                    CS_STATIC_ARRAY_ITEM_SIZE(array), int32_is_greater);
+                    CS_STATIC_ARRAY_ITEM_SIZE(array), is_greater_int32);
 
     for (uint64_t i = 0; i < CS_STATIC_ARRAY_LENGTH(array); ++i) {
         printf("%i ", array[i]);
