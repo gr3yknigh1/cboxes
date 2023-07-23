@@ -20,4 +20,7 @@ void cs_bubble_sort_a(void *items, uint64_t item_count, size_t item_size,
 void cs_bubble_sort_b(void *items, uint64_t item_count, size_t item_size,
                       cs_is_greater_t is_greater);
 
+void cs_quick_sort_a(int *items, uint64_t item_length, size_t item_size,
+                     cs_is_greater_t is_greater);
+
 #endif // CBOXES_ALGORITHM_H_
