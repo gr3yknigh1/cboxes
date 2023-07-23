@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(cboxes C)
 
 
-set(CMAKE_C_STANDARD 23)
+set(CMAKE_C_STANDARD 17)
 set(CMAKE_C_STANDARD_REQUIRED true)
 
 
@@ -146,4 +146,7 @@ if(BUILD_TESTING)
     endforeach(TEST_SRC)
 endif()
 
+add_executable(${PROJECT_NAME}-testing ${PROJECT_SOURCE_DIR}/testing/main.c)
+target_link_libraries(${PROJECT_NAME}-testing ${PROJECT_NAME})
+target_include_directories(${PROJECT_NAME}-testing PUBLIC ${PROJECT_SOURCE_DIR}/include)
 

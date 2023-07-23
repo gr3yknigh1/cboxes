@@ -4,10 +4,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define CS_ASSERT(__X, ...)                                                    \
+#define CS_ASSERT(EXPR, ...)                                                   \
     do {                                                                       \
-        if (!(__X)) {                                                          \
-            fprintf(stderr, "AssertionError: " __VA_OPT__(__VA_ARGS__));       \
+        if (!(EXPR)) {                                                         \
+            fprintf(stderr,                                                    \
+                    "AssertionError: %s:%i '" #EXPR                           \
+                    "' expresion failed: "__VA_OPT__(__VA_ARGS__),             \
+                    __FILE__, __LINE__);                                       \
             exit(1);                                                           \
         }                                                                      \
     } while (0)
