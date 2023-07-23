@@ -46,12 +46,24 @@ set(
 
 add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCES})
 
+
 if(MSVC)
-    target_compile_options(${PROJECT_NAME} PUBLIC /W4)
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        message(WARNING "Add debug flags")
+        target_compile_options(${PROJECT_NAME} PUBLIC /W4)
+    elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+        target_compile_options(${PROJECT_NAME} PUBLIC /W4)
+    endif()
 elseif(CMAKE_COMPILER_IS_GNUCC)
-    target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wextra -Wpedantic -Werror)
+    if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+        target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wextra -Wpedantic -Werror -O0 -g)
+    elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
+        target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wextra -Wpedantic -Werror -O3)
+    else()
+        message(FATAL_ERROR "Unhandled build type")
+    endif()
 else()
-    message(FATAL_ERROR "Unhandled compiler ID")
+    message(FATAL_ERROR "Unhandled compiler")
 endif()
 
 if(SANITAZER STREQUAL "MSan")

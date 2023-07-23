@@ -6,10 +6,10 @@
 
 #include "cboxes/def.h"
 
-
 // TODO(gr3yknigh1): Move to separete header
 #define CS_PRINT_IMPL(FD, ...) fprintf((FD)__VA_OPT__(, __VA_ARGS__))
 #define CS_PRINT_ERROR(...) CS_PRINT_IMPL(stderr __VA_OPT__(, __VA_ARGS__))
+#define CS_PRINT(...) CS_PRINT_IMPL(stdout __VA_OPT__(, __VA_ARGS__))
 
 #define CS_ASSERT_IMPL(EXPR, MESSAGE, ...)                                     \
     do {                                                                       \

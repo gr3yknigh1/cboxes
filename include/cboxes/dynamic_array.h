@@ -63,7 +63,6 @@ void cs_dynamic_array_reallocate(cs_dynamic_array_t *dynamic_array,
 void cs_dynamic_array_push_back(cs_dynamic_array_t *dynamic_array,
                                 void *item_ptr);
 
-
 void cs_dynamic_array_clear(cs_dynamic_array_t *dynamic_array);
 void cs_dynamic_array_free(cs_dynamic_array_t *dynamic_array);
 

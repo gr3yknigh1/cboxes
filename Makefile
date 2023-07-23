@@ -10,11 +10,11 @@ all: build
 debug: CMAKE_CONF_FLAGS += -DBUILD_TESTING=true
 debug: CMAKE_CONF_FLAGS += -DCMAKE_BUILD_TYPE=Debug
 debug: CMAKE_BUILD_FLAGS += --config Debug
-debug: all
+debug: configure
 
 release: CMAKE_BUILD_FLAGS += --config Release
 release: CMAKE_CONF_FLAGS += -DCMAKE_BUILD_TYPE=Release
-release: all
+release: configure
 
 build: configure
 	cmake --build build $(CMAKE_BUILD_FLAGS) --verbose
