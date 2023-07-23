@@ -19,19 +19,11 @@ main(void) {
     for (uint64_t i = 0; i < CS_STATIC_ARRAY_LENGTH(array); ++i) {
         printf("%i ", array[i]);
     }
+
     printf("\n");
 
-    cs_bubble_sort_a((void *)array, CS_STATIC_ARRAY_LENGTH(array),
-                     CS_STATIC_ARRAY_ITEM_SIZE(array), int32_is_greater);
-
-    for (uint64_t i = 0; i < CS_STATIC_ARRAY_LENGTH(array); ++i) {
-        printf("%i ", array[i]);
-    }
-    printf("\n");
-
-
-    cs_bubble_sort_b((void *)array, CS_STATIC_ARRAY_LENGTH(array),
-                     CS_STATIC_ARRAY_ITEM_SIZE(array), int32_is_greater);
+    cs_quick_sort_a(array, CS_STATIC_ARRAY_LENGTH(array),
+                    CS_STATIC_ARRAY_ITEM_SIZE(array), int32_is_greater);
 
     for (uint64_t i = 0; i < CS_STATIC_ARRAY_LENGTH(array); ++i) {
         printf("%i ", array[i]);
