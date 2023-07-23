@@ -40,29 +40,33 @@ cs_bubble_sort_b(void *items, uint64_t item_count, size_t item_size,
 }
 
 void
-cs_quick_sort_a(int *items, uint64_t item_length, size_t item_size,
+cs_quick_sort_a(void *items, uint64_t item_length, size_t item_size,
                 cs_is_greater_t is_greater) {
     if (item_length < 2) {
         return;
     }
 
-    int *pivot = items + item_length - 1;
-    int *head = items;
-    int *tail = items;
+    void *pivot = (char *)items + (item_length - 1) * item_size;
+    void *head = items;
+    void *tail = items;
 
     while (tail < pivot) {
-        if (*tail < *pivot) {
+        if (is_greater(pivot, tail)) {
             cs_swap(head, tail, item_size);
-            head++;
+            head = (char *)head + item_size;
         }
-        tail++;
+        tail = (char *)tail + item_size;
     }
 
     cs_swap(pivot, head, item_size);
 
-    cs_quick_sort_a(items, head - items, item_size, is_greater);
-    cs_quick_sort_a(items + (head - items) + 1,
-                    item_length - (head - items + 1), item_size, is_greater);
+    size_t half_bytes_offset = (char *)head - (char *)items;
+    uint64_t half_length = half_bytes_offset / item_size;
+
+    cs_quick_sort_a(items, half_length, item_size, is_greater);
+    cs_quick_sort_a((char *)items + half_bytes_offset + item_size,
+                    item_length - (half_bytes_offset + item_size) / item_size,
+                    item_size, is_greater);
 }
 
 // void
