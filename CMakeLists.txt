@@ -8,6 +8,7 @@ set(CMAKE_C_STANDARD_REQUIRED true)
 
 set(
     PROJECT_SOURCES
+    ${PROJECT_SOURCE_DIR}/src/algorithm.c
     ${PROJECT_SOURCE_DIR}/src/darray.c
     ${PROJECT_SOURCE_DIR}/src/hash.c
     ${PROJECT_SOURCE_DIR}/src/hashmap.c
@@ -23,6 +24,7 @@ set(
 
 set(
     PROJECT_HEADERS
+    ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/algorithm.h
     ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/assert.h
     ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/darray.h
     ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/hash.h
