@@ -15,8 +15,9 @@
     do {                                                                       \
         if (!(EXPR)) {                                                         \
             CS_PRINT_ERROR("AssertionError: '" CS_STRINGIFY(                   \
-                EXPR) "'%s " CS_EXPAND_MACRO(MESSAGE)                          \
-                               __VA_OPT__(, __VA_ARGS__));                     \
+                               EXPR) "' at " __FILE__ ":%i"                    \
+                                     "%s" CS_EXPAND_MACRO(MESSAGE) "\n",       \
+                           __LINE__ __VA_OPT__(, __VA_ARGS__));                \
             exit(EXIT_FAILURE);                                                \
         }                                                                      \
     } while (0)

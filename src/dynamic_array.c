@@ -68,19 +68,6 @@ cs_dynamic_array_reallocate(cs_dynamic_array_t *dynamic_array,
     size_t new_data_size = dynamic_array->type->size * new_item_capacity;
     void *new_data = malloc(new_data_size);
 
-    do {
-        if (!(new_data != ((void *)0))) {
-            fprintf(stderr,
-                    "AssertionError: %s:%i '"
-                    "new_data != NULL"
-                    "' expretion failed: ",
-                    "/home/gr3yknigh1/Workspace/Projects/cboxes/src/"
-                    "dynamic_array.c",
-                    71);
-            exit(1);
-        }
-    } while (0);
-
     if (dynamic_array->item_count != 0) {
         cs_copy_memory(new_data, dynamic_array->data, new_item_capacity,
                        cs_dynamic_array_get_buffer_size(dynamic_array));
@@ -92,6 +79,8 @@ cs_dynamic_array_reallocate(cs_dynamic_array_t *dynamic_array,
 
     dynamic_array->data = new_data;
     dynamic_array->item_capacity = new_item_capacity;
+
+    CS_ASSERT(new_data != NULL);
 }
 
 void
