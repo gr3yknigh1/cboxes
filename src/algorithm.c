@@ -46,6 +46,7 @@ cs_quick_sort_a(void *items, uint64_t item_length, size_t item_size,
         return;
     }
 
+    // TODO(gr3yknigh1): Use random pivot value
     void *pivot = (char *)items + (item_length - 1) * item_size;
     void *head = items;
     void *tail = items;
