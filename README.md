@@ -2,25 +2,26 @@
 
 Simple collections library written in C
 
-## Build
 
-**Requirements**:
+## Requirements
 
 - CMake
-- LLVM Clang
-- clang-tidy
-- clang-format
-- valgrind
+- GNU GCC (LLVM Clang doesn't supported temporaly)
+- (optional) clang-tidy
+- (optional) clang-format
+- (optional, and not yet integrated) valgrind
+
+## How to build?
 
 ```bash
-make
+cmake -B build -D CMAKE_BUILD_TYPE Debug
+cmake --build build --target cboxes
 ```
 
-## To Do
+## To-dos
 
 - [X] Linked List
 - [ ] Dynamic Array
 - [X] Hash Map
-- [ ] 2D Dynamic Array
 - [ ] BST
 
