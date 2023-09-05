@@ -47,34 +47,31 @@ set(
 add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCES})
 
 
-if(MSVC)
+if (CMAKE_BUILD_TYPE STREQUAL "")
+    set(CMAKE_BUILD_TYPE "Debug")
+endif()
+
+message(STATUS "Build Type: ${CMAKE_BUILD_TYPE}")
+message(STATUS "Compiler: ${CMAKE_C_COMPILER_ID}")
+
+if(CMAKE_C_COMPILER_ID STREQUAL "MSVC")
+    # TODO(gr3yknigh1): Test this up
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
         message(WARNING "Add debug flags")
         target_compile_options(${PROJECT_NAME} PUBLIC /W4)
     elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
         target_compile_options(${PROJECT_NAME} PUBLIC /W4)
     endif()
-elseif(CMAKE_COMPILER_IS_GNUCC)
+elseif(CMAKE_C_COMPILER_ID STREQUAL "GNU" OR CMAKE_C_COMPILER_ID STREQUAL "Clang")
     if (CMAKE_BUILD_TYPE STREQUAL "Debug")
         target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wextra -Wpedantic -Werror -O0 -g)
     elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
         target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wextra -Wpedantic -Werror -O3)
-    else()
-        message(FATAL_ERROR "Unhandled build type")
+    elseif(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+        target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wextra -Wpedantic -Werror -O3 -g)
+    elseif(CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
+        target_compile_options(${PROJECT_NAME} PUBLIC -Wall -Wextra -Wpedantic -Werror -Os)
     endif()
-else()
-    message(FATAL_ERROR "Unhandled compiler")
-endif()
-
-if(SANITAZER STREQUAL "MSan")
-    target_compile_options(${PROJECT_NAME} PUBLIC -fsanitize=leak)
-    target_link_options   (${PROJECT_NAME} PUBLIC -fsanitize=leak)
-elseif(SANITAZER STREQUAL "ASan")
-    target_compile_options(${PROJECT_NAME} PUBLIC -fsanitize=address)
-    target_link_options   (${PROJECT_NAME} PUBLIC -fsanitize=address)
-elseif(SANITAZER STREQUAL "TSan")
-    target_compile_options(${PROJECT_NAME} PUBLIC -fsanitize=thread)
-    target_link_options   (${PROJECT_NAME} PUBLIC -fsanitize=thread)
 endif()
 
 target_include_directories(
@@ -134,13 +131,7 @@ else()
 endif()
 
 
-find_program(VALGRIND_EXEC valgrind)
-if(VALGRIND_EXEC)
-    message(STATUS "Found valgrind")
-else()
-    message(WARNING "Valgrind not found")
-endif()
-
+# NOTE(gr3yknigh1): Horray, more bikes! Custom test suite lib
 include(CTest)
 enable_testing()
 
