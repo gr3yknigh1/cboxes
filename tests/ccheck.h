@@ -3,9 +3,9 @@
 
 /*
  * TODO:
- *     - [ ] Add quite mode
- *     - [ ] .init and .fini for suite
- *     - [ ] .init and .fini for case
+ *   - [ ] Add quite mode
+ *   - [ ] .init and .fini for suite
+ *   - [ ] .init and .fini for case
  * */
 
 #include <stdbool.h>
