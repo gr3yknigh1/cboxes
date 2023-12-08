@@ -1,6 +1,8 @@
 #include "cboxes/algorithm.h"
 #include "cboxes/assert.h"
 
+#include <math.h>
+
 void
 cs_swap(void *restrict a, void *b, size_t size) {
     char t[size];
@@ -98,4 +100,30 @@ cs_quick_sort_d(void *items, uint64_t item_length, size_t item_size,
     cs_quick_sort_d((char *)items + half_bytes_offset + item_size,
                     item_length - (half_bytes_offset + item_size) / item_size,
                     item_size, is_greater);
+}
+
+void *
+cs_binary_search(const void *restrict items, uint64_t items_length, size_t item_size,
+                 cs_is_greater_t is_greater_fn, const void *value) {
+
+    uint64_t left = 0;
+    uint64_t right = items_length;
+
+    while (is_greater_fn((char *)items + left * item_size,
+                         (char *)items + right * item_size)) {
+        // uint64_t middle = floor((left + right) / 2);  // NOTE: BAD: INT OVERFLOW
+        uint64_t middle = floor(left + (right - left) / 2);  // NOTE: BETTER: NO INT OVERFLOW
+        void *middle_ptr = (char *)items + middle * item_size;
+
+        bool is_greater_ = is_greater_fn(middle_ptr, value);
+        if (!is_greater_) {
+
+        } else if (is_greater_) {
+
+        } else {
+
+        }
+    }
+
+    return NULL;
 }

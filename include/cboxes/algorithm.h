@@ -10,7 +10,7 @@
 #define CS_STATIC_ARRAY_LENGTH(ARRAY)                                          \
     (sizeof((ARRAY)) / CS_STATIC_ARRAY_ITEM_SIZE(ARRAY))
 
-typedef bool (*cs_is_greater_t)(void *, void *);
+typedef bool (*cs_is_greater_t)(const void *, const void *);
 
 void cs_swap(void *restrict a, void *b, size_t size);
 
